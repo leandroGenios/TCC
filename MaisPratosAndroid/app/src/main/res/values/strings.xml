@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MaisPratos</string>
+    <string name="title_activity_lista_ingredientes">ListaIngredientes</string>
+    <string name="digitar_o_mes">Digite o Mês</string>
 </resources>

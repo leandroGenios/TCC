@@ -5,12 +5,12 @@ import android.os.Bundle;
 
 import com.tcc.maispratos.R;
 
-public class Cadastro extends AppCompatActivity {
+public class CadastroUsuario extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
-        setContentView(R.layout.activity_cadastro);
+        setContentView(R.layout.activity_cadastro_usuario);
     }
 }

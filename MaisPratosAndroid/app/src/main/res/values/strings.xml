@@ -2,4 +2,8 @@
     <string name="app_name">MaisPratos</string>
     <string name="title_activity_lista_ingredientes">ListaIngredientes</string>
     <string name="digitar_o_mes">Digite o Mês</string>
+    <string name="hint_nome">NOME DO USUÁRIO</string>
+    <string name="hint_senha">SENHA</string>
+    <string name="btn_entrar">ENTRAR</string>
+    <string name="btn_cadastro">NOVO CADASTRO</string>
 </resources>

@@ -31,6 +31,18 @@ public class Login extends AppCompatActivity {
             }
         });
 
+        Button entrar = (Button) findViewById(R.id.btnEntrar);
+        entrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), CadastroIngrediente.class);
+                startActivity(intent);
+            }
+        });
+
+    }
+
+    public void teste(){
         new IntentIntegrator(this).initiateScan();
     }
 

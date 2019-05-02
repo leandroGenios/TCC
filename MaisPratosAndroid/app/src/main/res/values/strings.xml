@@ -4,6 +4,11 @@
     <string name="digitar_o_mes">Digite o Mês</string>
     <string name="hint_nome">NOME DO USUÁRIO</string>
     <string name="hint_senha">SENHA</string>
+    <string name="hint_codigo_barras">CÓDIGO DE BARRAS</string>
+    <string name="hint_pais">PAÍS DE FABRICAÇÃO</string>
+    <string name="hint_fabricante">FABRICANTE</string>
+    <string name="hint_nome_produto">NOME DO PRODUTO</string>
+    <string name="hint_unidade_medida">TIPO</string>
     <string name="btn_entrar">ENTRAR</string>
     <string name="btn_cadastro">NOVO CADASTRO</string>
     <string name="title_activity_ingredientes">IngredientesActivity</string>

@@ -3,6 +3,7 @@
     package="com.tcc.maispratos">
 
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
@@ -12,21 +13,30 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.Login"
-                  android:screenOrientation="portrait">
+        <activity
+            android:name=".activity.Login"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.CadastroUsuario"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.CadastroUsuario"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ListaIngredientes"
             android:label="@string/title_activity_lista_ingredientes"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.CadastroIngrediente">
-        </activity>
+        <activity android:name=".activity.CadastroIngrediente" />
+        <activity
+            android:name=".activity.IngredientesActivity"
+            android:label="@string/title_activity_ingredientes"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.PratosActivity"
+            android:label="@string/title_activity_pratos"></activity>
     </application>
 
 </manifest>

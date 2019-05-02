@@ -6,4 +6,9 @@
     <string name="hint_senha">SENHA</string>
     <string name="btn_entrar">ENTRAR</string>
     <string name="btn_cadastro">NOVO CADASTRO</string>
+    <string name="title_activity_ingredientes">IngredientesActivity</string>
+    <string name="title_activity_pratos">PratosActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 </resources>

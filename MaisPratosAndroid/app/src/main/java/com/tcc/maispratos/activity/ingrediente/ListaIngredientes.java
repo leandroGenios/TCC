@@ -1,4 +1,4 @@
-package com.tcc.maispratos.activity;
+package com.tcc.maispratos.activity.ingrediente;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,12 +9,12 @@ import android.view.View;
 
 import com.tcc.maispratos.R;
 
-public class IngredientesActivity extends AppCompatActivity {
+public class ListaIngredientes extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ingredientes);
+        setContentView(R.layout.activity_lista_ingredientes);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

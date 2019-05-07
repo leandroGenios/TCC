@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme"
         >
         <activity
-            android:name=".activity.Login"
+            android:name=".activity.usuario.Login"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,22 +24,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.CadastroUsuario"
+            android:name=".activity.usuario.CadastroUsuario"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ListaIngredientes"
+            android:name=".activity.ingrediente.ListaIngredientes"
             android:label="@string/title_activity_lista_ingredientes"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.CadastroIngrediente"
+            android:name=".activity.ingrediente.CadastroIngredienteActivity"
             android:configChanges="orientation|screenSize">
         </activity>
         <activity
-            android:name=".activity.IngredientesActivity"
+            android:name=".activity.ingrediente.IngredientesActivity"
             android:label="@string/title_activity_ingredientes"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.PratosActivity"
+            android:name=".activity.prato.PratosActivity"
             android:label="@string/title_activity_pratos"></activity>
     </application>
 

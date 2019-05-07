@@ -1,4 +1,4 @@
-package com.tcc.maispratos.activity;
+package com.tcc.maispratos.activity.ingrediente;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -17,7 +17,7 @@ import com.google.zxing.integration.android.IntentResult;
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.util.Constants;
 
-public class CadastroIngrediente extends AppCompatActivity {
+public class CadastroIngredienteActivity extends AppCompatActivity {
 
     String MesesVetor[] = {"Janeiro", "Fevereiro", "Março", "Abril", "Maio",
             "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
@@ -54,7 +54,7 @@ public class CadastroIngrediente extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.ingredientes) {
-            Intent intent = new Intent(this, CadastroIngrediente.class);
+            Intent intent = new Intent(this, CadastroIngredienteActivity.class);
             startActivity(intent);
         }
 

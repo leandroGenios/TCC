@@ -1,4 +1,4 @@
-package com.tcc.maispratos.model;
+package com.tcc.maispratos.activity.prato;
 
 public class Prato {
     private String nome;

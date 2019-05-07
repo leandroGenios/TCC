@@ -1,4 +1,4 @@
-package com.tcc.maispratos.activity;
+package com.tcc.maispratos.activity.usuario;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

@@ -1,16 +1,15 @@
-package com.tcc.maispratos.activity;
+package com.tcc.maispratos.activity.usuario;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.tcc.maispratos.R;
+import com.tcc.maispratos.activity.prato.PratosActivity;
 
 public class Login extends AppCompatActivity {
 

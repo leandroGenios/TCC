@@ -1,4 +1,4 @@
-package com.tcc.maispratos.adapter;
+package com.tcc.maispratos.activity.prato;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -6,11 +6,8 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.tcc.maispratos.R;
-import com.tcc.maispratos.model.Prato;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class PratoAdapter extends RecyclerView.Adapter<LinePratoHolder> {
     private final List<Prato> pratos;
@@ -23,7 +20,7 @@ public class PratoAdapter extends RecyclerView.Adapter<LinePratoHolder> {
     @Override
     public LinePratoHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         return new LinePratoHolder(LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.card_line, viewGroup, false));
+                .inflate(R.layout.card_line_prato, viewGroup, false));
     }
 
     @Override
@@ -43,5 +40,10 @@ public class PratoAdapter extends RecyclerView.Adapter<LinePratoHolder> {
     private void insertItem(Prato prato) {
         pratos.add(prato);
         notifyItemInserted(getItemCount());
+    }
+
+    public void clear(){
+        pratos.clear();
+        notifyDataSetChanged();
     }
 }

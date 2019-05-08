@@ -62,7 +62,7 @@ public class PratosActivity extends AppCompatActivity {
         adapter.clear();
 
         Prato p1 = new Prato();
-        p1.setNome("Prato 1");
+        p1.setNome("LASANHA AO MOLHO BOLONHESA");
         adapter.updateList(p1);
 
         Prato p2 = new Prato();

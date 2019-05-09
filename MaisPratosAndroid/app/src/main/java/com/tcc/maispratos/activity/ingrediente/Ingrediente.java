@@ -1,6 +1,7 @@
 package com.tcc.maispratos.activity.ingrediente;
 
 public class Ingrediente {
+    private int id;
     private String nome;
     private float qtde;
     private UnidadeMedida unidadeMedida;
@@ -27,5 +28,13 @@ public class Ingrediente {
 
     public void setUnidadeMedida(UnidadeMedida unidadeMedida) {
         this.unidadeMedida = unidadeMedida;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

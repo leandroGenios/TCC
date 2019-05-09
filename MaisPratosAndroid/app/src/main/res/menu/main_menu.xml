@@ -5,4 +5,19 @@
     <item
         android:id="@+id/ingredientes"
         android:title="Ingredientes" />
+    <item
+        android:id="@+id/pratos"
+        android:title="Buscar pratos" />
+    <item
+        android:id="@+id/listaCompras"
+        android:title="Lista de compras" />
+    <item
+        android:id="@+id/perfil"
+        android:title="Perfil" />
+    <item
+        android:id="@+id/amigos"
+        android:title="Amigos" />
+    <item
+        android:id="@+id/sair"
+        android:title="Sair" />
 </menu>

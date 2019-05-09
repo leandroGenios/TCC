@@ -16,6 +16,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.util.Constants;
+import com.tcc.maispratos.util.MenusAction;
 
 public class CadastroIngredienteActivity extends AppCompatActivity {
 
@@ -23,8 +24,6 @@ public class CadastroIngredienteActivity extends AppCompatActivity {
             "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
 
     EditText edtCodigoBarras;
-    EditText edtPaisFabricacao;
-    EditText edtFabricante;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,25 +45,19 @@ public class CadastroIngredienteActivity extends AppCompatActivity {
         });
 
         edtCodigoBarras = findViewById(R.id.edtCodBarras);
-        edtPaisFabricacao = findViewById(R.id.edtPais);
-        edtFabricante = findViewById(R.id.edtFabricante);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.ingredientes) {
-            Intent intent = new Intent(this, CadastroIngredienteActivity.class);
-            startActivity(intent);
-        }
-
-        return super.onOptionsItemSelected(item);
+        Intent intent = new Intent(getApplicationContext(), MenusAction.onActionMenu(item.getItemId()));
+        startActivity(intent);
+        finish();
+        return true;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
 
@@ -87,8 +80,6 @@ public class CadastroIngredienteActivity extends AppCompatActivity {
         IntentResult result = IntentIntegrator.parseActivityResult(resultCode, data);
         String codigo = result.getContents();
         edtCodigoBarras.setText(codigo);
-        edtPaisFabricacao.setText(verificaPaisFabricacao(codigo));
-        edtFabricante.setText(buscaFabricante(codigo));
 
         /*if(result.getContents() == null) {
             Log.d("MainActivity", "Cancelled scan");

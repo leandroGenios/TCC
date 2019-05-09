@@ -39,13 +39,14 @@ public class IngredientesActivity extends AppCompatActivity {
         RecyclerView rcvIngrediente = (RecyclerView) findViewById(R.id.rcvIngrediente);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rcvIngrediente.setLayoutManager(layoutManager);
-        IngredienteAdapter adapter = new IngredienteAdapter(new ArrayList<Ingrediente>(0));
+        IngredienteAdapter adapter = new IngredienteAdapter(new ArrayList<Ingrediente>(0), this);
         rcvIngrediente.setAdapter(adapter);
         rcvIngrediente.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         UnidadeMedida unidade = new UnidadeMedida();
         unidade.setTipo("lata");
         Ingrediente ingrediente = new Ingrediente();
+        ingrediente.setId(1);
         ingrediente.setNome("MASSA DE TOMATE");
         ingrediente.setQtde(4);
         ingrediente.setUnidadeMedida(unidade);
@@ -55,12 +56,20 @@ public class IngredientesActivity extends AppCompatActivity {
         UnidadeMedida unidade2 = new UnidadeMedida();
         unidade2.setTipo("pacote 1Kg");
         Ingrediente ingrediente2 = new Ingrediente();
+        ingrediente2.setId(2);
         ingrediente2.setNome("Açucar");
         ingrediente2.setQtde(1);
         ingrediente2.setUnidadeMedida(unidade2);
 
         adapter.updateList(ingrediente2);
-
+        adapter.updateList(ingrediente2);
+        adapter.updateList(ingrediente2);
+        adapter.updateList(ingrediente2);
+        adapter.updateList(ingrediente2);
+        adapter.updateList(ingrediente2);
+        adapter.updateList(ingrediente2);
+        adapter.updateList(ingrediente2);
+        adapter.updateList(ingrediente2);
     }
 
 }

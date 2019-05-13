@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutionException;
 public class IngredienteAdapter extends RecyclerView.Adapter<LineIngredienteHolder> {
     private final List<Ingrediente> ingredientes;
     private IngredientesActivity activity;
-    private int index;
 
     public IngredienteAdapter(List<Ingrediente> ingredientes, IngredientesActivity activity) {
         this.activity = activity;
@@ -36,14 +35,12 @@ public class IngredienteAdapter extends RecyclerView.Adapter<LineIngredienteHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull LineIngredienteHolder lineIngredienteHolder, int i) {
+    public void onBindViewHolder(@NonNull LineIngredienteHolder lineIngredienteHolder, final int i) {
         lineIngredienteHolder.txtNomeIngrediente.setText(ingredientes.get(i).getNome());
         lineIngredienteHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println();
-                System.out.println(ingredientes.get(index));
-                exibeDialogo(ingredientes.get(index));
+                exibeDialogo(ingredientes.get(i));
             }
         });
     }

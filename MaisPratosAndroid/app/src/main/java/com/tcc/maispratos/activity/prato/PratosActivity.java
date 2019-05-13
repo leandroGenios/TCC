@@ -52,7 +52,7 @@ public class PratosActivity extends AppCompatActivity {
         RecyclerView rcvPratos = (RecyclerView) findViewById(R.id.rcvPratos);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rcvPratos.setLayoutManager(layoutManager);
-        adapter = new PratoAdapter(new ArrayList<Prato>(0));
+        adapter = new PratoAdapter(new ArrayList<Prato>(0), this);
         rcvPratos.setAdapter(adapter);
         rcvPratos.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 

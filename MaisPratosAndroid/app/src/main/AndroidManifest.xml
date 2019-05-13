@@ -12,8 +12,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        >
+        android:theme="@style/AppTheme">
+        <activity android:name=".activity.prato.PratoActivity"></activity>
         <activity
             android:name=".activity.usuario.Login"
             android:screenOrientation="portrait">
@@ -32,15 +32,14 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.ingrediente.CadastroIngredienteActivity"
-            android:configChanges="orientation|screenSize">
-        </activity>
+            android:configChanges="orientation|screenSize"></activity>
         <activity
             android:name=".activity.ingrediente.IngredientesActivity"
             android:label="@string/title_activity_ingredientes"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.prato.PratosActivity"
-            android:label="@string/title_activity_pratos"></activity>
+            android:label="@string/title_activity_pratos" />
     </application>
 
 </manifest>

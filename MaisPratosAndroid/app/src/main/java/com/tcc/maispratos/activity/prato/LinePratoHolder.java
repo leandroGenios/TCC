@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.tcc.maispratos.R;
 
 public class LinePratoHolder extends RecyclerView.ViewHolder {
-
     public ImageView imgPrato;
     public TextView txtNomePrato;
 
@@ -19,4 +18,5 @@ public class LinePratoHolder extends RecyclerView.ViewHolder {
         imgPrato = (ImageView) itemView.findViewById(R.id.imgPrato);
         txtNomePrato = (TextView) itemView.findViewById(R.id.txtNomePrato);
     }
+
 }

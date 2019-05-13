@@ -1,6 +1,7 @@
 package com.tcc.maispratos.activity.prato;
 
 public class Prato {
+    private int id;
     private String nome;
     private String imagem;
     private String notaGeral;
@@ -27,5 +28,13 @@ public class Prato {
 
     public void setNotaGeral(String notaGeral) {
         this.notaGeral = notaGeral;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

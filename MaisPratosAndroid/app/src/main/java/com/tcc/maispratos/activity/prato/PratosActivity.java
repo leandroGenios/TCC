@@ -13,11 +13,12 @@ import android.view.MenuItem;
 
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
+import com.tcc.maispratos.util.BaseMenuActivity;
 import com.tcc.maispratos.util.MenusAction;
 
 import java.util.ArrayList;
 
-public class PratosActivity extends AppCompatActivity {
+public class PratosActivity extends BaseMenuActivity {
 
     private RecyclerView rcvPratos;
     private PratoAdapter adapter;
@@ -76,19 +77,5 @@ public class PratosActivity extends AppCompatActivity {
         adapter.updateList(p2);
         adapter.updateList(p2);
         adapter.updateList(p2);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = new Intent(getApplicationContext(), MenusAction.onActionMenu(item.getItemId()));
-        startActivity(intent);
-        finish();
-        return true;
     }
 }

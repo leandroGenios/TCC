@@ -31,10 +31,6 @@
             android:name=".activity.usuario.CadastroUsuario"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ingrediente.ListaIngredientes"
-            android:label="@string/title_activity_lista_ingredientes"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".activity.ingrediente.CadastroIngredienteActivity"
             android:configChanges="orientation|screenSize" />
         <activity

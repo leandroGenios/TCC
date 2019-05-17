@@ -8,4 +8,16 @@
     tools:context=".activity.listacompras.ListaComprasActivity"
     tools:showIn="@layout/activity_lista_compras">
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rcvListaCompras"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

@@ -4,17 +4,26 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.tcc.maispratos.R;
+import com.tcc.maispratos.activity.ingrediente.Ingrediente;
+import com.tcc.maispratos.activity.ingrediente.IngredienteAdapter;
+import com.tcc.maispratos.activity.ingrediente.UnidadeMedida;
+import com.tcc.maispratos.util.BaseMenuActivity;
 
-public class ListaComprasActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class ListaComprasActivity extends BaseMenuActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lista_compras);
+        setContentView(R.layout.activity_ingredientes);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -26,6 +35,41 @@ public class ListaComprasActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        RecyclerView rcvIngrediente = (RecyclerView) findViewById(R.id.rcvIngrediente);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        rcvIngrediente.setLayoutManager(layoutManager);
+        ListaComprasAdapter adapter = new ListaComprasAdapter(new ArrayList<Ingrediente>(0), this);
+        rcvIngrediente.setAdapter(adapter);
+        rcvIngrediente.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+
+        UnidadeMedida unidade = new UnidadeMedida();
+        unidade.setTipo("lata");
+        Ingrediente ingrediente = new Ingrediente();
+        ingrediente.setId(1);
+        ingrediente.setNome("MASSA DE TOMATE");
+        ingrediente.setQtde(4);
+        ingrediente.setUnidadeMedida(unidade);
+
+        adapter.updateList(ingrediente);
+
+        UnidadeMedida unidade2 = new UnidadeMedida();
+        unidade2.setTipo("pacote 1Kg");
+        Ingrediente ingrediente2 = new Ingrediente();
+        ingrediente2.setId(2);
+        ingrediente2.setNome("Açucar");
+        ingrediente2.setQtde(1);
+        ingrediente2.setUnidadeMedida(unidade2);
+
+        adapter.updateList(ingrediente2);
+        adapter.updateList(ingrediente2);
+        adapter.updateList(ingrediente2);
+        adapter.updateList(ingrediente2);
+        adapter.updateList(ingrediente2);
+        adapter.updateList(ingrediente2);
+        adapter.updateList(ingrediente2);
+        adapter.updateList(ingrediente2);
+        adapter.updateList(ingrediente2);
     }
 
 }

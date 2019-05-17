@@ -14,10 +14,11 @@ import com.tcc.maispratos.ingrediente.IngredientePrato;
 import com.tcc.maispratos.ingrediente.IngredientePratoAdapter;
 import com.tcc.maispratos.modopreparo.ModoPreparo;
 import com.tcc.maispratos.modopreparo.ModoPreparoAdapter;
+import com.tcc.maispratos.util.BaseMenuActivity;
 
 import java.util.ArrayList;
 
-public class PratoActivity extends AppCompatActivity {
+public class PratoActivity extends BaseMenuActivity {
 
     private ComentarioAdapter comentarioAdapter;
 

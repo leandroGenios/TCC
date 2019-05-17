@@ -12,10 +12,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.tcc.maispratos.R;
+import com.tcc.maispratos.util.BaseMenuActivity;
 
 import java.util.ArrayList;
 
-public class IngredientesActivity extends AppCompatActivity {
+public class IngredientesActivity extends BaseMenuActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

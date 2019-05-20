@@ -15,10 +15,11 @@ import android.widget.EditText;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.tcc.maispratos.R;
+import com.tcc.maispratos.util.BaseMenuActivity;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.MenusAction;
 
-public class CadastroIngredienteActivity extends AppCompatActivity {
+public class CadastroIngredienteActivity extends BaseMenuActivity {
 
     String MesesVetor[] = {"Janeiro", "Fevereiro", "Março", "Abril", "Maio",
             "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
@@ -45,20 +46,6 @@ public class CadastroIngredienteActivity extends AppCompatActivity {
         });
 
         edtCodigoBarras = findViewById(R.id.edtCodBarras);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = new Intent(getApplicationContext(), MenusAction.onActionMenu(item.getItemId()));
-        startActivity(intent);
-        finish();
-        return true;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
     }
 
     @Override

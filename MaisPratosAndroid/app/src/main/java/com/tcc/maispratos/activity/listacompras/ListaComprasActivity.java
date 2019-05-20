@@ -1,6 +1,5 @@
-package com.tcc.maispratos.activity.ingrediente;
+package com.tcc.maispratos.activity.listacompras;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,35 +11,35 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.tcc.maispratos.R;
+import com.tcc.maispratos.activity.ingrediente.Ingrediente;
+import com.tcc.maispratos.activity.ingrediente.IngredienteAdapter;
+import com.tcc.maispratos.activity.ingrediente.UnidadeMedida;
 import com.tcc.maispratos.util.BaseMenuActivity;
 
 import java.util.ArrayList;
 
-public class IngredientesActivity extends BaseMenuActivity {
+public class ListaComprasActivity extends BaseMenuActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ingredientes);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                Intent intent = new Intent(getApplicationContext(), CadastroIngredienteActivity.class);
-                startActivity(intent);
-                finish();
             }
         });
 
         RecyclerView rcvIngrediente = (RecyclerView) findViewById(R.id.rcvIngrediente);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rcvIngrediente.setLayoutManager(layoutManager);
-        IngredienteAdapter adapter = new IngredienteAdapter(new ArrayList<Ingrediente>(0), this);
+        ListaComprasAdapter adapter = new ListaComprasAdapter(new ArrayList<Ingrediente>(0), this);
         rcvIngrediente.setAdapter(adapter);
         rcvIngrediente.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 

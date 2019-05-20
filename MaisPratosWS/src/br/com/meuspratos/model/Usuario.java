@@ -1,17 +1,11 @@
 package br.com.meuspratos.model;
 
 public class Usuario {
-	private String login;
+	private int id;
 	private String senha;
 	private String email;
 	private String nome;
 	
-	public String getLogin() {
-		return login;
-	}
-	public void setLogin(String login) {
-		this.login = login;
-	}
 	public String getSenha() {
 		return senha;
 	}
@@ -29,5 +23,11 @@ public class Usuario {
 	}
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
 	}
 }

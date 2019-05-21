@@ -3,6 +3,7 @@
     package="com.tcc.maispratos">
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
@@ -19,7 +20,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.prato.PratoActivity" />
         <activity
-            android:name=".activity.usuario.Login"
+            android:name=".activity.usuario.LoginActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

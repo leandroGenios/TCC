@@ -17,14 +17,16 @@ public class UsuarioResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("")
 	public Response setCadastro(Usuario usuario) {
-		try {
+		/*try {
 			new UsuarioDAO().setUsuario(usuario);
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
+		}*/
+		usuario.setId(1234);
+		usuario.setNome("Leandro");
 		return Response
 				.status(Response.Status.OK)
-				.header("Access-Control-Allow-Origin", "*")
+				.entity(usuario)
 				.build();
 	}
 }

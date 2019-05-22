@@ -2,8 +2,11 @@
     <string name="app_name">MaisPratos</string>
     <string name="title_activity_lista_ingredientes">ListaIngredientes</string>
     <string name="digitar_o_mes">Digite o Mês</string>
-    <string name="hint_nome">E-MAIL</string>
+    <string name="hint_nome">NOME</string>
+    <string name="hint_email">E-MAIL</string>
+    <string name="hint_confirma_email">CONFIRMAR E-MAIL</string>
     <string name="hint_senha">SENHA</string>
+    <string name="hint_confirma_senha">CONFIRMAR SENHA</string>
     <string name="hint_codigo_barras">CÓDIGO DE BARRAS</string>
     <string name="hint_pais">PAÍS DE FABRICAÇÃO</string>
     <string name="hint_fabricante">FABRICANTE</string>

@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.usuario.CadastroUsuario"
+            android:name=".activity.usuario.CadastroUsuarioActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ingrediente.CadastroIngredienteActivity"

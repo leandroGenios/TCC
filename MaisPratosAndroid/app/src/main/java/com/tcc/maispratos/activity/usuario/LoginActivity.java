@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), CadastroUsuario.class);
+                Intent intent = new Intent(getApplicationContext(), CadastroUsuarioActivity.class);
                 startActivity(intent);
             }
         };

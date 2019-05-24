@@ -61,20 +61,20 @@ public class LoginActivity extends AppCompatActivity {
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(verificaPreenchimento()){
+                if(verificarPreenchimento()){
                     TaskConnection connection = new TaskConnection();
                     Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
                     params[Constants.TIPO_DE_REQUISICAO] = Constants.POST;
                     params[Constants.NOME_DO_RESOURCE] = "usuario";
 
-                    Usuario usuario = populaUsuario();
+                    Usuario usuario = popularUsuario();
                     String gson = new Gson().toJson(usuario);
 
                     try {
                         params[Constants.OBJETO] = new JSONObject(gson);
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        exibeErro("Ocorreu um problema ao tentar autenticar os dados. Tente novamente mais tarde.");
+                        exibirErro("Ocorreu um problema ao tentar autenticar os dados. Tente novamente mais tarde.");
                     }
                     connection.execute(params);
 
@@ -83,10 +83,10 @@ public class LoginActivity extends AppCompatActivity {
                         json = (String) connection.get();
                     } catch (ExecutionException e) {
                         e.printStackTrace();
-                        exibeErro("Ocorreu um problema ao tentar autenticar os dados. Tente novamente mais tarde.");
+                        exibirErro("Ocorreu um problema ao tentar autenticar os dados. Tente novamente mais tarde.");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
-                        exibeErro("Ocorreu um problema ao tentar autenticar os dados. Tente novamente mais tarde.");
+                        exibirErro("Ocorreu um problema ao tentar autenticar os dados. Tente novamente mais tarde.");
                     }
 
                     if(json != null){
@@ -98,19 +98,19 @@ public class LoginActivity extends AppCompatActivity {
                             startActivity(intent);
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            exibeErro("Ocorreu um problema ao tentar autenticar os dados. Tente novamente mais tarde.");
+                            exibirErro("Ocorreu um problema ao tentar autenticar os dados. Tente novamente mais tarde.");
                         }
                     }
                     System.out.println(json);
                 }else{
-                    exibeMensagem("Todos os campos devem ser preenchidos");
+                    exibirMensagem("Todos os campos devem ser preenchidos");
                 }
             }
         };
         return onClickListener;
     }
 
-    private Usuario populaUsuario(){
+    private Usuario popularUsuario(){
         Usuario usuario = new Usuario();
         usuario.setEmail(edtEmail.getText().toString());
         usuario.setSenha(edtSenha.getText().toString());
@@ -118,21 +118,19 @@ public class LoginActivity extends AppCompatActivity {
         return usuario;
     }
 
-    private boolean verificaPreenchimento(){
-        System.out.println("edtt = " + edtEmail.getText());
+    private boolean verificarPreenchimento(){
         if(edtEmail.getText() == null || edtEmail.getText().toString().equals("")){
             return false;
         }
 
         if(edtSenha.getText() == null || edtSenha.getText().toString().equals("")){
-            System.out.println("entrou------1");
             return false;
         }
 
         return true;
     }
 
-    private void exibeMensagem(String mensagem){
+    private void exibirMensagem(String mensagem){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Atenção");
         builder.setMessage(mensagem);
@@ -144,7 +142,7 @@ public class LoginActivity extends AppCompatActivity {
         alerta.show();
     }
 
-    private void exibeErro(String mensagem){
+    private void exibirErro(String mensagem){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Erro");
         builder.setMessage(mensagem);

@@ -66,15 +66,17 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
             return false;
         }
         if(!compararEmails()){
+            edtEmail.requestFocus();
             exibirMensagem("Os campos de e-mail não estão iguais.");
             return false;
         }
         if(!compararSenhas()){
+            edtSenha.requestFocus();
             exibirMensagem("Os campos de senha não estão iguais.");
             return false;
         }
         if(!buscarEmailIgual()){
-            exibirMensagem("Este e-mail já existe na base de dados.");
+            edtEmail.requestFocus();
             return false;
         }
 
@@ -129,6 +131,10 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
             exibirErro("Ocorreu um problema ao tentar validar o e-mail. Tente novamente mais tarde.");
         } catch (InterruptedException e) {
             e.printStackTrace();
+            exibirErro("Ocorreu um problema ao tentar validar o e-mail. Tente novamente mais tarde.");
+        }
+
+        if(!json.equals("true") && !json.equals("false")){
             exibirErro("Ocorreu um problema ao tentar validar o e-mail. Tente novamente mais tarde.");
         }
 

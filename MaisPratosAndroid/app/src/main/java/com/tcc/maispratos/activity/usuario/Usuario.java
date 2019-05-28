@@ -1,6 +1,8 @@
 package com.tcc.maispratos.activity.usuario;
 
-public class Usuario {
+import java.io.Serializable;
+
+public class Usuario implements Serializable {
     private int id;
     private String senha;
     private String email;

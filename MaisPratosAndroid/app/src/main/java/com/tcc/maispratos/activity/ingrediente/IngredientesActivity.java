@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.tcc.maispratos.R;
+import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.util.BaseMenuActivity;
 
 import java.util.ArrayList;
@@ -21,6 +22,9 @@ public class IngredientesActivity extends BaseMenuActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Usuario usuario = (Usuario) getIntent().getExtras().getSerializable("usuario");
+        System.out.println(usuario.getNome());
+
         setContentView(R.layout.activity_ingredientes);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

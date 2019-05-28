@@ -36,4 +36,26 @@ public class UsuarioDAO {
 		}
 		return usuario;
 	}
+	
+	public boolean emailExiste(String email) throws SQLException{
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "SELECT * FROM USUARIO WHERE EMAIL = ?";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setString(1, email);
+			
+			stmt.executeQuery();
+			
+			ResultSet rs = stmt.getGeneratedKeys();
+			return rs.next();
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+	}
 }

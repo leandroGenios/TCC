@@ -12,6 +12,7 @@ import android.widget.Switch;
 
 import com.google.gson.Gson;
 import com.tcc.maispratos.R;
+import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
 
@@ -53,7 +54,7 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(verificarCampos()){
-
+                    cadastrarUsuario();
                 }
             }
         };
@@ -75,8 +76,9 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
             exibirMensagem("Os campos de senha não estão iguais.");
             return false;
         }
-        if(!buscarEmailIgual()){
+        if(emailExiste()){
             edtEmail.requestFocus();
+            exibirMensagem("O e-mail informado já existe.");
             return false;
         }
 
@@ -115,7 +117,7 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         return edtSenha.getText().toString().equals(edtConfirmaSenha.getText().toString());
     }
 
-    private boolean buscarEmailIgual(){
+    private boolean emailExiste(){
         TaskConnection connection = new TaskConnection();
         Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
         params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
@@ -139,6 +141,53 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         }
 
         return json.equals("true");
+    }
+
+    private void cadastrarUsuario(){
+        Usuario usuario = new Usuario();
+        usuario.setNome(edtNome.getText().toString());
+        usuario.setSenha(edtSenha.getText().toString());
+        usuario.setEmail(edtEmail.getText().toString());
+
+        /*TaskConnection connection = new TaskConnection();
+        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.POST;
+        params[Constants.NOME_DO_RESOURCE] = "usuario";
+        params[Constants.OBJETO] = usuario;
+        connection.execute(params);
+
+        String json = null;
+        try {
+            json = (String) connection.get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            exibirErro("Ocorreu um problema ao cadastrar. Tente novamente mais tarde.");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            exibirErro("Ocorreu um problema ao cadastrar. Tente novamente mais tarde.");
+        }
+
+        if(!json.equals("true")){
+            exibirErro("Ocorreu um problema ao cadastrar. Tente novamente mais tarde.");
+        }else{
+            exibeMensagemSucesso(usuario);
+        }*/
+    }
+
+    private void exibeMensagemSucesso(final Usuario usuario){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Sucesso");
+        builder.setMessage("Cadastro realizado");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
+                intent.putExtra("usuario", usuario);
+                startActivity(intent);
+                finish();
+            }
+        });
+        AlertDialog alerta = builder.create();
+        alerta.show();
     }
 
     private void exibirErro(String mensagem){

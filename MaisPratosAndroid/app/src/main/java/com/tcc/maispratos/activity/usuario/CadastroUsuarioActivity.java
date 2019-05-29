@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Switch;
 
 import com.google.gson.Gson;
 import com.tcc.maispratos.R;
@@ -16,6 +15,7 @@ import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.concurrent.ExecutionException;
@@ -121,8 +121,7 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         TaskConnection connection = new TaskConnection();
         Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
         params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
-        params[Constants.NOME_DO_RESOURCE] = "usuario/getEmail";
-        params[Constants.OBJETO] = edtEmail.getText().toString();
+        params[Constants.NOME_DO_RESOURCE] = "usuario/emailExiste/" + edtEmail.getText().toString();
         connection.execute(params);
 
         String json = null;
@@ -149,29 +148,33 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         usuario.setSenha(edtSenha.getText().toString());
         usuario.setEmail(edtEmail.getText().toString());
 
-        /*TaskConnection connection = new TaskConnection();
+        TaskConnection connection = new TaskConnection();
         Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
         params[Constants.TIPO_DE_REQUISICAO] = Constants.POST;
         params[Constants.NOME_DO_RESOURCE] = "usuario";
         params[Constants.OBJETO] = usuario;
+
+        String gson = new Gson().toJson(usuario);
+        try {
+            params[2] = new JSONObject(gson);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         connection.execute(params);
 
         String json = null;
         try {
             json = (String) connection.get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            exibirErro("Ocorreu um problema ao cadastrar. Tente novamente mais tarde.");
-        } catch (InterruptedException e) {
+            usuario = getUsuario(json);
+            exibeMensagemSucesso(usuario);
+        } catch (Exception e) {
             e.printStackTrace();
             exibirErro("Ocorreu um problema ao cadastrar. Tente novamente mais tarde.");
         }
+    }
 
-        if(!json.equals("true")){
-            exibirErro("Ocorreu um problema ao cadastrar. Tente novamente mais tarde.");
-        }else{
-            exibeMensagemSucesso(usuario);
-        }*/
+    private Usuario getUsuario(String json){
+        return new Gson().fromJson(json, Usuario.class);
     }
 
     private void exibeMensagemSucesso(final Usuario usuario){

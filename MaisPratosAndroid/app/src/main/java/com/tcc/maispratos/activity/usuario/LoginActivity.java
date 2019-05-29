@@ -11,6 +11,7 @@ import android.widget.EditText;
 
 import com.google.gson.Gson;
 import com.tcc.maispratos.R;
+import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
 import com.tcc.maispratos.activity.prato.PratosActivity;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
@@ -62,46 +63,13 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(verificarPreenchimento()){
-                    TaskConnection connection = new TaskConnection();
-                    Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
-                    params[Constants.TIPO_DE_REQUISICAO] = Constants.POST;
-                    params[Constants.NOME_DO_RESOURCE] = "usuario";
-
-                    Usuario usuario = popularUsuario();
-                    String gson = new Gson().toJson(usuario);
-
-                    try {
-                        params[Constants.OBJETO] = new JSONObject(gson);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        exibirErro("Ocorreu um problema ao tentar autenticar os dados. Tente novamente mais tarde.");
+                    Usuario usuario = login();
+                    if(usuario != null){
+                        Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
+                        intent.putExtra("usuario", usuario);
+                    }else{
+                        exibirMensagem("Usuario ou senha inválido.");
                     }
-                    connection.execute(params);
-
-                    String json = null;
-                    try {
-                        json = (String) connection.get();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                        exibirErro("Ocorreu um problema ao tentar autenticar os dados. Tente novamente mais tarde.");
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        exibirErro("Ocorreu um problema ao tentar autenticar os dados. Tente novamente mais tarde.");
-                    }
-
-                    if(json != null){
-                        try {
-                            JSONObject jsonObj = new JSONObject(json);
-                            usuario.setNome(jsonObj.getString("nome"));
-                            usuario.setId(jsonObj.getInt("id"));
-                            Intent intent = new Intent(getApplicationContext(), PratosActivity.class);
-                            startActivity(intent);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            exibirErro("Ocorreu um problema ao tentar autenticar os dados. Tente novamente mais tarde.");
-                        }
-                    }
-                    System.out.println(json);
                 }else{
                     exibirMensagem("Todos os campos devem ser preenchidos");
                 }
@@ -128,6 +96,37 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    private Usuario login(){
+        Usuario usuario = null;
+        TaskConnection connection = new TaskConnection();
+        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
+        params[Constants.NOME_DO_RESOURCE] = "usuario/login/" + edtEmail.getText().toString() + "/" + edtSenha.getText().toString();
+        connection.execute(params);
+
+        String json = null;
+        try {
+            json = (String) connection.get();
+            if(usuarioLogado(json)){
+                usuario = new Usuario();
+                JSONObject jsonObj = new JSONObject(json);
+                usuario.setId(jsonObj.getInt("id"));
+                usuario.setNome(jsonObj.getString("nome"));
+                usuario.setEmail(jsonObj.getString("email"));
+                usuario.setSenha(jsonObj.getString("senha"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            exibirErro("Ocorreu um problema ao tentar autenticar os dados. Tente novamente mais tarde.");
+        }
+
+        return usuario;
+    }
+
+    private boolean usuarioLogado(String json){
+        return !json.equals("false");
     }
 
     private void exibirMensagem(String mensagem){

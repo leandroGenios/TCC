@@ -49,10 +49,60 @@ public class UsuarioDAO {
 			
 			stmt.setString(1, email);
 			
-			stmt.executeQuery();
-			
-			ResultSet rs = stmt.getGeneratedKeys();
+			ResultSet rs = stmt.executeQuery();
 			return rs.next();
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+	}
+	
+	public boolean usuarioExiste(String email, String senha) throws SQLException{
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "SELECT * FROM USUARIO WHERE EMAIL = ? AND SENHA = ?";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			System.out.println(email);
+			System.out.println(senha);
+			stmt.setString(1, email);
+			stmt.setString(2, senha);
+			
+			ResultSet rs = stmt.executeQuery();
+			return rs.next();
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+	}
+	
+	public Usuario getUsuario(String email) throws SQLException{
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "SELECT * FROM USUARIO WHERE EMAIL = ?";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setString(1, email);
+			
+			ResultSet rs = stmt.executeQuery();
+			
+			Usuario usuario = null;
+			while (rs.next()) {
+				usuario = new Usuario();
+				usuario.setId(rs.getInt("id"));
+				usuario.setEmail(rs.getString("email"));
+				usuario.setNome(rs.getString("nome"));
+				usuario.setSenha(rs.getString("senha"));
+			}
+			return usuario;
 		}
 		finally {
 			GerenciadorJDBC.close(conn, stmt);

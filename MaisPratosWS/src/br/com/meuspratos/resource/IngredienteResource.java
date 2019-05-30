@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response;
 
 @Path("/ingrediente")
 @Produces(MediaType.APPLICATION_JSON)
-public class Ingrediente {
+public class IngredienteResource {
 	
 	@GET
 	@Path("getInfo/{codigo}")

@@ -67,8 +67,6 @@ public class UsuarioDAO {
 			String sql = "SELECT * FROM USUARIO WHERE EMAIL = ? AND SENHA = ?";
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
-			System.out.println(email);
-			System.out.println(senha);
 			stmt.setString(1, email);
 			stmt.setString(2, senha);
 			

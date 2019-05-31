@@ -1,13 +1,22 @@
 package com.tcc.maispratos.activity.ingrediente;
 
 public class UnidadeMedida {
-    private String tipo;
+    private int id;
+    private String sigla;
 
-    public String getTipo() {
-        return tipo;
+    public int getId() {
+        return id;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getSigla() {
+        return sigla;
+    }
+
+    public void setSigla(String sigla) {
+        this.sigla = sigla;
     }
 }

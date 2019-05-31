@@ -11,5 +11,6 @@ public class Constants {
     public static final int NOME_DO_RESOURCE = 1;
     public static final int OBJETO = 2;
     public static final int QUERY_COM_ENVIO_DE_OBJETO = 3;
+    public static final int QUERY_SEM_ENVIO_DE_OBJETO = 2;
 
 }

@@ -44,21 +44,21 @@ public class ListaComprasActivity extends BaseMenuActivity {
         rcvIngrediente.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         UnidadeMedida unidade = new UnidadeMedida();
-        unidade.setTipo("lata");
+        unidade.setSigla("lata");
         Ingrediente ingrediente = new Ingrediente();
         ingrediente.setId(1);
         ingrediente.setNome("MASSA DE TOMATE");
-        ingrediente.setQtde(4);
+        ingrediente.setQuantidade(4);
         ingrediente.setUnidadeMedida(unidade);
 
         adapter.updateList(ingrediente);
 
         UnidadeMedida unidade2 = new UnidadeMedida();
-        unidade2.setTipo("pacote 1Kg");
+        unidade2.setSigla("pacote 1Kg");
         Ingrediente ingrediente2 = new Ingrediente();
         ingrediente2.setId(2);
         ingrediente2.setNome("Açucar");
-        ingrediente2.setQtde(1);
+        ingrediente2.setQuantidade(1);
         ingrediente2.setUnidadeMedida(unidade2);
 
         adapter.updateList(ingrediente2);

@@ -10,7 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.tcc.maispratos.R;
+import com.tcc.maispratos.activity.ingrediente.Ingrediente;
 import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
 import com.tcc.maispratos.activity.prato.PratosActivity;
 import com.tcc.maispratos.util.Constants;
@@ -19,6 +21,9 @@ import com.tcc.maispratos.util.TaskConnection;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class LoginActivity extends AppCompatActivity {
@@ -65,8 +70,14 @@ public class LoginActivity extends AppCompatActivity {
                 if(verificarPreenchimento()){
                     Usuario usuario = login();
                     if(usuario != null){
-                        Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
-                        intent.putExtra("usuario", usuario);
+                        if(getIngredientes(usuario).size() > 0){
+                            System.out.println("mais que zero");
+                        }else{
+                            System.out.println("menos que zero");
+                            Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
+                            intent.putExtra("usuario", usuario);
+                            startActivity(intent);
+                        }
                     }else{
                         exibirMensagem("Usuario ou senha inválido.");
                     }
@@ -123,6 +134,28 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         return usuario;
+    }
+
+    private List<Ingrediente> getIngredientes(Usuario usuario){
+        List<Ingrediente> list = null;
+        TaskConnection connection = new TaskConnection();
+        String[] params = new String[Constants.QUERY_SEM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
+        params[Constants.NOME_DO_RESOURCE] = "ingrediente/" + usuario.getId();
+
+        String json = null;
+        connection.execute(params);
+        try {
+            json = (String) connection.get();
+            Type listType = new TypeToken<ArrayList<Ingrediente>>(){}.getType();
+            list = new Gson().fromJson(json, listType);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(list);
+        return list;
     }
 
     private boolean usuarioLogado(String json){

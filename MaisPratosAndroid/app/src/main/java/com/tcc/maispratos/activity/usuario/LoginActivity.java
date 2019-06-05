@@ -71,9 +71,10 @@ public class LoginActivity extends AppCompatActivity {
                     Usuario usuario = login();
                     if(usuario != null){
                         if(getIngredientes(usuario).size() > 0){
-                            System.out.println("mais que zero");
+                            Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
+                            intent.putExtra("usuario", usuario);
+                            startActivity(intent);
                         }else{
-                            System.out.println("menos que zero");
                             Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
                             intent.putExtra("usuario", usuario);
                             startActivity(intent);

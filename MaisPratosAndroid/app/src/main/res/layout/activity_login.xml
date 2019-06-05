@@ -35,7 +35,8 @@
         app:layout_constraintBottom_toTopOf="@+id/pwdSenhaLogin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="leandro.genios@gmail.com" />
 
     <EditText
         android:id="@+id/pwdSenhaLogin"
@@ -50,7 +51,8 @@
         app:layout_constraintBottom_toTopOf="@+id/btnEntrar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="123" />
 
     <Button
         android:id="@+id/btnEntrar"

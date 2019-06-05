@@ -7,6 +7,7 @@ public class Usuario {
 	private String senha;
 	private String email;
 	private String nome;
+	private Ingrediente ingrediente;
 	private List<Ingrediente> ingredientes;
 	
 	public String getSenha() {
@@ -38,5 +39,11 @@ public class Usuario {
 	}
 	public void setIngredientes(List<Ingrediente> ingredientes) {
 		this.ingredientes = ingredientes;
+	}
+	public Ingrediente getIngrediente() {
+		return ingrediente;
+	}
+	public void setIngrediente(Ingrediente ingrediente) {
+		this.ingrediente = ingrediente;
 	}
 }

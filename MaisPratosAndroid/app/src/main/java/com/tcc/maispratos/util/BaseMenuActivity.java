@@ -11,7 +11,7 @@ import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.usuario.Usuario;
 
 public class BaseMenuActivity extends AppCompatActivity {
-    private Usuario usuario = (Usuario) getIntent().getExtras().getSerializable("usuario");
+    private Usuario usuario;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -36,7 +36,7 @@ public class BaseMenuActivity extends AppCompatActivity {
         this.usuario = usuario;
     }
 
-    private void exibirErro(String mensagem){
+    public void exibirErro(String mensagem){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Erro");
         builder.setMessage(mensagem);
@@ -48,7 +48,7 @@ public class BaseMenuActivity extends AppCompatActivity {
         alerta.show();
     }
 
-    private void exibirMensagem(String mensagem){
+    public void exibirMensagem(String mensagem){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Atenção");
         builder.setMessage(mensagem);

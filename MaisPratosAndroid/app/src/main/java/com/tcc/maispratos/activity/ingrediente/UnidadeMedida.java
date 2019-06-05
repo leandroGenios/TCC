@@ -1,6 +1,8 @@
 package com.tcc.maispratos.activity.ingrediente;
 
-public class UnidadeMedida {
+import java.io.Serializable;
+
+public class UnidadeMedida implements Serializable {
     private int id;
     private String sigla;
 

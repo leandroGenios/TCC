@@ -1,6 +1,8 @@
 package com.tcc.maispratos.activity.ingrediente;
 
-public class Ingrediente {
+import java.io.Serializable;
+
+public class Ingrediente implements Serializable {
     private int id;
     private float quantidade;
     private double codigoBarras;

@@ -152,11 +152,10 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
         params[Constants.TIPO_DE_REQUISICAO] = Constants.POST;
         params[Constants.NOME_DO_RESOURCE] = "usuario";
-        params[Constants.OBJETO] = usuario;
 
         String gson = new Gson().toJson(usuario);
         try {
-            params[2] = new JSONObject(gson);
+            params[Constants.OBJETO] = new JSONObject(gson);
         } catch (JSONException e) {
             e.printStackTrace();
         }

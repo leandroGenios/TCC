@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class IngredientesActivity extends BaseMenuActivity {
-    private TextView txtNome;
-    private TextView txtQuantidade;
     private Toolbar toolbar;
     private FloatingActionButton fab;
     private RecyclerView rcvIngrediente;
@@ -37,37 +35,11 @@ public class IngredientesActivity extends BaseMenuActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ingredientes);
+        setTitle("Lista de ingredientes");
+        setUsuario((Usuario) getIntent().getExtras().getSerializable("usuario"));
 
         iniciaElementos();
-        getIngredientes();
-
-        UnidadeMedida unidade = new UnidadeMedida();
-        unidade.setSigla("lata");
-        Ingrediente ingrediente = new Ingrediente();
-        ingrediente.setId(1);
-        ingrediente.setNome("MASSA DE TOMATE");
-        ingrediente.setQuantidade(4);
-        ingrediente.setUnidadeMedida(unidade);
-
-        adapter.updateList(ingrediente);
-
-        UnidadeMedida unidade2 = new UnidadeMedida();
-        unidade2.setSigla("pacote 1Kg");
-        Ingrediente ingrediente2 = new Ingrediente();
-        ingrediente2.setId(2);
-        ingrediente2.setNome("Açucar");
-        ingrediente2.setQuantidade(1);
-        ingrediente2.setUnidadeMedida(unidade2);
-
-        adapter.updateList(ingrediente2);
-        adapter.updateList(ingrediente2);
-        adapter.updateList(ingrediente2);
-        adapter.updateList(ingrediente2);
-        adapter.updateList(ingrediente2);
-        adapter.updateList(ingrediente2);
-        adapter.updateList(ingrediente2);
-        adapter.updateList(ingrediente2);
-        adapter.updateList(ingrediente2);
+        montaLista(getIngredientes());
     }
 
     private void iniciaElementos(){
@@ -90,7 +62,7 @@ public class IngredientesActivity extends BaseMenuActivity {
             public void onClick(View v) {
                 Snackbar.make(v, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                Intent intent = new Intent(getApplicationContext(), Ingrediente.class);
+                Intent intent = new Intent(getApplicationContext(), CadastroIngredienteActivity.class);
                 intent.putExtra("usuario", getUsuario());
                 startActivity(intent);
                 finish();
@@ -119,5 +91,11 @@ public class IngredientesActivity extends BaseMenuActivity {
         }
 
         return list;
+    }
+
+    private void montaLista(List<Ingrediente> ingredientes){
+        for (Ingrediente ingrediente: ingredientes) {
+            adapter.updateList(ingrediente);
+        }
     }
 }

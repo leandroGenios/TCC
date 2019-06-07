@@ -76,8 +76,9 @@ public class IngredienteAdapter extends RecyclerView.Adapter<LineIngredienteHold
         });
         builder.setNegativeButton("Alterar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                Intent intent = new Intent(activity.getApplicationContext(), CadastroIngredienteActivity.class);
-                intent.putExtra("ingrediente.id", ingrediente.getId());
+                Intent intent = new Intent(activity.getApplicationContext(), UpdateIngredienteActivity.class);
+                intent.putExtra("ingrediente", ingrediente);
+                intent.putExtra("usuario", activity.getUsuario());
                 activity.startActivity(intent);
                 activity.finish();
             }

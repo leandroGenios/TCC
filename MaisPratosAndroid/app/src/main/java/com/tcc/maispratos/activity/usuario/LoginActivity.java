@@ -70,14 +70,18 @@ public class LoginActivity extends AppCompatActivity {
                 if(verificarPreenchimento()){
                     Usuario usuario = login();
                     if(usuario != null){
-                        if(getIngredientes(usuario).size() > 0){
-                            Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
-                            intent.putExtra("usuario", usuario);
-                            startActivity(intent);
-                        }else{
-                            Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
-                            intent.putExtra("usuario", usuario);
-                            startActivity(intent);
+                        List<Ingrediente> ingredientes = getIngredientes(usuario);
+
+                        if(ingredientes != null){
+                            if(ingredientes.size() > 0){
+                                Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
+                                intent.putExtra("usuario", usuario);
+                                startActivity(intent);
+                            }else{
+                                Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
+                                intent.putExtra("usuario", usuario);
+                                startActivity(intent);
+                            }
                         }
                     }else{
                         exibirMensagem("Usuario ou senha inválido.");
@@ -150,12 +154,9 @@ public class LoginActivity extends AppCompatActivity {
             json = (String) connection.get();
             Type listType = new TypeToken<ArrayList<Ingrediente>>(){}.getType();
             list = new Gson().fromJson(json, listType);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println(list);
         return list;
     }
 

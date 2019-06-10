@@ -18,6 +18,7 @@ import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.util.BaseMenuActivity;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
+import com.tcc.maispratos.util.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,7 +69,7 @@ public class UpdateIngredienteActivity extends BaseMenuActivity {
                 initCodBarras();
             }
         });
-        btnSalvar.setOnClickListener(addIngrediente());
+        btnSalvar.setOnClickListener(updateIngrediente());
         edtCodBarras.setOnFocusChangeListener(serFocus());
     }
 
@@ -117,12 +118,12 @@ public class UpdateIngredienteActivity extends BaseMenuActivity {
         new IntentIntegrator(this).initiateScan();
     }
 
-    private View.OnClickListener addIngrediente(){
+    private View.OnClickListener updateIngrediente(){
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(validarCampos()){
-                    if(cadastrarIngrediente()){
+                    if(atualizarIngrediente()){
                         Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
                         intent.putExtra("usuario", getUsuario());
                         startActivity(intent);
@@ -168,8 +169,7 @@ public class UpdateIngredienteActivity extends BaseMenuActivity {
         return true;
     }
 
-    private boolean cadastrarIngrediente(){
-        Ingrediente ingrediente = new Ingrediente();
+    private boolean atualizarIngrediente(){
         ingrediente.setCodigoBarras(Double.parseDouble(edtCodBarras.getText().toString()));
         ingrediente.setQuantidade(Integer.parseInt(edtQuantidade.getText().toString()));
         ingrediente.setNome(edtNome.getText().toString());
@@ -184,7 +184,7 @@ public class UpdateIngredienteActivity extends BaseMenuActivity {
 
         TaskConnection connection = new TaskConnection();
         Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
-        params[Constants.TIPO_DE_REQUISICAO] = Constants.POST;
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.PUT;
         params[Constants.NOME_DO_RESOURCE] = "ingrediente";
         String gson = new Gson().toJson(getUsuario());
         try {
@@ -198,7 +198,7 @@ public class UpdateIngredienteActivity extends BaseMenuActivity {
             return ((String) connection.get()).equals("true");
         } catch (Exception e) {
             e.printStackTrace();
-            exibirErro("Ocorreu um problema ao cadastrar. Tente novamente mais tarde.");
+            exibirErro("Ocorreu um problema ao atualizar. Tente novamente mais tarde.");
         }
 
         return false;
@@ -262,13 +262,13 @@ public class UpdateIngredienteActivity extends BaseMenuActivity {
     }
 
     private void carregarCampos(){
-        edtCodBarras.setText(String.valueOf(ingrediente.getCodigoBarras()));
+        edtCodBarras.setText(Utils.DOUBLE_TO_STRING(ingrediente.getCodigoBarras(), Constants.QTDE_DIGITOS_CODIGO_MARRAS));
         edtNome.setText(ingrediente.getNome());
         edtQuantidade.setText(String.valueOf(ingrediente.getQuantidade()));
 
-        for(int i = 0; i > unidadesMedida.size(); i++){
+        for(int i = 0; i < unidadesMedida.size(); i++){
             if(unidadesMedida.get(i).getId() == ingrediente.getUnidadeMedida().getId()){
-                aucUnidadeMedida.setSelection(1);
+                aucUnidadeMedida.setText(aucUnidadeMedida.getAdapter().getItem(i).toString(), false);
             }
         }
     }

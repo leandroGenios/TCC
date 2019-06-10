@@ -84,9 +84,7 @@ public class IngredientesActivity extends BaseMenuActivity {
             json = (String) connection.get();
             Type listType = new TypeToken<ArrayList<Ingrediente>>(){}.getType();
             list = new Gson().fromJson(json, listType);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

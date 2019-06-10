@@ -55,6 +55,7 @@ public class IngredienteDAO {
 				ingrediente.setUnidadeMedida(unidadeMedida);
 				
 				ingredientes.add(ingrediente);
+				System.out.println(String.format("%f%n", ingrediente.getCodigoBarras()));
 			}
 		}
 		finally {
@@ -121,7 +122,7 @@ public class IngredienteDAO {
 		return true;
 	}
 	
-public Ingrediente setIngrediente(Ingrediente ingrediente) throws SQLException{
+	public Ingrediente setIngrediente(Ingrediente ingrediente) throws SQLException{
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		
@@ -144,5 +145,36 @@ public Ingrediente setIngrediente(Ingrediente ingrediente) throws SQLException{
 			GerenciadorJDBC.close(conn, stmt);
 		}
 		return ingrediente;
+	}
+	
+	public boolean updateIngredienteByUsuario(Usuario usuario) throws SQLException{
+		if(deleteIngredienteByUsuario(usuario)) {
+			return setIngredienteByUsuario(usuario);
+		}
+		return false;
+	}
+	
+	public boolean deleteIngredienteByUsuario(Usuario usuario) throws SQLException{
+		
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "DELETE FROM usuario_ingrediente "
+					   + " WHERE usuario_id = ? "
+					   + "   AND ingrediente_id = ?";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setInt(1, usuario.getId());
+			stmt.setInt(2, usuario.getIngrediente().getId());
+			
+			stmt.executeUpdate();
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		return true;
 	}
 }

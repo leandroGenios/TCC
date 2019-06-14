@@ -1,4 +1,4 @@
-package com.tcc.maispratos.ingrediente;
+package com.tcc.maispratos.ingrediente.prato;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -8,8 +8,6 @@ import android.view.ViewGroup;
 
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.prato.PratoActivity;
-import com.tcc.maispratos.comentario.Comentario;
-import com.tcc.maispratos.comentario.LineComentarioHolder;
 
 import java.util.List;
 

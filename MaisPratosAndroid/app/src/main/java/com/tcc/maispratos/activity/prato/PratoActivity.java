@@ -1,6 +1,5 @@
 package com.tcc.maispratos.activity.prato;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,8 +9,8 @@ import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.comentario.Comentario;
 import com.tcc.maispratos.comentario.ComentarioAdapter;
-import com.tcc.maispratos.ingrediente.IngredientePrato;
-import com.tcc.maispratos.ingrediente.IngredientePratoAdapter;
+import com.tcc.maispratos.ingrediente.prato.IngredientePrato;
+import com.tcc.maispratos.ingrediente.prato.IngredientePratoAdapter;
 import com.tcc.maispratos.modopreparo.ModoPreparo;
 import com.tcc.maispratos.modopreparo.ModoPreparoAdapter;
 import com.tcc.maispratos.util.BaseMenuActivity;

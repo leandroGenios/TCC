@@ -12,19 +12,16 @@ import android.widget.EditText;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.tcc.maispratos.R;
-import com.tcc.maispratos.activity.ingrediente.Ingrediente;
+import com.tcc.maispratos.ingrediente.Ingrediente;
 import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
-import com.tcc.maispratos.activity.prato.PratosActivity;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText edtEmail;

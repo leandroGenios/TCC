@@ -1,7 +1,5 @@
 package com.tcc.maispratos.util;
 
-import android.content.Intent;
-
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
 import com.tcc.maispratos.activity.listacompras.ListaComprasActivity;

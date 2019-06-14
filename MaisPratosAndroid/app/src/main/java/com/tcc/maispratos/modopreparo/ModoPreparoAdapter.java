@@ -8,8 +8,6 @@ import android.view.ViewGroup;
 
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.prato.PratoActivity;
-import com.tcc.maispratos.ingrediente.IngredientePrato;
-import com.tcc.maispratos.ingrediente.LineIngredientePratoHolder;
 
 import java.util.List;
 

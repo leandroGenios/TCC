@@ -14,9 +14,9 @@ import br.com.meuspratos.model.Ingrediente;
 import br.com.meuspratos.model.UnidadeMedida;
 import br.com.meuspratos.model.Usuario;
 
-public class IngredienteDAO {
+public class ListaComprasDAO {
 
-	public List<Ingrediente> getIngredientes(int idUsuario) throws SQLException{
+	public List<Ingrediente> getListaCompras(int idUsuario) throws SQLException{
 		List<Ingrediente> ingredientes = new ArrayList<Ingrediente>();
 		
 		Connection conn = null;
@@ -30,13 +30,13 @@ public class IngredienteDAO {
 					"            I.nome NOME_INGREDIENTE," + 
 					"            UM.id ID_UNIDADE_MEDIDA," + 
 					"            UM.sigla SIGLA_UNIDADE_MEDIDA," + 
-					"            UI.quantidade QUANTIDADE" + 
-					"       FROM usuario_ingrediente UI" + 
+					"            LC.quantidade QUANTIDADE" + 
+					"       FROM lista_compra LC" + 
 					"      INNER JOIN ingrediente I" + 
-					" 	      ON I.id = UI.ingrediente_id" + 
+					" 	      ON I.id = LC.ingrediente_id" + 
 					"      INNER JOIN unidade_medida UM" + 
-					"         ON UM.id = UI.unidade_medida_id" + 
-					"      WHERE UI.usuario_id = ?";
+					"         ON UM.id = LC.unidade_medida_id" + 
+					"      WHERE LC.usuario_id = ?";
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
 			stmt.setInt(1, idUsuario);
@@ -55,6 +55,7 @@ public class IngredienteDAO {
 				ingrediente.setUnidadeMedida(unidadeMedida);
 				
 				ingredientes.add(ingrediente);
+				System.out.println(String.format("%f%n", ingrediente.getCodigoBarras()));
 			}
 		}
 		finally {
@@ -64,41 +65,9 @@ public class IngredienteDAO {
 		return ingredientes;
 	}
 	
-	public Ingrediente getIngredienteByCodigoBarras(double codBarras) throws SQLException{
-		Ingrediente ingrediente = null;		
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		
-		try {
-			conn = GerenciadorJDBC.getConnection();
-			
-			String sql = "SELECT * FROM ingrediente WHERE codigo_barras = ?";
-			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-			
-			stmt.setDouble(1, codBarras);
-			
-			ResultSet rs = stmt.executeQuery();
-			while (rs.next()) {
-				ingrediente = new Ingrediente();
-				ingrediente.setId(rs.getInt("ID"));
-				ingrediente.setCodigoBarras(rs.getDouble("CODIGO_BARRAS"));
-				ingrediente.setNome(rs.getString("NOME"));
-			}
-		}
-		finally {
-			GerenciadorJDBC.close(conn, stmt);
-		}
-		
-		return ingrediente;
-	}
-	
 	public boolean setIngredienteByUsuario(Usuario usuario) throws SQLException{
-		Ingrediente ingrediente = null;
-		if(usuario.getIngrediente().getCodigoBarras() != 0)
-			ingrediente = getIngredienteByCodigoBarras(usuario.getIngrediente().getCodigoBarras());
-		else
-			ingrediente = getIngredienteByNome(usuario.getIngrediente().getNome());
 		
+		Ingrediente ingrediente = new IngredienteDAO().getIngredienteByCodigoBarras(usuario.getIngrediente().getCodigoBarras());
 		if(ingrediente == null){
 			usuario.setIngrediente(setIngrediente(usuario.getIngrediente()));
 		}
@@ -109,7 +78,7 @@ public class IngredienteDAO {
 		try {
 			conn = GerenciadorJDBC.getConnection();
 			
-			String sql = "INSERT INTO usuario_ingrediente(usuario_id, ingrediente_id, unidade_medida_id, quantidade) VALUES (?,?,?,?)";
+			String sql = "INSERT INTO lista_compra (usuario_id, ingrediente_id, unidade_medida_id, quantidade) VALUES (?,?,?,?)";
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
 			stmt.setInt(1, usuario.getId());
@@ -125,34 +94,6 @@ public class IngredienteDAO {
 		return true;
 	}
 	
-	private Ingrediente getIngredienteByNome(String nome) throws SQLException {
-		Ingrediente ingrediente = null;		
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		
-		try {
-			conn = GerenciadorJDBC.getConnection();
-			
-			String sql = "SELECT * FROM ingrediente WHERE nome = ?";
-			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-			
-			stmt.setString(1, nome.toUpperCase());
-			
-			ResultSet rs = stmt.executeQuery();
-			while (rs.next()) {
-				ingrediente = new Ingrediente();
-				ingrediente.setId(rs.getInt("ID"));
-				ingrediente.setCodigoBarras(rs.getDouble("CODIGO_BARRAS"));
-				ingrediente.setNome(rs.getString("NOME"));
-			}
-		}
-		finally {
-			GerenciadorJDBC.close(conn, stmt);
-		}
-		
-		return ingrediente;
-	}
-
 	public Ingrediente setIngrediente(Ingrediente ingrediente) throws SQLException{
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -163,8 +104,8 @@ public class IngredienteDAO {
 			String sql = "INSERT INTO ingrediente VALUES (NULL, ?, ?)";
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
-			stmt.setDouble(1, ingrediente.getCodigoBarras() == 0 ? null : ingrediente.getCodigoBarras());
-			stmt.setString(2, ingrediente.getNome().toUpperCase());
+			stmt.setDouble(1, ingrediente.getCodigoBarras());
+			stmt.setString(2, ingrediente.getNome());
 			
 			stmt.executeUpdate();
 			
@@ -193,7 +134,7 @@ public class IngredienteDAO {
 		try {
 			conn = GerenciadorJDBC.getConnection();
 			
-			String sql = "DELETE FROM usuario_ingrediente "
+			String sql = "DELETE FROM lista_compra "
 					   + " WHERE usuario_id = ? "
 					   + "   AND ingrediente_id = ?";
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);

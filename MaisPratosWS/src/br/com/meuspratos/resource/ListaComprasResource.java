@@ -12,13 +12,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import br.com.maispratos.dao.IngredienteDAO;
+import br.com.maispratos.dao.ListaComprasDAO;
 import br.com.meuspratos.model.Usuario;
 
-@Path("/ingrediente")
+@Path("/listaCompras")
 @Produces(MediaType.APPLICATION_JSON)
-public class IngredienteResource {
-	private IngredienteDAO dao;
+public class ListaComprasResource {
+	private ListaComprasDAO dao;
 	
 	@GET
 	@Path("/{idUsuario}")
@@ -26,24 +26,7 @@ public class IngredienteResource {
 		try {
 			return Response
 					.status(Response.Status.OK)
-					.entity(getIngredienteDao().getIngredientes(idUsuario))
-					.build();				
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return Response
-					.status(Response.Status.NOT_FOUND)
-					.entity(e.getMessage())
-					.build();
-		}
-	}
-	
-	@GET
-	@Path("/getByCodigoBarras/{codBarras}")
-	public Response getByCodigoBarras(@PathParam("codBarras") String codBarras) {
-		try {
-			return Response
-					.status(Response.Status.OK)
-					.entity(getIngredienteDao().getIngredienteByCodigoBarras(Double.parseDouble(codBarras)))
+					.entity(getListaComprasDao().getListaCompras(idUsuario))
 					.build();				
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -60,7 +43,7 @@ public class IngredienteResource {
 		try {
 			return Response
 					.status(Response.Status.OK)
-					.entity(getIngredienteDao().setIngredienteByUsuario(usuario))
+					.entity(getListaComprasDao().setIngredienteByUsuario(usuario))
 					.build();				
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -77,7 +60,7 @@ public class IngredienteResource {
 		try {
 			return Response
 					.status(Response.Status.OK)
-					.entity(getIngredienteDao().updateIngredienteByUsuario(usuario))
+					.entity(getListaComprasDao().updateIngredienteByUsuario(usuario))
 					.build();				
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -94,7 +77,7 @@ public class IngredienteResource {
 		try {
 			return Response
 					.status(Response.Status.OK)
-					.entity(getIngredienteDao().deleteIngredienteByUsuario(codUsuario, codIngrediente))
+					.entity(getListaComprasDao().deleteIngredienteByUsuario(codUsuario, codIngrediente))
 					.build();				
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -105,9 +88,9 @@ public class IngredienteResource {
 		}
 	}
 	
-	private IngredienteDAO getIngredienteDao(){
+	private ListaComprasDAO getListaComprasDao(){
 		if(dao == null){
-			dao = new IngredienteDAO();
+			dao = new ListaComprasDAO();
 		}
 		return dao;
 	}

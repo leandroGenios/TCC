@@ -1,43 +1,48 @@
-package com.tcc.maispratos.activity.ingrediente;
+package com.tcc.maispratos.listacompras;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.tcc.maispratos.R;
-import com.tcc.maispratos.activity.prato.LinePratoHolder;
-import com.tcc.maispratos.activity.prato.Prato;
+import com.tcc.maispratos.activity.ingrediente.CadastroIngredienteActivity;
+import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
+import com.tcc.maispratos.activity.ingrediente.UpdateIngredienteActivity;
+import com.tcc.maispratos.activity.listacompras.ListaComprasActivity;
+import com.tcc.maispratos.activity.listacompras.UpdateListaComprasActivity;
+import com.tcc.maispratos.ingrediente.Ingrediente;
+import com.tcc.maispratos.ingrediente.LineIngredienteHolder;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-public class IngredienteAdapter extends RecyclerView.Adapter<LineIngredienteHolder> {
+public class ListaComprasAdapter extends RecyclerView.Adapter<LineListaComprasHolder> {
     private final List<Ingrediente> ingredientes;
-    private IngredientesActivity activity;
+    private ListaComprasActivity activity;
 
-    public IngredienteAdapter(List<Ingrediente> ingredientes, IngredientesActivity activity) {
+    public ListaComprasAdapter(List<Ingrediente> ingredientes, ListaComprasActivity activity) {
         this.activity = activity;
         this.ingredientes = ingredientes;
     }
 
     @NonNull
     @Override
-    public LineIngredienteHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        return new LineIngredienteHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_line_ingrediente, viewGroup, false));
+    public LineListaComprasHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        return new LineListaComprasHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_line_lista_compras, viewGroup, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull LineIngredienteHolder lineIngredienteHolder, final int i) {
-        lineIngredienteHolder.txtNomeIngrediente.setText(ingredientes.get(i).getNome());
-        lineIngredienteHolder.itemView.setOnClickListener(new View.OnClickListener() {
+    public void onBindViewHolder(@NonNull LineListaComprasHolder lineListaComprasHolder, final int i) {
+        lineListaComprasHolder.txtNomeIngredienteListaCompras.setText(ingredientes.get(i).getNome());
+        lineListaComprasHolder.txtQtdeIngredienteListaCompras.setText(String.valueOf(ingredientes.get(i).getQuantidade() + " " + ingredientes.get(i).getUnidadeMedida().getSigla()));
+        lineListaComprasHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 exibeDialogo(ingredientes.get(i));
@@ -69,6 +74,34 @@ public class IngredienteAdapter extends RecyclerView.Adapter<LineIngredienteHold
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle("Atenção");
         builder.setMessage("Qual a ação desejada?");
+        builder.setPositiveButton("Mais", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                exibeDialogoMais(ingrediente);
+            }
+        });
+        builder.setNegativeButton("Comprado", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                Intent intent = new Intent(activity.getApplicationContext(), UpdateListaComprasActivity.class);
+                intent.putExtra("ingrediente", ingrediente);
+                intent.putExtra("usuario", activity.getUsuario());
+                activity.startActivity(intent);
+                activity.finish();
+            }
+        });
+
+        builder.setNeutralButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        AlertDialog alerta = builder.create();
+        alerta.show();
+    }
+
+    private void exibeDialogoMais(final Ingrediente ingrediente) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle("Atenção");
+        builder.setMessage("Qual a ação desejada?");
         builder.setPositiveButton("Excluir", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
                 exibeDialogoDelete(ingrediente);
@@ -76,7 +109,7 @@ public class IngredienteAdapter extends RecyclerView.Adapter<LineIngredienteHold
         });
         builder.setNegativeButton("Alterar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                Intent intent = new Intent(activity.getApplicationContext(), UpdateIngredienteActivity.class);
+                Intent intent = new Intent(activity.getApplicationContext(), UpdateListaComprasActivity.class);
                 intent.putExtra("ingrediente", ingrediente);
                 intent.putExtra("usuario", activity.getUsuario());
                 activity.startActivity(intent);
@@ -99,24 +132,17 @@ public class IngredienteAdapter extends RecyclerView.Adapter<LineIngredienteHold
         builder.setMessage("Deseja realmente excluir o ingrediente " + ingrediente.getNome().toUpperCase() + "?");
         builder.setPositiveButton("Excluir", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                TaskConnection t = new TaskConnection();
-                String[] params = new String[2];
-                params[0] = Constants.DELETE;
-                params[1] = "ingrediente/" + ingrediente.getId();
+                TaskConnection connection = new TaskConnection();
+                Object[] params = new Object[Constants.QUERY_SEM_ENVIO_DE_OBJETO];
+                params[Constants.TIPO_DE_REQUISICAO] = Constants.DELETE;
+                params[Constants.NOME_DO_RESOURCE] = "ingrediente/" + activity.getUsuario().getId() + "/" + ingrediente.getId();
+                connection.execute(params);
 
-                String json = null;
-                t.execute(params);
                 try {
-                    json = (String) t.get();
-                    if(json.split("1451").length > 1){
-                        exibeMensagem("O ingrediente selecionado não pode ser excluido porque tem pedidos cadastrados.");
-                    }else{
-                        ingredientes.remove(ingrediente);
-                        notifyDataSetChanged();
-                    }
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
+                    ((String) connection.get()).equals("true");
+                    ingredientes.remove(ingrediente);
+                    notifyDataSetChanged();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

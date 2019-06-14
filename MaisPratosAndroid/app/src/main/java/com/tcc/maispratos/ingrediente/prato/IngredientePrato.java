@@ -1,4 +1,4 @@
-package com.tcc.maispratos.ingrediente;
+package com.tcc.maispratos.ingrediente.prato;
 
 public class IngredientePrato {
     private String nome;

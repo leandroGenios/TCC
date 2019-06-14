@@ -1,6 +1,7 @@
-package com.tcc.maispratos.activity.ingrediente;
+package com.tcc.maispratos.activity.listacompras;
 
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -13,6 +14,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.tcc.maispratos.R;
+import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
 import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.ingrediente.Ingrediente;
 import com.tcc.maispratos.unidademedida.UnidadeMedida;
@@ -29,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class UpdateIngredienteActivity extends BaseMenuActivity {
+public class UpdateListaComprasActivity extends BaseMenuActivity {
 
     private Ingrediente ingrediente;
     private Button btnCodBarras;
@@ -46,8 +48,8 @@ public class UpdateIngredienteActivity extends BaseMenuActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_update_ingrediente);
-        setTitle("Editar ingrediente");
+        setContentView(R.layout.activity_update_lista_compras);
+        setTitle("Editar item");
         setUsuario((Usuario) getIntent().getExtras().getSerializable("usuario"));
         ingrediente = (Ingrediente) getIntent().getExtras().getSerializable("ingrediente");
 
@@ -57,12 +59,12 @@ public class UpdateIngredienteActivity extends BaseMenuActivity {
     }
 
     private void iniciaElementos(){
-        btnCodBarras = (Button) findViewById(R.id.btnUpdateIngredienteCodBarras);
-        edtCodBarras = (EditText) findViewById(R.id.edtUpdateIngredienteCodBarras);
-        edtNome = (EditText) findViewById(R.id.edtUpdateIngredienteNome);
-        edtQuantidade = (EditText) findViewById(R.id.edtUpdateIngredienteQuantidade);
-        aucUnidadeMedida = (AutoCompleteTextView) findViewById(R.id.aucUpdateIngredienteUnidadeMedida);
-        btnSalvar = (Button) findViewById(R.id.btnUpdateIngredienteSalvar);
+        btnCodBarras = (Button) findViewById(R.id.btnUpdateListaComprasCodBarras);
+        edtCodBarras = (EditText) findViewById(R.id.edtUpdateUpdateListaCodBarras);
+        edtNome = (EditText) findViewById(R.id.edtUpdateUpdateListaNome);
+        edtQuantidade = (EditText) findViewById(R.id.edtUpdateUpdateListaQuantidade);
+        aucUnidadeMedida = (AutoCompleteTextView) findViewById(R.id.aucUpdateUpdateListaUnidadeMedida);
+        btnSalvar = (Button) findViewById(R.id.btnUpdateUpdateListaSalvar);
 
         btnCodBarras.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,12 +127,12 @@ public class UpdateIngredienteActivity extends BaseMenuActivity {
             public void onClick(View v) {
                 if(validarCampos()){
                     if(atualizarIngrediente()){
-                        Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), ListaComprasActivity.class);
                         intent.putExtra("usuario", getUsuario());
                         startActivity(intent);
                         finish();
                     }else{
-                        exibirErro("Não foi possível salvar o ingrediente. Tente novamente mais tarde.");
+                        exibirErro("Não foi possível salvar o item. Tente novamente mais tarde.");
                     }
                 }
             }
@@ -186,7 +188,7 @@ public class UpdateIngredienteActivity extends BaseMenuActivity {
         TaskConnection connection = new TaskConnection();
         Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
         params[Constants.TIPO_DE_REQUISICAO] = Constants.PUT;
-        params[Constants.NOME_DO_RESOURCE] = "ingrediente";
+        params[Constants.NOME_DO_RESOURCE] = "listaCompras";
         String gson = new Gson().toJson(getUsuario());
         try {
             params[Constants.OBJETO] = new JSONObject(gson);

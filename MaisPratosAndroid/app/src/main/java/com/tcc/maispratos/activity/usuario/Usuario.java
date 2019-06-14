@@ -1,6 +1,6 @@
 package com.tcc.maispratos.activity.usuario;
 
-import com.tcc.maispratos.activity.ingrediente.Ingrediente;
+import com.tcc.maispratos.ingrediente.Ingrediente;
 
 import java.io.Serializable;
 import java.util.List;

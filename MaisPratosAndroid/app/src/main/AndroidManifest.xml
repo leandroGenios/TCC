@@ -14,7 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.ingrediente.UpdateIngredienteActivity"></activity>
+        <activity android:name=".activity.listacompras.UpdateListaComprasActivity"></activity>
+        <activity android:name=".activity.listacompras.CadastroListaComprasActivity" />
+        <activity android:name=".activity.ingrediente.UpdateIngredienteActivity" />
         <activity
             android:name=".activity.listacompras.ListaComprasActivity"
             android:label="@string/title_activity_lista_compras"

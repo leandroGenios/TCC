@@ -1,4 +1,4 @@
-package com.tcc.maispratos.activity.ingrediente;
+package com.tcc.maispratos.unidademedida;
 
 import java.io.Serializable;
 

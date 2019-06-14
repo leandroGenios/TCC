@@ -1,4 +1,4 @@
-package com.tcc.maispratos.activity.ingrediente;
+package com.tcc.maispratos.activity.listacompras;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,9 +13,9 @@ import com.google.gson.reflect.TypeToken;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.tcc.maispratos.R;
-import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.ingrediente.Ingrediente;
 import com.tcc.maispratos.unidademedida.UnidadeMedida;
+import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.util.BaseMenuActivity;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
@@ -28,8 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class CadastroIngredienteActivity extends BaseMenuActivity {
-
+public class CadastroListaComprasActivity extends BaseMenuActivity {
     private AutoCompleteTextView acObjText;
     private ArrayAdapter<String> adapter;
     private Button insereCodBarras;
@@ -43,22 +42,20 @@ public class CadastroIngredienteActivity extends BaseMenuActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cadastro_ingrediente);
-        setTitle("Cadastro de ingrediente");
+        setContentView(R.layout.activity_cadastro_lista_compras);
+        setTitle("Cadastro de lista de compras");
         setUsuario((Usuario) getIntent().getExtras().getSerializable("usuario"));
         iniciaElementos();
         iniciaAutoComplete();
-
-
     }
 
     private void iniciaElementos(){
-        insereCodBarras = (Button) findViewById(R.id.btnCodBarras);
-        edtCodigoBarras = (EditText) findViewById(R.id.edtCodBarras);
-        edtNome = (EditText) findViewById(R.id.edtNome);
-        edtQuantidade = (EditText) findViewById(R.id.edtQuantidade);
-        acObjText = (AutoCompleteTextView) findViewById(R.id.aucUnidadeMedida);
-        adicionar = (Button) findViewById(R.id.btnAdicionarIngrediente);
+        insereCodBarras = (Button) findViewById(R.id.btnCodBarrasListaCompras);
+        edtCodigoBarras = (EditText) findViewById(R.id.edtCodBarrasListaCompras);
+        edtNome = (EditText) findViewById(R.id.edtNomeListaCompras);
+        edtQuantidade = (EditText) findViewById(R.id.edtQuantidadeListaCompras);
+        acObjText = (AutoCompleteTextView) findViewById(R.id.aucUnidadeMedidaListaCompras);
+        adicionar = (Button) findViewById(R.id.btnAdicionarIngredienteListaCompras);
 
         insereCodBarras.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,7 +118,7 @@ public class CadastroIngredienteActivity extends BaseMenuActivity {
             public void onClick(View v) {
                 if(validarCampos()){
                     if(cadastrarIngrediente()){
-                        Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), ListaComprasActivity.class);
                         intent.putExtra("usuario", getUsuario());
                         startActivity(intent);
                         finish();
@@ -240,7 +237,7 @@ public class CadastroIngredienteActivity extends BaseMenuActivity {
         TaskConnection connection = new TaskConnection();
         Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
         params[Constants.TIPO_DE_REQUISICAO] = Constants.POST;
-        params[Constants.NOME_DO_RESOURCE] = "ingrediente";
+        params[Constants.NOME_DO_RESOURCE] = "listaCompras";
         String gson = new Gson().toJson(getUsuario());
         try {
             params[Constants.OBJETO] = new JSONObject(gson);

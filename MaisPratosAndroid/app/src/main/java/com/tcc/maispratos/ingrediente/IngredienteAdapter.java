@@ -1,4 +1,4 @@
-package com.tcc.maispratos.activity.listacompras;
+package com.tcc.maispratos.ingrediente;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -10,21 +10,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tcc.maispratos.R;
-import com.tcc.maispratos.activity.ingrediente.CadastroIngredienteActivity;
-import com.tcc.maispratos.activity.ingrediente.Ingrediente;
 import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
-import com.tcc.maispratos.activity.ingrediente.LineIngredienteHolder;
+import com.tcc.maispratos.activity.ingrediente.UpdateIngredienteActivity;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-public class ListaComprasAdapter extends RecyclerView.Adapter<LineIngredienteHolder> {
+public class IngredienteAdapter extends RecyclerView.Adapter<LineIngredienteHolder> {
     private final List<Ingrediente> ingredientes;
-    private ListaComprasActivity activity;
+    private IngredientesActivity activity;
 
-    public ListaComprasAdapter(List<Ingrediente> ingredientes, ListaComprasActivity activity) {
+    public IngredienteAdapter(List<Ingrediente> ingredientes, IngredientesActivity activity) {
         this.activity = activity;
         this.ingredientes = ingredientes;
     }
@@ -38,6 +35,7 @@ public class ListaComprasAdapter extends RecyclerView.Adapter<LineIngredienteHol
     @Override
     public void onBindViewHolder(@NonNull LineIngredienteHolder lineIngredienteHolder, final int i) {
         lineIngredienteHolder.txtNomeIngrediente.setText(ingredientes.get(i).getNome());
+        lineIngredienteHolder.txtQtdeIngrediente.setText(String.valueOf(ingredientes.get(i).getQuantidade() + " " + ingredientes.get(i).getUnidadeMedida().getSigla()));
         lineIngredienteHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,8 +75,9 @@ public class ListaComprasAdapter extends RecyclerView.Adapter<LineIngredienteHol
         });
         builder.setNegativeButton("Alterar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                Intent intent = new Intent(activity.getApplicationContext(), CadastroIngredienteActivity.class);
-                intent.putExtra("ingrediente.id", ingrediente.getId());
+                Intent intent = new Intent(activity.getApplicationContext(), UpdateIngredienteActivity.class);
+                intent.putExtra("ingrediente", ingrediente);
+                intent.putExtra("usuario", activity.getUsuario());
                 activity.startActivity(intent);
                 activity.finish();
             }
@@ -96,19 +95,26 @@ public class ListaComprasAdapter extends RecyclerView.Adapter<LineIngredienteHol
     private void exibeDialogoDelete(final Ingrediente ingrediente) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle("Atenção");
-        builder.setMessage("Qual o motivo da exclusão");
-        builder.setPositiveButton("Comprado", new DialogInterface.OnClickListener() {
+        builder.setMessage("Deseja realmente excluir o ingrediente " + ingrediente.getNome().toUpperCase() + "?");
+        builder.setPositiveButton("Excluir", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
+                TaskConnection connection = new TaskConnection();
+                Object[] params = new Object[Constants.QUERY_SEM_ENVIO_DE_OBJETO];
+                params[Constants.TIPO_DE_REQUISICAO] = Constants.DELETE;
+                params[Constants.NOME_DO_RESOURCE] = "ingrediente/" + activity.getUsuario().getId() + "/" + ingrediente.getId();
+                connection.execute(params);
 
+                try {
+                    ((String) connection.get()).equals("true");
+                    ingredientes.remove(ingrediente);
+                    notifyDataSetChanged();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
-        builder.setNegativeButton("Remover da lista", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-            }
-        });
-        builder.setNeutralButton("Cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
             }
         });
         AlertDialog alerta = builder.create();

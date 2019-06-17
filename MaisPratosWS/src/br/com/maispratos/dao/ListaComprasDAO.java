@@ -55,7 +55,6 @@ public class ListaComprasDAO {
 				ingrediente.setUnidadeMedida(unidadeMedida);
 				
 				ingredientes.add(ingrediente);
-				System.out.println(String.format("%f%n", ingrediente.getCodigoBarras()));
 			}
 		}
 		finally {

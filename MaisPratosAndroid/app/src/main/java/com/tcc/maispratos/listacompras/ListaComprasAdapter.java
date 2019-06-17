@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.Gson;
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.ingrediente.CadastroIngredienteActivity;
 import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
@@ -19,6 +20,9 @@ import com.tcc.maispratos.ingrediente.Ingrediente;
 import com.tcc.maispratos.ingrediente.LineIngredienteHolder;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.List;
@@ -81,11 +85,30 @@ public class ListaComprasAdapter extends RecyclerView.Adapter<LineListaComprasHo
         });
         builder.setNegativeButton("Comprado", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                Intent intent = new Intent(activity.getApplicationContext(), UpdateListaComprasActivity.class);
-                intent.putExtra("ingrediente", ingrediente);
-                intent.putExtra("usuario", activity.getUsuario());
-                activity.startActivity(intent);
-                activity.finish();
+                activity.getUsuario().setIngrediente(ingrediente);
+                TaskConnection connection = new TaskConnection();
+                Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+                params[Constants.TIPO_DE_REQUISICAO] = Constants.POST;
+                params[Constants.NOME_DO_RESOURCE] = "listaCompras/comprado";
+                String gson = new Gson().toJson(activity.getUsuario());
+                try {
+                    params[Constants.OBJETO] = new JSONObject(gson);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                connection.execute(params);
+
+                try {
+                    if(((String) connection.get()).equals("true")){
+                        Intent intent = new Intent(activity.getApplicationContext(), ListaComprasActivity.class);
+                        intent.putExtra("usuario", activity.getUsuario());
+                        activity.startActivity(intent);
+                        activity.finish();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    exibirErro("Ocorreu um problema ao atualizar. Tente novamente mais tarde.");
+                }
             }
         });
 
@@ -135,7 +158,7 @@ public class ListaComprasAdapter extends RecyclerView.Adapter<LineListaComprasHo
                 TaskConnection connection = new TaskConnection();
                 Object[] params = new Object[Constants.QUERY_SEM_ENVIO_DE_OBJETO];
                 params[Constants.TIPO_DE_REQUISICAO] = Constants.DELETE;
-                params[Constants.NOME_DO_RESOURCE] = "ingrediente/" + activity.getUsuario().getId() + "/" + ingrediente.getId();
+                params[Constants.NOME_DO_RESOURCE] = "listaCompras/" + activity.getUsuario().getId() + "/" + ingrediente.getId();
                 connection.execute(params);
 
                 try {
@@ -158,6 +181,18 @@ public class ListaComprasAdapter extends RecyclerView.Adapter<LineListaComprasHo
     private void exibeMensagem(String mensagem){
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle("Atenção");
+        builder.setMessage(mensagem);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+            }
+        });
+        AlertDialog alerta = builder.create();
+        alerta.show();
+    }
+
+    private void exibirErro(String mensagem){
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle("Erro");
         builder.setMessage(mensagem);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {

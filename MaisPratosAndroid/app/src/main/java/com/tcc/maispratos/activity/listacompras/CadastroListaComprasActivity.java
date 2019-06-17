@@ -38,6 +38,7 @@ public class CadastroListaComprasActivity extends BaseMenuActivity {
     private List<UnidadeMedida> unidadesMedida;
     private ArrayList<String> unidadesMedidaArray;
     private Button adicionar;
+    private Ingrediente ingrediente;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,7 @@ public class CadastroListaComprasActivity extends BaseMenuActivity {
     }
 
     private void iniciaElementos(){
+        ingrediente = new Ingrediente();
         insereCodBarras = (Button) findViewById(R.id.btnCodBarrasListaCompras);
         edtCodigoBarras = (EditText) findViewById(R.id.edtCodBarrasListaCompras);
         edtNome = (EditText) findViewById(R.id.edtNomeListaCompras);
@@ -151,6 +153,7 @@ public class CadastroListaComprasActivity extends BaseMenuActivity {
 
     private void validarIngrediente(Ingrediente ingrediente){
         if(ingrediente != null){
+            this.ingrediente = ingrediente;
             edtNome.setText(ingrediente.getNome());
             edtNome.setEnabled(false);
         }else{
@@ -221,7 +224,6 @@ public class CadastroListaComprasActivity extends BaseMenuActivity {
     }
 
     private boolean cadastrarIngrediente(){
-        Ingrediente ingrediente = new Ingrediente();
         ingrediente.setCodigoBarras(Double.parseDouble(edtCodigoBarras.getText().toString()));
         ingrediente.setQuantidade(Float.parseFloat(edtQuantidade.getText().toString()));
         ingrediente.setNome(edtNome.getText().toString());

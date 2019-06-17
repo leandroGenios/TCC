@@ -12,6 +12,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import br.com.maispratos.dao.IngredienteDAO;
 import br.com.maispratos.dao.ListaComprasDAO;
 import br.com.meuspratos.model.Usuario;
 
@@ -45,6 +46,31 @@ public class ListaComprasResource {
 					.status(Response.Status.OK)
 					.entity(getListaComprasDao().setIngredienteByUsuario(usuario))
 					.build();				
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
+
+	@POST
+	@Path("/comprado")
+	public Response setComprado(Usuario usuario) {
+		try {
+			IngredienteDAO ingredienteDAO = new IngredienteDAO();
+			if(ingredienteDAO.setIngredienteByUsuario(usuario)){
+				return Response
+						.status(Response.Status.OK)
+						.entity(getListaComprasDao().deleteIngredienteByUsuario(usuario.getId(), usuario.getIngrediente().getId()))
+						.build();								
+			}else{
+				return Response
+						.status(Response.Status.OK)
+						.entity(false)
+						.build();												
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return Response

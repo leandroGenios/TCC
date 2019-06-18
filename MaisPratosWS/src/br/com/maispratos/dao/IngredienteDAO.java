@@ -208,4 +208,51 @@ public class IngredienteDAO {
 		}
 		return true;
 	}
+	
+	public Ingrediente getIngredienteByUsuario(Usuario usuario) throws SQLException {
+		Ingrediente ingrediente = null;
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "SELECT I.id ID_INGREDIENTE," + 
+					"	         I.codigo_barras CODIGO_BARRAS," + 
+					"            I.nome NOME_INGREDIENTE," + 
+					"            UM.id ID_UNIDADE_MEDIDA," + 
+					"            UM.sigla SIGLA_UNIDADE_MEDIDA," + 
+					"            UI.quantidade QUANTIDADE" + 
+					"       FROM usuario_ingrediente UI" + 
+					"      INNER JOIN ingrediente I" + 
+					" 	      ON I.id = UI.ingrediente_id" + 
+					"      INNER JOIN unidade_medida UM" + 
+					"         ON UM.id = UI.unidade_medida_id" + 
+					"      WHERE UI.usuario_id = ?" + 
+					"        AND UI.ingrediente_id = ?";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setInt(1, usuario.getId());
+			stmt.setInt(2, usuario.getIngrediente().getId());
+			
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				UnidadeMedida unidadeMedida = new UnidadeMedida();
+				unidadeMedida.setId(rs.getInt("ID_UNIDADE_MEDIDA"));
+				unidadeMedida.setSigla(rs.getString("SIGLA_UNIDADE_MEDIDA"));
+
+				ingrediente = new Ingrediente();
+				ingrediente.setId(rs.getInt("ID_INGREDIENTE"));
+				ingrediente.setCodigoBarras(rs.getDouble("CODIGO_BARRAS"));
+				ingrediente.setNome(rs.getString("NOME_INGREDIENTE"));
+				ingrediente.setQuantidade(rs.getFloat("QUANTIDADE"));
+				ingrediente.setUnidadeMedida(unidadeMedida);
+			}
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		
+		return ingrediente;
+	}
 }

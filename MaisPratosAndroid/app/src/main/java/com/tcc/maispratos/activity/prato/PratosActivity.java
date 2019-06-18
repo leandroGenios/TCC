@@ -4,24 +4,47 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.tcc.maispratos.R;
-import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
+import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.util.BaseMenuActivity;
-import com.tcc.maispratos.util.MenusAction;
 
 import java.util.ArrayList;
 
 public class PratosActivity extends BaseMenuActivity {
-
+    private Toolbar toolbar;
+    private FloatingActionButton fab;
     private RecyclerView rcvPratos;
     private PratoAdapter adapter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_pratos);
+        setTitle("Lista de pratos");
+        setUsuario((Usuario) getIntent().getExtras().getSerializable("usuario"));
+
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        rcvPratos = (RecyclerView) findViewById(R.id.rcvPratos);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        rcvPratos.setLayoutManager(layoutManager);
+        adapter = new PratoAdapter(new ArrayList<Prato>(0), this);
+        rcvPratos.setAdapter(adapter);
+        rcvPratos.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+
+        iniciaElementos();
+        listGeral();
+    }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -42,22 +65,24 @@ public class PratosActivity extends BaseMenuActivity {
         }
     };
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pratos);
+    private void iniciaElementos(){
+        fab = (FloatingActionButton) findViewById(R.id.flbAddPrato);
+        fab.setOnClickListener(addPrato());
+    }
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-        RecyclerView rcvPratos = (RecyclerView) findViewById(R.id.rcvPratos);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        rcvPratos.setLayoutManager(layoutManager);
-        adapter = new PratoAdapter(new ArrayList<Prato>(0), this);
-        rcvPratos.setAdapter(adapter);
-        rcvPratos.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-
-        listGeral();
+    private View.OnClickListener addPrato(){
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar.make(v, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                Intent intent = new Intent(getApplicationContext(), PratoActivity.class);
+                intent.putExtra("usuario", getUsuario());
+                startActivity(intent);
+                finish();
+            }
+        };
+        return onClickListener;
     }
 
     private void listGeral(){

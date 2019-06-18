@@ -12,6 +12,7 @@ import android.widget.EditText;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.tcc.maispratos.R;
+import com.tcc.maispratos.activity.prato.PratosActivity;
 import com.tcc.maispratos.ingrediente.Ingrediente;
 import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
 import com.tcc.maispratos.util.Constants;
@@ -70,15 +71,14 @@ public class LoginActivity extends AppCompatActivity {
                         List<Ingrediente> ingredientes = getIngredientes(usuario);
 
                         if(ingredientes != null){
+                            Intent intent = null;
                             if(ingredientes.size() > 0){
-                                Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
-                                intent.putExtra("usuario", usuario);
-                                startActivity(intent);
+                                intent = new Intent(getApplicationContext(), PratosActivity.class);
                             }else{
-                                Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
-                                intent.putExtra("usuario", usuario);
-                                startActivity(intent);
+                                intent = new Intent(getApplicationContext(), IngredientesActivity.class);
                             }
+                            intent.putExtra("usuario", usuario);
+                            startActivity(intent);
                         }
                     }else{
                         exibirMensagem("Usuario ou senha inválido.");

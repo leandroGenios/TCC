@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tcc.maispratos.R;
-import com.tcc.maispratos.activity.ingrediente.CadastroIngredienteActivity;
 
 import java.util.List;
 

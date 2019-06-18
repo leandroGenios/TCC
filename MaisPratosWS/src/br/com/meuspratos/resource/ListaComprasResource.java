@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 
 import br.com.maispratos.dao.IngredienteDAO;
 import br.com.maispratos.dao.ListaComprasDAO;
+import br.com.meuspratos.model.Ingrediente;
 import br.com.meuspratos.model.Usuario;
 
 @Path("/listaCompras")
@@ -60,6 +61,18 @@ public class ListaComprasResource {
 	public Response setComprado(Usuario usuario) {
 		try {
 			IngredienteDAO ingredienteDAO = new IngredienteDAO();
+			Ingrediente ingrediente = ingredienteDAO.getIngredienteByUsuario(usuario);
+			if(ingrediente != null){
+				float totalIngrediente = usuario.getIngrediente().getQuantidade() + ingrediente.getQuantidade();
+				usuario.getIngrediente().setQuantidade(totalIngrediente);
+				if(!ingredienteDAO.deleteIngredienteByUsuario(usuario.getId(), usuario.getIngrediente().getId())){
+					return Response
+							.status(Response.Status.OK)
+							.entity(false)
+							.build();	
+				}
+			}
+			
 			if(ingredienteDAO.setIngredienteByUsuario(usuario)){
 				return Response
 						.status(Response.Status.OK)

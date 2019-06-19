@@ -1,4 +1,4 @@
-package com.tcc.maispratos.activity.prato;
+package com.tcc.maispratos.prato;
 
 import android.media.Image;
 import android.support.annotation.NonNull;

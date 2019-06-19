@@ -1,4 +1,4 @@
-package com.tcc.maispratos.activity.prato;
+package com.tcc.maispratos.prato;
 
 public class Prato {
     private int id;

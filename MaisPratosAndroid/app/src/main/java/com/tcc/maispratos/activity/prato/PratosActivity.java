@@ -15,6 +15,8 @@ import android.view.View;
 
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.usuario.Usuario;
+import com.tcc.maispratos.prato.Prato;
+import com.tcc.maispratos.prato.PratoAdapter;
 import com.tcc.maispratos.util.BaseMenuActivity;
 
 import java.util.ArrayList;
@@ -76,7 +78,7 @@ public class PratosActivity extends BaseMenuActivity {
             public void onClick(View v) {
                 Snackbar.make(v, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                Intent intent = new Intent(getApplicationContext(), PratoActivity.class);
+                Intent intent = new Intent(getApplicationContext(), CadastroPratoActivity.class);
                 intent.putExtra("usuario", getUsuario());
                 startActivity(intent);
                 finish();

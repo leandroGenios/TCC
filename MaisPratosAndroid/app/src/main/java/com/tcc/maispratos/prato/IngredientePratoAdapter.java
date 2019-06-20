@@ -61,6 +61,10 @@ public class IngredientePratoAdapter extends RecyclerView.Adapter<LineIngredient
         notifyItemInserted(getItemCount());
     }
 
+    public List<Ingrediente> getIngredientes(){
+        return ingredientes;
+    }
+
     public void clear(){
         ingredientes.clear();
         notifyDataSetChanged();

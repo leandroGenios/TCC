@@ -27,6 +27,7 @@ public class CadastroPratoActivity extends BaseMenuActivity {
     private EditText mltModoPreparo;
     private EditText edtTempoPreparo;
     private IngredientePratoAdapter adapter;
+    private Button btnSalvar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,7 @@ public class CadastroPratoActivity extends BaseMenuActivity {
         rcvIngrediente = (RecyclerView) findViewById(R.id.rcvIngredientesPrato);
         mltModoPreparo = (EditText) findViewById(R.id.edtQuantidade);
         edtTempoPreparo = (AutoCompleteTextView) findViewById(R.id.aucUnidadeMedida);
+        btnSalvar = (Button) findViewById(R.id.btnSalvar);
 
         rcvIngrediente.setLayoutManager(new LinearLayoutManager(this));
         adapter = new IngredientePratoAdapter(new ArrayList<Ingrediente>(0), this);
@@ -50,9 +52,20 @@ public class CadastroPratoActivity extends BaseMenuActivity {
         rcvIngrediente.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         btnAddIngrediente.setOnClickListener(addIngrediente());
+        btnSalvar.setOnClickListener(salvar());
     }
 
     private View.OnClickListener addIngrediente(){
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        };
+        return onClickListener;
+    }
+
+    private View.OnClickListener salvar(){
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,8 +78,10 @@ public class CadastroPratoActivity extends BaseMenuActivity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        System.out.println(data.getExtras().getSerializable("ingrediente"));
-        addIngrediente((Ingrediente) data.getExtras().getSerializable("ingrediente"));
+        if (resultCode == RESULT_OK && data != null) {
+            System.out.println(data.getExtras().getSerializable("ingrediente"));
+            addIngrediente((Ingrediente) data.getExtras().getSerializable("ingrediente"));
+        }
     }
 
     private void addIngrediente(Ingrediente ingrediente){

@@ -12,11 +12,13 @@ import com.tcc.maispratos.R;
 public class LinePratoHolder extends RecyclerView.ViewHolder {
     public ImageView imgPrato;
     public TextView txtNomePrato;
+    public TextView txtIngredientesCompativeis;
 
     public LinePratoHolder(@NonNull View itemView) {
         super(itemView);
         imgPrato = (ImageView) itemView.findViewById(R.id.imgPrato);
         txtNomePrato = (TextView) itemView.findViewById(R.id.txtNomePrato);
+        txtIngredientesCompativeis = (TextView) itemView.findViewById(R.id.txtIngredientesCompativeis);
     }
 
 }

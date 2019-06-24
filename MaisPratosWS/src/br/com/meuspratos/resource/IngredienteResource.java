@@ -2,6 +2,7 @@ package br.com.meuspratos.resource;
 
 import java.sql.SQLException;
 
+import javax.inject.Inject;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -18,7 +19,24 @@ import br.com.meuspratos.model.Usuario;
 @Path("/ingrediente")
 @Produces(MediaType.APPLICATION_JSON)
 public class IngredienteResource {
+	@Inject
 	private IngredienteDAO dao;
+	
+	@GET
+	public Response listIngredientes() {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(dao.listIngredientes())
+					.build();				
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
 	
 	@GET
 	@Path("/{idUsuario}")
@@ -26,7 +44,7 @@ public class IngredienteResource {
 		try {
 			return Response
 					.status(Response.Status.OK)
-					.entity(getIngredienteDao().getIngredientes(idUsuario))
+					.entity(dao.getIngredientes(idUsuario))
 					.build();				
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -43,7 +61,7 @@ public class IngredienteResource {
 		try {
 			return Response
 					.status(Response.Status.OK)
-					.entity(getIngredienteDao().getIngredienteByCodigoBarras(Double.parseDouble(codBarras)))
+					.entity(dao.getIngredienteByCodigoBarras(Double.parseDouble(codBarras)))
 					.build();				
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -55,12 +73,11 @@ public class IngredienteResource {
 	}
 	
 	@POST
-	@Path("")
 	public Response setIngrediente(Usuario usuario) {
 		try {
 			return Response
 					.status(Response.Status.OK)
-					.entity(getIngredienteDao().setIngredienteByUsuario(usuario))
+					.entity(dao.setIngredienteByUsuario(usuario))
 					.build();				
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -72,12 +89,11 @@ public class IngredienteResource {
 	}
 	
 	@PUT
-	@Path("")
 	public Response updateIngrediente(Usuario usuario) {
 		try {
 			return Response
 					.status(Response.Status.OK)
-					.entity(getIngredienteDao().updateIngredienteByUsuario(usuario))
+					.entity(dao.updateIngredienteByUsuario(usuario))
 					.build();				
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -94,7 +110,7 @@ public class IngredienteResource {
 		try {
 			return Response
 					.status(Response.Status.OK)
-					.entity(getIngredienteDao().deleteIngredienteByUsuario(codUsuario, codIngrediente))
+					.entity(dao.deleteIngredienteByUsuario(codUsuario, codIngrediente))
 					.build();				
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -103,12 +119,5 @@ public class IngredienteResource {
 					.entity(e.getMessage())
 					.build();
 		}
-	}
-	
-	private IngredienteDAO getIngredienteDao(){
-		if(dao == null){
-			dao = new IngredienteDAO();
-		}
-		return dao;
 	}
 }

@@ -13,13 +13,22 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.usuario.Usuario;
+import com.tcc.maispratos.ingrediente.Ingrediente;
 import com.tcc.maispratos.prato.Prato;
 import com.tcc.maispratos.prato.PratoAdapter;
 import com.tcc.maispratos.util.BaseMenuActivity;
+import com.tcc.maispratos.util.Constants;
+import com.tcc.maispratos.util.TaskConnection;
 
+import org.json.JSONObject;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PratosActivity extends BaseMenuActivity {
     private Toolbar toolbar;
@@ -88,21 +97,47 @@ public class PratosActivity extends BaseMenuActivity {
     }
 
     private void listGeral(){
+        List<Prato> list = null;
+        TaskConnection connection = new TaskConnection();
+        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
+        params[Constants.NOME_DO_RESOURCE] = "prato/" + getUsuario().getId();
+        String json = null;
+        connection.execute(params);
+        try {
+            json = (String) connection.get();
+            System.out.println(json);
+            Type listType = new TypeToken<ArrayList<Prato>>(){}.getType();
+            list = new Gson().fromJson(json, listType);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         adapter.clear();
+        if(list != null){
+            for (Prato prato: list) {
+                adapter.updateList(prato);
+            }
+        }
+    }
 
-        Prato p1 = new Prato();
-        p1.setNome("LASANHA AO MOLHO BOLONHESA");
-        adapter.updateList(p1);
+    private List<Ingrediente> getIngredientes(){
+        List<Ingrediente> list = null;
+        TaskConnection connection = new TaskConnection();
+        String[] params = new String[Constants.QUERY_SEM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
+        params[Constants.NOME_DO_RESOURCE] = "ingrediente/" + getUsuario().getId();
 
-        Prato p2 = new Prato();
-        p2.setNome("Prato 2");
-        adapter.updateList(p2);
-        adapter.updateList(p2);
-        adapter.updateList(p2);
-        adapter.updateList(p2);
-        adapter.updateList(p2);
-        adapter.updateList(p2);
-        adapter.updateList(p2);
-        adapter.updateList(p2);
+        String json = null;
+        connection.execute(params);
+        try {
+            json = (String) connection.get();
+            Type listType = new TypeToken<ArrayList<Ingrediente>>(){}.getType();
+            list = new Gson().fromJson(json, listType);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
     }
 }

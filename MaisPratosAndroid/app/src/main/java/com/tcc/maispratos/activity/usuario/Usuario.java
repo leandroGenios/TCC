@@ -1,6 +1,7 @@
 package com.tcc.maispratos.activity.usuario;
 
 import com.tcc.maispratos.ingrediente.Ingrediente;
+import com.tcc.maispratos.prato.Prato;
 
 import java.io.Serializable;
 import java.util.List;
@@ -12,6 +13,8 @@ public class Usuario implements Serializable {
     private String nome;
     private Ingrediente ingrediente;
     private List<Ingrediente> ingredientes;
+    private Prato prato;
+    private List<Prato> pratos;
 
     public String getSenha() {
         return senha;
@@ -52,6 +55,19 @@ public class Usuario implements Serializable {
 
     public void setIngredientes(List<Ingrediente> ingredientes) {
         this.ingredientes = ingredientes;
+    }
+
+    public Prato getPrato() {
+        return prato;
+    }
+    public void setPrato(Prato prato) {
+        this.prato = prato;
+    }
+    public List<Prato> getPratos() {
+        return pratos;
+    }
+    public void setPratos(List<Prato> pratos) {
+        this.pratos = pratos;
     }
 }
 

@@ -1,10 +1,9 @@
 package com.tcc.maispratos.activity.prato;
 
 import android.content.Intent;
-import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -15,15 +14,14 @@ import com.google.gson.reflect.TypeToken;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.tcc.maispratos.R;
-import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
 import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.ingrediente.Ingrediente;
 import com.tcc.maispratos.unidademedida.UnidadeMedida;
 import com.tcc.maispratos.util.BaseMenuActivity;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
+import com.tcc.maispratos.util.Utils;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
@@ -32,14 +30,17 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class CadastroIngredientePratoActivity extends BaseMenuActivity {
-    private AutoCompleteTextView acObjText;
-    private ArrayAdapter<String> adapter;
+    private AutoCompleteTextView aucUnidadeMedida;
+    private ArrayAdapter<String> adapterUnidadeMedida;
+    private ArrayAdapter<String> adapterIngrediente;
     private Button insereCodBarras;
     private EditText edtCodigoBarras;
-    private EditText edtNome;
+    private AutoCompleteTextView aucNome;
     private EditText edtQuantidade;
     private List<UnidadeMedida> unidadesMedida;
     private ArrayList<String> unidadesMedidaArray;
+    private List<Ingrediente> ingredientes;
+    private ArrayList<String> ingredienteArray;
     private Button adicionar;
     private Ingrediente ingrediente;
 
@@ -50,15 +51,16 @@ public class CadastroIngredientePratoActivity extends BaseMenuActivity {
         setTitle("Adicionar ingrediente");
         setUsuario((Usuario) getIntent().getExtras().getSerializable("usuario"));
         iniciaElementos();
-        iniciaAutoComplete();
+        iniciaAutoCompleteUnidadeMedida();
+        iniciaAutoCompleteIngrediente();
     }
 
     private void iniciaElementos(){
         insereCodBarras = (Button) findViewById(R.id.btnCodBarras);
         edtCodigoBarras = (EditText) findViewById(R.id.edtCodBarras);
-        edtNome = (EditText) findViewById(R.id.edtNome);
+        aucNome = (AutoCompleteTextView) findViewById(R.id.aucNome);
         edtQuantidade = (EditText) findViewById(R.id.edtQuantidade);
-        acObjText = (AutoCompleteTextView) findViewById(R.id.aucUnidadeMedida);
+        aucUnidadeMedida = (AutoCompleteTextView) findViewById(R.id.aucUnidadeMedida);
         adicionar = (Button) findViewById(R.id.btnAdicionarIngrediente);
 
         insereCodBarras.setOnClickListener(new View.OnClickListener() {
@@ -69,12 +71,19 @@ public class CadastroIngredientePratoActivity extends BaseMenuActivity {
         });
         adicionar.setOnClickListener(addIngrediente());
         edtCodigoBarras.setOnFocusChangeListener(serFocus());
+        aucNome.setOnItemClickListener(getIngrediente());
     }
 
-    private void iniciaAutoComplete(){
-        getStringArray(getUnidadesMedida());
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, unidadesMedidaArray);
-        acObjText.setAdapter(adapter);
+    private void iniciaAutoCompleteUnidadeMedida(){
+        getUnidadesMedidaToStringArray(getUnidadesMedida());
+        adapterUnidadeMedida = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, unidadesMedidaArray);
+        aucUnidadeMedida.setAdapter(adapterUnidadeMedida);
+    }
+
+    private void iniciaAutoCompleteIngrediente(){
+        getIngredientesToStringArray(getIngredientes());
+        adapterIngrediente = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ingredienteArray);
+        aucNome.setAdapter(adapterIngrediente);
     }
 
     private List<UnidadeMedida> getUnidadesMedida(){
@@ -98,11 +107,54 @@ public class CadastroIngredientePratoActivity extends BaseMenuActivity {
         return unidadesMedida;
     }
 
-    private void getStringArray(List<UnidadeMedida> unidadesMedida){
+    private List<Ingrediente> getIngredientes(){
+        ingredientes = null;
+        TaskConnection connection = new TaskConnection();
+        String[] params = new String[Constants.QUERY_SEM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
+        params[Constants.NOME_DO_RESOURCE] = "ingrediente";
+
+        String json = null;
+        connection.execute(params);
+        try {
+            json = (String) connection.get();
+            Type listType = new TypeToken<ArrayList<Ingrediente>>(){}.getType();
+            ingredientes = new Gson().fromJson(json, listType);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return ingredientes;
+    }
+
+    private void getUnidadesMedidaToStringArray(List<UnidadeMedida> unidadesMedida){
         unidadesMedidaArray = new ArrayList<>();
         for (UnidadeMedida unidadeMedida : unidadesMedida) {
             unidadesMedidaArray.add(unidadeMedida.getSigla());
         }
+    }
+
+    private void getIngredientesToStringArray(List<Ingrediente> ingredientes){
+        ingredienteArray = new ArrayList<>();
+        for (Ingrediente ingrediente : ingredientes) {
+            ingredienteArray.add(ingrediente.getNome());
+        }
+    }
+
+    private AdapterView.OnItemClickListener getIngrediente(){
+       AdapterView.OnItemClickListener onClickListener = new AdapterView.OnItemClickListener() {
+           @Override
+           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+               for (Ingrediente ingrediente: ingredientes) {
+                   if(ingrediente.getNome().equals(parent.getItemAtPosition(position))){
+                       edtCodigoBarras.setText(Utils.DOUBLE_TO_STRING(ingrediente.getCodigoBarras(), Constants.QTDE_DIGITOS_CODIGO_MARRAS));
+                   }
+               }
+           }
+       };
+
+       return onClickListener;
     }
 
     @Override
@@ -123,7 +175,7 @@ public class CadastroIngredientePratoActivity extends BaseMenuActivity {
                 ingrediente = new Ingrediente();
                 if(validarCampos()){
                     getIntent().putExtra("ingrediente", ingrediente);
-                    setResult(RESULT_OK, getIntent());
+                    setResult(RESULT_FIRST_USER, getIntent());
                     finish();
                 }
             }
@@ -135,12 +187,11 @@ public class CadastroIngredientePratoActivity extends BaseMenuActivity {
         View.OnFocusChangeListener focus = new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
-            if(!hasFocus){
+            if(!hasFocus && edtCodigoBarras.getText().length() > 0){
                 if(verificarCodigoBarras()){
                     validarIngrediente(getIngredienteByCodigoBarras());
                 }else{
                     exibirMensagem("O código precisa ter " + Constants.QTDE_DIGITOS_CODIGO_MARRAS + " dígitos.");
-                    edtCodigoBarras.requestFocus();
                 }
             }
             }
@@ -151,10 +202,10 @@ public class CadastroIngredientePratoActivity extends BaseMenuActivity {
 
     private void validarIngrediente(Ingrediente ingrediente){
         if(ingrediente != null){
-            edtNome.setText(ingrediente.getNome());
-            edtNome.setEnabled(false);
+            aucNome.setText(ingrediente.getNome());
+            aucNome.setEnabled(false);
         }else{
-            edtNome.setEnabled(true);
+            aucNome.setEnabled(true);
         }
     }
 
@@ -198,32 +249,33 @@ public class CadastroIngredientePratoActivity extends BaseMenuActivity {
 
     private boolean validarPreenchimento(){
         if(edtCodigoBarras.getText() == null || edtCodigoBarras.getText().toString().equals("")){
-            edtCodigoBarras.requestFocus();
             return false;
         }else{
             ingrediente.setCodigoBarras(Double.parseDouble(edtCodigoBarras.getText().toString()));
         }
 
-        if(edtNome.getText() == null || edtNome.getText().toString().equals("")){
-            edtNome.requestFocus();
+        if(aucNome.getText() == null || aucNome.getText().toString().equals("")){
             return false;
         }else{
-            ingrediente.setNome(edtNome.getText().toString());
+            for (Ingrediente ingrediente: ingredientes) {
+                if(ingrediente.getNome().equals(aucNome.getText().toString())){
+                    this.ingrediente.setNome(ingrediente.getNome());
+                    break;
+                }
+            }
         }
 
         if(edtQuantidade.getText() == null || edtQuantidade.getText().toString().equals("")){
-            edtQuantidade.requestFocus();
             return false;
         }else{
             ingrediente.setQuantidade(Float.parseFloat(edtQuantidade.getText().toString()));
         }
 
-        if(acObjText.getText() == null || acObjText.getText().toString().equals("")){
-            acObjText.requestFocus();
+        if(aucUnidadeMedida.getText() == null || aucUnidadeMedida.getText().toString().equals("")){
             return false;
         }else{
             for (UnidadeMedida unidadeMedida: unidadesMedida) {
-                if(unidadeMedida.getSigla().equals(acObjText.getText().toString())){
+                if(unidadeMedida.getSigla().equals(aucUnidadeMedida.getText().toString())){
                     ingrediente.setUnidadeMedida(unidadeMedida);
                     break;
                 }
@@ -231,41 +283,5 @@ public class CadastroIngredientePratoActivity extends BaseMenuActivity {
         }
 
         return true;
-    }
-
-    private boolean cadastrarIngrediente(){
-        Ingrediente ingrediente = new Ingrediente();
-        ingrediente.setCodigoBarras(Double.parseDouble(edtCodigoBarras.getText().toString()));
-        ingrediente.setQuantidade(Float.parseFloat(edtQuantidade.getText().toString()));
-        ingrediente.setNome(edtNome.getText().toString());
-        for (UnidadeMedida unidadeMedida: unidadesMedida) {
-            if(unidadeMedida.getSigla().equals(acObjText.getText().toString())){
-                ingrediente.setUnidadeMedida(unidadeMedida);
-                break;
-            }
-        }
-
-        getUsuario().setIngrediente(ingrediente);
-
-        TaskConnection connection = new TaskConnection();
-        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
-        params[Constants.TIPO_DE_REQUISICAO] = Constants.POST;
-        params[Constants.NOME_DO_RESOURCE] = "prato/ingrediente";
-        String gson = new Gson().toJson(getUsuario());
-        try {
-            params[Constants.OBJETO] = new JSONObject(gson);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        connection.execute(params);
-
-        try {
-            return ((String) connection.get()).equals("true");
-        } catch (Exception e) {
-            e.printStackTrace();
-            exibirErro("Ocorreu um problema ao cadastrar. Tente novamente mais tarde.");
-        }
-
-        return false;
     }
 }

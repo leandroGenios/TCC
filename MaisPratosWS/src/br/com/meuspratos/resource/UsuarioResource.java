@@ -2,6 +2,7 @@ package br.com.meuspratos.resource;
 
 import java.sql.SQLException;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -14,17 +15,17 @@ import br.com.maispratos.dao.UsuarioDAO;
 import br.com.meuspratos.model.Usuario;
 
 @Path("/usuario")
+@Produces(MediaType.APPLICATION_JSON)
 public class UsuarioResource {
+	@Inject
 	private UsuarioDAO dao;
 	
 	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("")
 	public Response setUsuario(Usuario usuario) {
 		try {
 			return Response
 					.status(Response.Status.OK)
-					.entity(getUsuarioDao().setUsuario(usuario))
+					.entity(dao.setUsuario(usuario))
 					.build();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -36,13 +37,12 @@ public class UsuarioResource {
 	}
 	
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("emailExiste/{email}")
 	public Response emailExiste(@PathParam("email")String email) {
 		try {
 			return Response
 					.status(Response.Status.OK)
-					.entity(getUsuarioDao().emailExiste(email))
+					.entity(dao.emailExiste(email))
 					.build();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -54,16 +54,14 @@ public class UsuarioResource {
 	}
 	
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("login/{email}/{senha}")
 	public Response login(@PathParam("email")String email, @PathParam("senha")String senha) {
 		try {
-			boolean usuarioExiste = getUsuarioDao().usuarioExiste(email, senha);
-			System.out.println(usuarioExiste);
+			boolean usuarioExiste = dao.usuarioExiste(email, senha);
 			if(usuarioExiste){
 				return Response
 						.status(Response.Status.OK)
-						.entity(getUsuarioDao().getUsuario(email))
+						.entity(dao.getUsuario(email))
 						.build();				
 			}else{
 				return Response
@@ -78,12 +76,5 @@ public class UsuarioResource {
 					.entity(e.getMessage())
 					.build();
 		}
-	}
-	
-	private UsuarioDAO getUsuarioDao(){
-		if(dao == null){
-			dao = new UsuarioDAO();
-		}
-		return dao;
 	}
 }

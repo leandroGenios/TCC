@@ -1,8 +1,11 @@
 package com.tcc.maispratos.prato;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +14,7 @@ import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.prato.PratoActivity;
 import com.tcc.maispratos.activity.prato.PratosActivity;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 public class PratoAdapter extends RecyclerView.Adapter<LinePratoHolder> {
@@ -33,6 +37,12 @@ public class PratoAdapter extends RecyclerView.Adapter<LinePratoHolder> {
     @Override
     public void onBindViewHolder(@NonNull LinePratoHolder linePratoHolder, final int i) {
         linePratoHolder.txtNomePrato.setText(pratos.get(i).getNome());
+        linePratoHolder.txtIngredientesCompativeis.setText(pratos.get(i).getIngredientesCompativeis() + " ingredientes compatíveis");
+
+        byte[] bitMapData = Base64.decode(pratos.get(i).getImagem(),Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bitMapData, 0, bitMapData.length);
+        linePratoHolder.imgPrato.setImageBitmap(bitmap);
+
         linePratoHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

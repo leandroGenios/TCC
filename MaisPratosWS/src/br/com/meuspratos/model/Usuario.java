@@ -9,7 +9,21 @@ public class Usuario {
 	private String nome;
 	private Ingrediente ingrediente;
 	private List<Ingrediente> ingredientes;
+	private Prato prato;
+	private List<Prato> pratos;
 	
+	public Prato getPrato() {
+		return prato;
+	}
+	public void setPrato(Prato prato) {
+		this.prato = prato;
+	}
+	public List<Prato> getPratos() {
+		return pratos;
+	}
+	public void setPratos(List<Prato> pratos) {
+		this.pratos = pratos;
+	}
 	public String getSenha() {
 		return senha;
 	}

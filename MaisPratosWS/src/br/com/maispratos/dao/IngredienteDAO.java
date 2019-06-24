@@ -15,7 +15,39 @@ import br.com.meuspratos.model.UnidadeMedida;
 import br.com.meuspratos.model.Usuario;
 
 public class IngredienteDAO {
-
+	
+	public List<Ingrediente> listIngredientes() throws SQLException{
+		List<Ingrediente> ingredientes = new ArrayList<Ingrediente>();
+		
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "SELECT I.id ID_INGREDIENTE," + 
+					"	         I.codigo_barras CODIGO_BARRAS," + 
+					"            I.nome NOME_INGREDIENTE" + 
+					"       FROM ingrediente I";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				Ingrediente ingrediente = new Ingrediente();
+				ingrediente.setId(rs.getInt("ID_INGREDIENTE"));
+				ingrediente.setCodigoBarras(rs.getDouble("CODIGO_BARRAS"));
+				ingrediente.setNome(rs.getString("NOME_INGREDIENTE"));
+				
+				ingredientes.add(ingrediente);
+			}
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		
+		return ingredientes;
+	}
+	
 	public List<Ingrediente> getIngredientes(int idUsuario) throws SQLException{
 		List<Ingrediente> ingredientes = new ArrayList<Ingrediente>();
 		

@@ -2,11 +2,13 @@ package br.com.maispratos.dao;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import com.mysql.jdbc.Statement;
@@ -162,7 +164,10 @@ public class PratoDAO {
 					prato.setNome(rs.getString("NOME_PRATO"));
 					prato.setModoPreparo(rs.getString("MODO_PREPARO"));
 					prato.setTempoPreparo(rs.getInt("TEMPO_PREPARO"));
-					prato.setImagem(rs.getBytes("IMAGEM"));
+					
+					Blob blob = rs.getBlob("IMAGEM");
+					String base64String = Base64.getEncoder().encodeToString(blob.getBytes(1, (int)blob.length()));
+					prato.setImagemBase64(base64String);
 					ingredientesPrato = new ArrayList<>();
 					prato.setIngredientes(ingredientesPrato);
 					pratos.add(prato);

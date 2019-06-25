@@ -1,8 +1,7 @@
 package com.tcc.maispratos.activity;
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.tcc.maispratos.R;

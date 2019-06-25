@@ -24,8 +24,6 @@ import com.tcc.maispratos.util.BaseMenuActivity;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
 
-import org.json.JSONObject;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +104,6 @@ public class PratosActivity extends BaseMenuActivity {
         connection.execute(params);
         try {
             json = (String) connection.get();
-            System.out.println(json);
             Type listType = new TypeToken<ArrayList<Prato>>(){}.getType();
             list = new Gson().fromJson(json, listType);
         } catch (Exception e) {

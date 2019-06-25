@@ -14,7 +14,6 @@ import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.prato.PratoActivity;
 import com.tcc.maispratos.activity.prato.PratosActivity;
 
-import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 public class PratoAdapter extends RecyclerView.Adapter<LinePratoHolder> {
@@ -39,7 +38,7 @@ public class PratoAdapter extends RecyclerView.Adapter<LinePratoHolder> {
         linePratoHolder.txtNomePrato.setText(pratos.get(i).getNome());
         linePratoHolder.txtIngredientesCompativeis.setText(pratos.get(i).getIngredientesCompativeis() + " ingredientes compatíveis");
 
-        byte[] bitMapData = Base64.decode(pratos.get(i).getImagem(),Base64.DEFAULT);
+        byte[] bitMapData = Base64.decode(pratos.get(i).getImagemBase64(),Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(bitMapData, 0, bitMapData.length);
         linePratoHolder.imgPrato.setImageBitmap(bitmap);
 

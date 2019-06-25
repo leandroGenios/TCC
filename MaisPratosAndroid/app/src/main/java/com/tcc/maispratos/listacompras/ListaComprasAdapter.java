@@ -11,20 +11,15 @@ import android.view.ViewGroup;
 
 import com.google.gson.Gson;
 import com.tcc.maispratos.R;
-import com.tcc.maispratos.activity.ingrediente.CadastroIngredienteActivity;
-import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
-import com.tcc.maispratos.activity.ingrediente.UpdateIngredienteActivity;
 import com.tcc.maispratos.activity.listacompras.ListaComprasActivity;
 import com.tcc.maispratos.activity.listacompras.UpdateListaComprasActivity;
 import com.tcc.maispratos.ingrediente.Ingrediente;
-import com.tcc.maispratos.ingrediente.LineIngredienteHolder;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class ListaComprasAdapter extends RecyclerView.Adapter<LineListaComprasHolder> {

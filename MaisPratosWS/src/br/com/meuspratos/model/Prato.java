@@ -9,6 +9,7 @@ public class Prato {
 	private String modoPreparo;
 	private int ingredientesCompativeis = 0;
 	private byte[] imagem;
+	private String imagemBase64;
 	private int tempoPreparo;
 	
 	public int getId() {
@@ -52,5 +53,11 @@ public class Prato {
 	}
 	public void setImagem(byte[] imagem) {
 		this.imagem = imagem;
+	}
+	public String getImagemBase64() {
+		return imagemBase64;
+	}
+	public void setImagemBase64(String imagemBase64) {
+		this.imagemBase64 = imagemBase64;
 	}
 }

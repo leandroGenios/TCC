@@ -69,6 +69,8 @@ public class ListaComprasDAO {
 		Ingrediente ingrediente = new IngredienteDAO().getIngredienteByCodigoBarras(usuario.getIngrediente().getCodigoBarras());
 		if(ingrediente == null){
 			usuario.setIngrediente(setIngrediente(usuario.getIngrediente()));
+		}else{
+			usuario.getIngrediente().setId(ingrediente.getId());
 		}
 		
 		Connection conn = null;

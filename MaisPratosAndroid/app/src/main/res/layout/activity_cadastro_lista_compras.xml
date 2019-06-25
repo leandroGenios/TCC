@@ -7,7 +7,7 @@
     tools:context=".activity.listacompras.CadastroListaComprasActivity">
 
     <Button
-        android:id="@+id/btnCodBarrasListaCompras"
+        android:id="@+id/btnCodBarras"
         android:layout_width="wrap_content"
         android:layout_height="100dp"
         android:layout_marginStart="8dp"
@@ -19,35 +19,36 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/edtCodBarrasListaCompras"
+        android:id="@+id/edtCodBarras"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
+        android:digits="0123456789"
         android:ems="10"
+        android:maxLength="13"
+        android:inputType="numberDecimal"
         android:hint="@string/hint_codigo_barras"
-        android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnCodBarrasListaCompras" />
+        app:layout_constraintTop_toBottomOf="@+id/btnCodBarras" />
 
-    <EditText
-        android:id="@+id/edtNomeListaCompras"
+    <AutoCompleteTextView
+        android:id="@+id/aucNome"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:ems="10"
         android:hint="@string/hint_nome_produto"
-        android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtCodBarrasListaCompras" />
+        app:layout_constraintTop_toBottomOf="@+id/edtCodBarras" />
 
     <EditText
-        android:id="@+id/edtQuantidadeListaCompras"
+        android:id="@+id/edtQuantidade"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -56,10 +57,10 @@
         android:hint="QUANTIDADE"
         android:inputType="number"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtNomeListaCompras" />
+        app:layout_constraintTop_toBottomOf="@+id/aucNome" />
 
     <AutoCompleteTextView
-        android:id="@+id/aucUnidadeMedidaListaCompras"
+        android:id="@+id/aucUnidadeMedida"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -68,11 +69,11 @@
         android:layout_marginEnd="8dp"
         android:hint="@string/hint_unidade_medida"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/edtQuantidadeListaCompras"
-        app:layout_constraintTop_toBottomOf="@+id/edtNomeListaCompras" />
+        app:layout_constraintStart_toEndOf="@+id/edtQuantidade"
+        app:layout_constraintTop_toBottomOf="@+id/aucNome" />
 
     <Button
-        android:id="@+id/btnAdicionarIngredienteListaCompras"
+        android:id="@+id/btnAdicionarIngrediente"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -83,5 +84,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtQuantidadeListaCompras" />
+        app:layout_constraintTop_toBottomOf="@+id/edtQuantidade" />
 </android.support.constraint.ConstraintLayout>

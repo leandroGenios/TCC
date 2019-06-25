@@ -201,12 +201,7 @@ public class CadastroIngredientePratoActivity extends BaseMenuActivity {
     }
 
     private void validarIngrediente(Ingrediente ingrediente){
-        if(ingrediente != null){
-            aucNome.setText(ingrediente.getNome());
-            aucNome.setEnabled(false);
-        }else{
-            aucNome.setEnabled(true);
-        }
+        aucNome.setText(ingrediente.getNome());
     }
 
     private boolean verificarCodigoBarras(){

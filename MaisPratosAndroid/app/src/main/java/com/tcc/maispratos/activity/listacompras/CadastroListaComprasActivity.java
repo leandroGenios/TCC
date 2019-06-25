@@ -13,9 +13,10 @@ import com.google.gson.reflect.TypeToken;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.tcc.maispratos.R;
+import com.tcc.maispratos.activity.usuario.Usuario;
+import com.tcc.maispratos.ingrediente.BaseIngrediente;
 import com.tcc.maispratos.ingrediente.Ingrediente;
 import com.tcc.maispratos.unidademedida.UnidadeMedida;
-import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.util.BaseMenuActivity;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
@@ -28,17 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class CadastroListaComprasActivity extends BaseMenuActivity {
-    private AutoCompleteTextView acObjText;
-    private ArrayAdapter<String> adapter;
-    private Button insereCodBarras;
-    private EditText edtCodigoBarras;
-    private EditText edtNome;
-    private EditText edtQuantidade;
-    private List<UnidadeMedida> unidadesMedida;
-    private ArrayList<String> unidadesMedidaArray;
-    private Button adicionar;
-    private Ingrediente ingrediente;
+public class CadastroListaComprasActivity extends BaseIngrediente {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,74 +38,26 @@ public class CadastroListaComprasActivity extends BaseMenuActivity {
         setTitle("Cadastro de lista de compras");
         setUsuario((Usuario) getIntent().getExtras().getSerializable("usuario"));
         iniciaElementos();
-        iniciaAutoComplete();
-    }
-
-    private void iniciaElementos(){
-        ingrediente = new Ingrediente();
-        insereCodBarras = (Button) findViewById(R.id.btnCodBarrasListaCompras);
-        edtCodigoBarras = (EditText) findViewById(R.id.edtCodBarrasListaCompras);
-        edtNome = (EditText) findViewById(R.id.edtNomeListaCompras);
-        edtQuantidade = (EditText) findViewById(R.id.edtQuantidadeListaCompras);
-        acObjText = (AutoCompleteTextView) findViewById(R.id.aucUnidadeMedidaListaCompras);
-        adicionar = (Button) findViewById(R.id.btnAdicionarIngredienteListaCompras);
-
-        insereCodBarras.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                initCodBarras();
-            }
-        });
-        adicionar.setOnClickListener(addIngrediente());
-        edtCodigoBarras.setOnFocusChangeListener(serFocus());
-    }
-
-    private void iniciaAutoComplete(){
-        getStringArray(getUnidadesMedida());
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, unidadesMedidaArray);
-        acObjText.setAdapter(adapter);
-    }
-
-    private List<UnidadeMedida> getUnidadesMedida(){
-        unidadesMedida = null;
-        TaskConnection connection = new TaskConnection();
-        String[] params = new String[Constants.QUERY_SEM_ENVIO_DE_OBJETO];
-        params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
-        params[Constants.NOME_DO_RESOURCE] = "unidadeMedida";
-
-        String json = null;
-        connection.execute(params);
-        try {
-            json = (String) connection.get();
-            Type listType = new TypeToken<ArrayList<UnidadeMedida>>(){}.getType();
-            unidadesMedida = new Gson().fromJson(json, listType);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return unidadesMedida;
-    }
-
-    private void getStringArray(List<UnidadeMedida> unidadesMedida){
-        unidadesMedidaArray = new ArrayList<>();
-        for (UnidadeMedida unidadeMedida : unidadesMedida) {
-            unidadesMedidaArray.add(unidadeMedida.getSigla());
-        }
+        iniciaAutoCompleteUnidadeMedida();
+        iniciaAutoCompleteIngrediente();
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(resultCode, data);
-        String codigo = result.getContents();
-        edtCodigoBarras.setText(codigo);
+    public void iniciaElementos(){
+        btnInserirCodBarras = (Button) findViewById(R.id.btnCodBarras);
+        edtCodigoBarras = (EditText) findViewById(R.id.edtCodBarras);
+        aucNomeIngrediente = (AutoCompleteTextView) findViewById(R.id.aucNome);
+        edtQuantidade = (EditText) findViewById(R.id.edtQuantidade);
+        aucUnidadeMedida = (AutoCompleteTextView) findViewById(R.id.aucUnidadeMedida);
+        btnAdicionar = (Button) findViewById(R.id.btnAdicionarIngrediente);
+
+        btnInserirCodBarras.setOnClickListener(getCodigoBarras());
+        edtCodigoBarras.setOnFocusChangeListener(focusOutCodigoBarras());
+        btnAdicionar.setOnClickListener(salvarIngrediente());
     }
 
-    public void initCodBarras(){
-        new IntentIntegrator(this).initiateScan();
-    }
-
-    private View.OnClickListener addIngrediente(){
+    @Override
+    public View.OnClickListener salvarIngrediente(){
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,102 +76,32 @@ public class CadastroListaComprasActivity extends BaseMenuActivity {
         return onClickListener;
     }
 
-    private View.OnFocusChangeListener serFocus(){
-        View.OnFocusChangeListener focus = new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if(!hasFocus){
-                    if(verificarCodigoBarras()){
-                        validarIngrediente(getIngredienteByCodigoBarras());
-                    }else{
-                        exibirMensagem("O código precisa ter " + Constants.QTDE_DIGITOS_CODIGO_MARRAS + " dígitos.");
-                        edtCodigoBarras.requestFocus();
-                    }
-                }
-            }
-        };
-
-        return focus;
-    }
-
-    private void validarIngrediente(Ingrediente ingrediente){
-        if(ingrediente != null){
-            this.ingrediente = ingrediente;
-            edtNome.setText(ingrediente.getNome());
-            edtNome.setEnabled(false);
-        }else{
-            edtNome.setEnabled(true);
-        }
-    }
-
-    private boolean verificarCodigoBarras(){
-        return edtCodigoBarras.getText().toString().length() == Constants.QTDE_DIGITOS_CODIGO_MARRAS;
-    }
-
-    private Ingrediente getIngredienteByCodigoBarras(){
-        Ingrediente ingrediente = null;
-        TaskConnection connection = new TaskConnection();
-        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
-        params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
-        params[Constants.NOME_DO_RESOURCE] = "ingrediente/getByCodigoBarras/" + edtCodigoBarras.getText().toString();
-        connection.execute(params);
-
-        String json = null;
-        try {
-            json = (String) connection.get();
-            if(!json.equals("")){
-                ingrediente = new Ingrediente();
-                JSONObject jsonObj = new JSONObject(json);
-                ingrediente.setId(jsonObj.getInt("id"));
-                ingrediente.setNome(jsonObj.getString("nome"));
-                ingrediente.setCodigoBarras(jsonObj.getInt("codigoBarras"));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            exibirErro("Ocorreu um problema ao buscar o código de barras. Tente novamente mais tarde.");
-        }
-
-        return ingrediente;
-    }
-
-    private boolean validarCampos(){
-        if(!validarPreenchimento()){
-            exibirMensagem("Todos os campos devem ser preenchidos.");
-            return false;
-        }
-        return true;
-    }
-
-    private boolean validarPreenchimento(){
-        if(edtCodigoBarras.getText() == null || edtCodigoBarras.getText().toString().equals("")){
-            edtCodigoBarras.requestFocus();
-            return false;
-        }
-
-        if(edtNome.getText() == null || edtNome.getText().toString().equals("")){
-            edtNome.requestFocus();
-            return false;
-        }
-
-        if(edtQuantidade.getText() == null || edtQuantidade.getText().toString().equals("")){
-            edtQuantidade.requestFocus();
-            return false;
-        }
-
-        if(acObjText.getText() == null || acObjText.getText().toString().equals("")){
-            acObjText.requestFocus();
-            return false;
-        }
-
-        return true;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(resultCode, data);
+        String codigo = result.getContents();
+        edtCodigoBarras.setText(codigo);
     }
 
     private boolean cadastrarIngrediente(){
+        Ingrediente ingrediente = new Ingrediente();
         ingrediente.setCodigoBarras(Double.parseDouble(edtCodigoBarras.getText().toString()));
         ingrediente.setQuantidade(Float.parseFloat(edtQuantidade.getText().toString()));
-        ingrediente.setNome(edtNome.getText().toString());
+
+        for (Ingrediente ingred: ingredientes) {
+            if(ingred.getNome().equals(aucNomeIngrediente.getText().toString())){
+                ingrediente.setNome(ingred.getNome());
+                break;
+            }
+        }
+        if(ingrediente.getNome() == null){
+            if(aucNomeIngrediente.getText() != null && !aucNomeIngrediente.getText().toString().equals("")){
+                ingrediente.setNome(aucNomeIngrediente.getText().toString());
+            }
+        }
+
         for (UnidadeMedida unidadeMedida: unidadesMedida) {
-            if(unidadeMedida.getSigla().equals(acObjText.getText().toString())){
+            if(unidadeMedida.getSigla().equals(aucUnidadeMedida.getText().toString())){
                 ingrediente.setUnidadeMedida(unidadeMedida);
                 break;
             }

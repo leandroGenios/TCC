@@ -10,40 +10,42 @@ public class Prato implements Serializable {
     private String nome;
     private List<Ingrediente> ingredientes;
     private String modoPreparo;
-    private int ingredientesCompativeis;
+    private int ingredientesCompativeis = 0;
     private byte[] imagem;
+    private String imagemBase64;
+    private int tempoPreparo;
 
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
+
     public String getNome() {
         return nome;
     }
+
     public void setNome(String nome) {
         this.nome = nome;
     }
+
     public List<Ingrediente> getIngredientes() {
         return ingredientes;
     }
+
     public void setIngredientes(List<Ingrediente> ingredientes) {
         this.ingredientes = ingredientes;
     }
+
     public String getModoPreparo() {
         return modoPreparo;
     }
+
     public void setModoPreparo(String modoPreparo) {
         this.modoPreparo = modoPreparo;
     }
-    public int getTempoPreparo() {
-        return tempoPreparo;
-    }
-    public void setTempoPreparo(int tempoPreparo) {
-        this.tempoPreparo = tempoPreparo;
-    }
-    private int tempoPreparo;
 
     public int getIngredientesCompativeis() {
         return ingredientesCompativeis;
@@ -59,5 +61,21 @@ public class Prato implements Serializable {
 
     public void setImagem(byte[] imagem) {
         this.imagem = imagem;
+    }
+
+    public int getTempoPreparo() {
+        return tempoPreparo;
+    }
+
+    public void setTempoPreparo(int tempoPreparo) {
+        this.tempoPreparo = tempoPreparo;
+    }
+
+    public String getImagemBase64() {
+        return imagemBase64;
+    }
+
+    public void setImagemBase64(String imagemBase64) {
+        this.imagemBase64 = imagemBase64;
     }
 }

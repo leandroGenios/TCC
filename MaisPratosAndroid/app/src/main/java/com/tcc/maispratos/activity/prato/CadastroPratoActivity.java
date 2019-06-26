@@ -109,7 +109,6 @@ public class CadastroPratoActivity extends BaseMenuActivity {
             switch (requestCode) {
                 case REQUEST_CODE:
                     if (resultCode == RESULT_OK) {
-                        System.out.println(data.getData());
                         Uri selectedImage = data.getData();
                         try {
                             bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
@@ -178,10 +177,11 @@ public class CadastroPratoActivity extends BaseMenuActivity {
         prato.setModoPreparo(mltModoPreparo.getText().toString());
         prato.setTempoPreparo(Integer.parseInt(edtTempoPreparo.getText().toString()));
 
-
-        ByteArrayOutputStream blob = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 0, blob);
-        prato.setImagem(blob.toByteArray());
+        if(bitmap != null){
+            ByteArrayOutputStream blob = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 0, blob);
+            prato.setImagem(blob.toByteArray());
+        }
 
         getUsuario().setPrato(prato);
 

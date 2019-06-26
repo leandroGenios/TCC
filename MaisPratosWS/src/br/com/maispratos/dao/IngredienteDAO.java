@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,6 +134,8 @@ public class IngredienteDAO {
 		
 		if(ingrediente == null){
 			usuario.setIngrediente(setIngrediente(usuario.getIngrediente()));
+		}else{
+			usuario.getIngrediente().setId(ingrediente.getId());
 		}
 		
 		Connection conn = null;
@@ -157,7 +160,7 @@ public class IngredienteDAO {
 		return true;
 	}
 	
-	private Ingrediente getIngredienteByNome(String nome) throws SQLException {
+	public Ingrediente getIngredienteByNome(String nome) throws SQLException {
 		Ingrediente ingrediente = null;		
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -195,7 +198,11 @@ public class IngredienteDAO {
 			String sql = "INSERT INTO ingrediente VALUES (NULL, ?, ?)";
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
-			stmt.setDouble(1, ingrediente.getCodigoBarras() == 0 ? null : ingrediente.getCodigoBarras());
+			if(ingrediente.getCodigoBarras() > 0){
+				stmt.setDouble(1, ingrediente.getCodigoBarras());				
+			}else{
+				stmt.setNull(1, Types.DOUBLE);
+			}
 			stmt.setString(2, ingrediente.getNome().toUpperCase());
 			
 			stmt.executeUpdate();

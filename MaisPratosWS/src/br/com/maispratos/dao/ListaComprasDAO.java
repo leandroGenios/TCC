@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import com.mysql.jdbc.Statement;
 
 import br.com.maispratos.util.GerenciadorJDBC;
@@ -15,7 +17,9 @@ import br.com.meuspratos.model.UnidadeMedida;
 import br.com.meuspratos.model.Usuario;
 
 public class ListaComprasDAO {
-
+	@Inject
+	private IngredienteDAO ingredienteDao;
+	
 	public List<Ingrediente> getListaCompras(int idUsuario) throws SQLException{
 		List<Ingrediente> ingredientes = new ArrayList<Ingrediente>();
 		
@@ -65,10 +69,14 @@ public class ListaComprasDAO {
 	}
 	
 	public boolean setIngredienteByUsuario(Usuario usuario) throws SQLException{
+		Ingrediente ingrediente = null;
+		if(usuario.getIngrediente().getCodigoBarras() != 0)
+			ingrediente = ingredienteDao.getIngredienteByCodigoBarras(usuario.getIngrediente().getCodigoBarras());
+		else
+			ingrediente = ingredienteDao.getIngredienteByNome(usuario.getIngrediente().getNome());
 		
-		Ingrediente ingrediente = new IngredienteDAO().getIngredienteByCodigoBarras(usuario.getIngrediente().getCodigoBarras());
 		if(ingrediente == null){
-			usuario.setIngrediente(setIngrediente(usuario.getIngrediente()));
+			usuario.setIngrediente(ingredienteDao.setIngrediente(usuario.getIngrediente()));
 		}else{
 			usuario.getIngrediente().setId(ingrediente.getId());
 		}
@@ -93,31 +101,6 @@ public class ListaComprasDAO {
 			GerenciadorJDBC.close(conn, stmt);
 		}
 		return true;
-	}
-	
-	public Ingrediente setIngrediente(Ingrediente ingrediente) throws SQLException{
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		
-		try {
-			conn = GerenciadorJDBC.getConnection();
-			
-			String sql = "INSERT INTO ingrediente VALUES (NULL, ?, ?)";
-			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-			
-			stmt.setDouble(1, ingrediente.getCodigoBarras());
-			stmt.setString(2, ingrediente.getNome());
-			
-			stmt.executeUpdate();
-			
-			ResultSet rs = stmt.getGeneratedKeys();
-			rs.next();
-			ingrediente.setId(rs.getInt(1));
-		}
-		finally {
-			GerenciadorJDBC.close(conn, stmt);
-		}
-		return ingrediente;
 	}
 	
 	public boolean updateIngredienteByUsuario(Usuario usuario) throws SQLException{

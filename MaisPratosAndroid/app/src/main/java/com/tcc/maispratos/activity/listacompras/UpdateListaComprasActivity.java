@@ -43,7 +43,7 @@ public class UpdateListaComprasActivity extends BaseIngrediente {
         iniciaElementos();
         iniciaAutoCompleteUnidadeMedida();
         iniciaAutoCompleteIngrediente();
-        carregarCampos();
+        carregarCampos(ingrediente);
     }
 
     @Override
@@ -88,9 +88,12 @@ public class UpdateListaComprasActivity extends BaseIngrediente {
     }
 
     private boolean atualizarIngrediente(){
-        ingrediente.setCodigoBarras(Double.parseDouble(edtCodigoBarras.getText().toString()));
+        if(edtCodigoBarras.getText() != null && !edtCodigoBarras.getText().toString().equals("")){
+            ingrediente.setCodigoBarras(Double.parseDouble(edtCodigoBarras.getText().toString()));
+        }
         ingrediente.setQuantidade(Float.parseFloat(edtQuantidade.getText().toString()));
 
+        ingrediente.setNome(null);
         for (Ingrediente ingred: ingredientes) {
             if(ingred.getNome().equals(aucNomeIngrediente.getText().toString())){
                 ingrediente.setNome(ingred.getNome());
@@ -132,22 +135,5 @@ public class UpdateListaComprasActivity extends BaseIngrediente {
         }
 
         return false;
-    }
-
-    private void carregarCampos(){
-        edtCodigoBarras.setText(Utils.DOUBLE_TO_STRING(ingrediente.getCodigoBarras(), Constants.QTDE_DIGITOS_CODIGO_MARRAS));
-        aucNomeIngrediente.setText(ingrediente.getNome());
-        String quantidade = String.valueOf(ingrediente.getQuantidade());
-        edtQuantidade.setText(formatarQuantidadeQuebrada(quantidade));
-
-        for(int i = 0; i < unidadesMedida.size(); i++){
-            if(unidadesMedida.get(i).getId() == ingrediente.getUnidadeMedida().getId()){
-                aucUnidadeMedida.setText(aucUnidadeMedida.getAdapter().getItem(i).toString(), false);
-            }
-        }
-    }
-
-    private String formatarQuantidadeQuebrada(String quantidade){
-        return quantidade.split("\\.")[1].equals("0") ? quantidade.split("\\.")[0] : quantidade;
     }
 }

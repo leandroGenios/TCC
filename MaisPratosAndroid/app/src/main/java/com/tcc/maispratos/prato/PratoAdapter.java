@@ -38,9 +38,11 @@ public class PratoAdapter extends RecyclerView.Adapter<LinePratoHolder> {
         linePratoHolder.txtNomePrato.setText(pratos.get(i).getNome());
         linePratoHolder.txtIngredientesCompativeis.setText(pratos.get(i).getIngredientesCompativeis() + " ingredientes compatíveis");
 
-        byte[] bitMapData = Base64.decode(pratos.get(i).getImagemBase64(),Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(bitMapData, 0, bitMapData.length);
-        linePratoHolder.imgPrato.setImageBitmap(bitmap);
+        if(pratos.get(i).getImagemBase64() != null){
+            byte[] bitMapData = Base64.decode(pratos.get(i).getImagemBase64(),Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bitMapData, 0, bitMapData.length);
+            linePratoHolder.imgPrato.setImageBitmap(bitmap);
+        }
 
         linePratoHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

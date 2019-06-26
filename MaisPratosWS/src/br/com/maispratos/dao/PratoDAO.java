@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -34,10 +35,15 @@ public class PratoDAO {
 	private List<Ingrediente> verificarIngredientesExistem(List<Ingrediente> ingredientes) throws SQLException {
 		for (Ingrediente ingrediente : ingredientes) {
 			Ingrediente ingredienteBase = null;
-			ingredienteBase = ingredienteDAO.getIngredienteByCodigoBarras(ingrediente.getCodigoBarras());
+			
+			if(ingrediente.getCodigoBarras() != 0)
+				ingredienteBase = ingredienteDAO.getIngredienteByCodigoBarras(ingrediente.getCodigoBarras());
+			else
+				ingredienteBase = ingredienteDAO.getIngredienteByNome(ingrediente.getNome());
+			
 			if(ingredienteBase == null){
 				ingrediente = ingredienteDAO.setIngrediente(ingrediente);
-			}else {
+			}else{
 				ingrediente.setId(ingredienteBase.getId());
 			}
 		}
@@ -59,9 +65,12 @@ public class PratoDAO {
 			stmt.setString(2, prato.getModoPreparo());
 			stmt.setInt(3, prato.getTempoPreparo());
 			
-			InputStream myInputStream = new ByteArrayInputStream(prato.getImagem()); 
-
-			stmt.setBinaryStream(4, myInputStream);
+			if(prato.getImagem() != null){
+				InputStream myInputStream = new ByteArrayInputStream(prato.getImagem()); 
+				stmt.setBinaryStream(4, myInputStream);				
+			}else{
+				stmt.setNull(4, Types.BLOB);
+			}
 			
 			stmt.executeUpdate();
 			
@@ -166,8 +175,10 @@ public class PratoDAO {
 					prato.setTempoPreparo(rs.getInt("TEMPO_PREPARO"));
 					
 					Blob blob = rs.getBlob("IMAGEM");
-					String base64String = Base64.getEncoder().encodeToString(blob.getBytes(1, (int)blob.length()));
-					prato.setImagemBase64(base64String);
+					if(blob != null){
+						String base64String = Base64.getEncoder().encodeToString(blob.getBytes(1, (int)blob.length()));
+						prato.setImagemBase64(base64String);						
+					}
 					ingredientesPrato = new ArrayList<>();
 					prato.setIngredientes(ingredientesPrato);
 					pratos.add(prato);

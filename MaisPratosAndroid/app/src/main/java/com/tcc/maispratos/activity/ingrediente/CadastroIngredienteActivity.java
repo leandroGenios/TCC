@@ -84,7 +84,9 @@ public class CadastroIngredienteActivity extends BaseIngrediente {
 
     private boolean cadastrarIngrediente(){
         Ingrediente ingrediente = new Ingrediente();
-        ingrediente.setCodigoBarras(Double.parseDouble(edtCodigoBarras.getText().toString()));
+        if(edtCodigoBarras.getText() != null && !edtCodigoBarras.getText().toString().equals("")){
+            ingrediente.setCodigoBarras(Double.parseDouble(edtCodigoBarras.getText().toString()));
+        }
         ingrediente.setQuantidade(Float.parseFloat(edtQuantidade.getText().toString()));
 
         for (Ingrediente ingred: ingredientes) {

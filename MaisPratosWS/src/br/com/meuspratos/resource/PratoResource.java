@@ -1,6 +1,5 @@
 package br.com.meuspratos.resource;
 
-import java.io.FileNotFoundException;
 import java.sql.SQLException;
 
 import javax.inject.Inject;

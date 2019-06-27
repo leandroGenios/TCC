@@ -1,9 +1,11 @@
 package com.tcc.maispratos.activity.prato;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +17,7 @@ import com.tcc.maispratos.ingrediente.prato.IngredientePrato;
 import com.tcc.maispratos.ingrediente.prato.IngredientePratoAdapter;
 import com.tcc.maispratos.modopreparo.ModoPreparo;
 import com.tcc.maispratos.modopreparo.ModoPreparoAdapter;
+import com.tcc.maispratos.prato.Prato;
 import com.tcc.maispratos.util.BaseMenuActivity;
 
 import java.util.ArrayList;
@@ -23,11 +26,21 @@ public class PratoActivity extends BaseMenuActivity {
 
     private TextView txtNomePrato;
     private TextView txtNotaPrato;
+    private TextView txtNomeCriador;
+    private TextView txtNivelCriador;
     private ImageView imgAvaliacao1;
     private ImageView imgAvaliacao2;
     private ImageView imgAvaliacao3;
     private ImageView imgAvaliacao4;
     private ImageView imgAvaliacao5;
+    private RecyclerView rcvIngredientes;
+    private TextView txtModoPreparo;
+    private TextView txtTempoPreparo;
+    private RecyclerView rcvComentarios;
+    private Button btnDeixarComentario;
+    private FloatingActionButton fab;
+
+    private Prato prato;
 
 
     private ComentarioAdapter comentarioAdapter;
@@ -36,11 +49,13 @@ public class PratoActivity extends BaseMenuActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prato);
-        setTitle("Cadastro de prato");
+        setTitle("Prato");
         setUsuario((Usuario) getIntent().getExtras().getSerializable("usuario"));
+        prato = (Prato) getIntent().getExtras().getSerializable("prato");
+
         iniciaElementos();
 
-        RecyclerView rcvComentario = (RecyclerView) findViewById(R.id.rcvComentarios);
+       /* RecyclerView rcvComentario = (RecyclerView) findViewById(R.id.rcvComentarios);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rcvComentario.setLayoutManager(layoutManager);
         comentarioAdapter = new ComentarioAdapter(new ArrayList<Comentario>(0), this);
@@ -102,10 +117,28 @@ public class PratoActivity extends BaseMenuActivity {
         modoPreparoAdapter.updateList(modoPreparo);
         modoPreparoAdapter.updateList(modoPreparo);
         modoPreparoAdapter.updateList(modoPreparo);
-        modoPreparoAdapter.updateList(modoPreparo);
+        modoPreparoAdapter.updateList(modoPreparo);*/
     }
 
     public void iniciaElementos(){
+        txtNotaPrato = (TextView) findViewById(R.id.txtNotaPrato);
+        txtNomePrato = (TextView) findViewById(R.id.txtNomePrato);
+        txtNomeCriador = (TextView) findViewById(R.id.txtNomeCriador);
+        txtNivelCriador = (TextView) findViewById(R.id.txtNivelCriador);
+        imgAvaliacao1 = (ImageView) findViewById(R.id.imgAvaliacao1);
+        imgAvaliacao2 = (ImageView) findViewById(R.id.imgAvaliacao2);
+        imgAvaliacao3 = (ImageView) findViewById(R.id.imgAvaliacao3);
+        imgAvaliacao4 = (ImageView) findViewById(R.id.imgAvaliacao4);
+        imgAvaliacao5 = (ImageView) findViewById(R.id.imgAvaliacao5);
+        rcvIngredientes = (RecyclerView) findViewById(R.id.rcvIngredientes);
+        txtModoPreparo = (TextView) findViewById(R.id.txtModoPreparo);
+        txtTempoPreparo = (TextView) findViewById(R.id.txtTempoPreparo);
+        rcvComentarios = (RecyclerView) findViewById(R.id.rcvComentarios);
+        btnDeixarComentario = (Button) findViewById(R.id.btnDeixarComentario);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
 
+        txtNomePrato.setText(prato.getNome());
+        txtNomeCriador.setText(prato.getCriador().getNome());
+        txtModoPreparo.setText(prato.getModoPreparo());
     }
 }

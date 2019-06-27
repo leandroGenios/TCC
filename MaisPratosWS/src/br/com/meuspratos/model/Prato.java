@@ -11,7 +11,8 @@ public class Prato {
 	private byte[] imagem;
 	private String imagemBase64;
 	private int tempoPreparo;
-	
+	private Usuario criador;
+
 	public int getId() {
 		return id;
 	}
@@ -59,5 +60,11 @@ public class Prato {
 	}
 	public void setImagemBase64(String imagemBase64) {
 		this.imagemBase64 = imagemBase64;
+	}
+	public Usuario getCriador() {
+		return criador;
+	}
+	public void setCriador(Usuario criador) {
+		this.criador = criador;
 	}
 }

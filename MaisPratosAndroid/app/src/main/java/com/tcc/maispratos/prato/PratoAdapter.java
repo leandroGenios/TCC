@@ -48,7 +48,8 @@ public class PratoAdapter extends RecyclerView.Adapter<LinePratoHolder> {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(activity.getApplicationContext(), PratoActivity.class);
-                intent.putExtra("prato.id", pratos.get(i).getId());
+                intent.putExtra("usuario", activity.getUsuario());
+                intent.putExtra("prato", pratos.get(i));
                 activity.startActivity(intent);
                 activity.finish();
             }

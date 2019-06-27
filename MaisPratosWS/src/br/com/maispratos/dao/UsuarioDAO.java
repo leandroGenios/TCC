@@ -34,6 +34,33 @@ public class UsuarioDAO {
 		finally {
 			GerenciadorJDBC.close(conn, stmt);
 		}
+		
+		setClassificacao(usuario);
+		
+		return usuario;
+	}
+	
+	public Usuario setClassificacao(Usuario usuario) throws SQLException{
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "INSERT INTO usuario_classificacao VALUES (?, ?)";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setInt(1, usuario.getId());
+			stmt.setInt(2, 1);
+			
+			stmt.executeUpdate();
+			
+			ResultSet rs = stmt.getGeneratedKeys();
+			rs.next();
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
 		return usuario;
 	}
 	

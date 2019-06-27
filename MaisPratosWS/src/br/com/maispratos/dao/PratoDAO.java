@@ -147,14 +147,24 @@ public class PratoDAO {
 					   + "		 I.codigo_barras, "
 					   + "		 I.nome, "
 					   + "		 PI.quantidade, "
-					   + "		 U.sigla "
+					   + "		 UM.sigla, "
+					   + "		 U.nome NOME_USUARIO, "
+					   + "		 C.descricao "
 					   + "	FROM prato P "
 					   + " INNER JOIN prato_ingrediente PI "
 					   + "	  ON PI.prato_id = P.id "
 					   + " INNER JOIN ingrediente I "
 					   + "	  ON I.id = PI.ingrediente_id "
-					   + " INNER JOIN unidade_medida U "
-					   + "	  ON U.id = PI.unidade_medida_id "
+					   + " INNER JOIN unidade_medida UM "
+					   + "	  ON UM.id = PI.unidade_medida_id "
+					   + " INNER JOIN prato_usuario PU "
+					   + "	  ON PU.prato_id = P.id "
+					   + " INNER JOIN usuario U "
+					   + "	  ON U.id = PU.usuario_id "
+					   + " INNER JOIN usuario_classificacao UC "
+					   + "	  ON UC.usuario_id = U.id "
+					   + " INNER JOIN classificacao C "
+					   + "	  ON C.id = UC.classificacao_id "
 					   + " WHERE TRUE";
 			for (Ingrediente ingrediente : ingredientes) {
 				sql += "	  OR PI.ingrediente_id = " + ingrediente.getId();
@@ -173,6 +183,11 @@ public class PratoDAO {
 					prato.setNome(rs.getString("NOME_PRATO"));
 					prato.setModoPreparo(rs.getString("MODO_PREPARO"));
 					prato.setTempoPreparo(rs.getInt("TEMPO_PREPARO"));
+					
+					Usuario usuario = new Usuario();
+					usuario.setNome(rs.getString("NOME_USUARIO"));
+					
+					prato.setCriador(usuario);
 					
 					Blob blob = rs.getBlob("IMAGEM");
 					if(blob != null){

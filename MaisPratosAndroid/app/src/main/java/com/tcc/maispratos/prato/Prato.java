@@ -1,5 +1,6 @@
 package com.tcc.maispratos.prato;
 
+import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.ingrediente.Ingrediente;
 
 import java.io.Serializable;
@@ -14,6 +15,7 @@ public class Prato implements Serializable {
     private byte[] imagem;
     private String imagemBase64;
     private int tempoPreparo;
+    private Usuario criador;
 
     public int getId() {
         return id;
@@ -77,5 +79,13 @@ public class Prato implements Serializable {
 
     public void setImagemBase64(String imagemBase64) {
         this.imagemBase64 = imagemBase64;
+    }
+
+    public Usuario getCriador() {
+        return criador;
+    }
+
+    public void setCriador(Usuario criador) {
+        this.criador = criador;
     }
 }

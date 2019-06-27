@@ -11,6 +11,7 @@ public class Usuario {
 	private List<Ingrediente> ingredientes;
 	private Prato prato;
 	private List<Prato> pratos;
+	private Classificacao classificacao;
 	
 	public Prato getPrato() {
 		return prato;
@@ -59,5 +60,11 @@ public class Usuario {
 	}
 	public void setIngrediente(Ingrediente ingrediente) {
 		this.ingrediente = ingrediente;
+	}
+	public Classificacao getClassificacao() {
+		return classificacao;
+	}
+	public void setClassificacao(Classificacao classificacao) {
+		this.classificacao = classificacao;
 	}
 }

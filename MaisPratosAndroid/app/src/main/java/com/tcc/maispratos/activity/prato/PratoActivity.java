@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.usuario.Usuario;
@@ -19,12 +21,24 @@ import java.util.ArrayList;
 
 public class PratoActivity extends BaseMenuActivity {
 
+    private TextView txtNomePrato;
+    private TextView txtNotaPrato;
+    private ImageView imgAvaliacao1;
+    private ImageView imgAvaliacao2;
+    private ImageView imgAvaliacao3;
+    private ImageView imgAvaliacao4;
+    private ImageView imgAvaliacao5;
+
+
     private ComentarioAdapter comentarioAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prato);
+        setTitle("Cadastro de prato");
+        setUsuario((Usuario) getIntent().getExtras().getSerializable("usuario"));
+        iniciaElementos();
 
         RecyclerView rcvComentario = (RecyclerView) findViewById(R.id.rcvComentarios);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -89,5 +103,9 @@ public class PratoActivity extends BaseMenuActivity {
         modoPreparoAdapter.updateList(modoPreparo);
         modoPreparoAdapter.updateList(modoPreparo);
         modoPreparoAdapter.updateList(modoPreparo);
+    }
+
+    public void iniciaElementos(){
+
     }
 }

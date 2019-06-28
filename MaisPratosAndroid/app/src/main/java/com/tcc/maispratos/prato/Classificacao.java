@@ -1,6 +1,8 @@
 package com.tcc.maispratos.prato;
 
-public class Classificacao {
+import java.io.Serializable;
+
+public class Classificacao implements Serializable {
 	private int id;
 	private String descricao;
 	

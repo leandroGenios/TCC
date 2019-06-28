@@ -12,7 +12,14 @@ public class Prato {
 	private String imagemBase64;
 	private int tempoPreparo;
 	private Usuario criador;
+	private int avaliacao;
 
+	public int getAvaliacao() {
+		return avaliacao;
+	}
+	public void setAvaliacao(int avaliacao) {
+		this.avaliacao = avaliacao;
+	}
 	public int getId() {
 		return id;
 	}

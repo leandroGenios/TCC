@@ -1,10 +1,13 @@
 package com.tcc.maispratos.activity.prato;
 
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,6 +24,7 @@ import com.tcc.maispratos.prato.Prato;
 import com.tcc.maispratos.util.BaseMenuActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PratoActivity extends BaseMenuActivity {
 
@@ -28,19 +32,17 @@ public class PratoActivity extends BaseMenuActivity {
     private TextView txtNotaPrato;
     private TextView txtNomeCriador;
     private TextView txtNivelCriador;
-    private ImageView imgAvaliacao1;
-    private ImageView imgAvaliacao2;
-    private ImageView imgAvaliacao3;
-    private ImageView imgAvaliacao4;
-    private ImageView imgAvaliacao5;
     private RecyclerView rcvIngredientes;
     private TextView txtModoPreparo;
     private TextView txtTempoPreparo;
     private RecyclerView rcvComentarios;
     private Button btnDeixarComentario;
     private FloatingActionButton fab;
+    private List<ImageView> estrelasAvaliacao;
 
     private Prato prato;
+    private Drawable estrelaSelecionada;
+    private Drawable estrela;
 
 
     private ComentarioAdapter comentarioAdapter;
@@ -54,6 +56,8 @@ public class PratoActivity extends BaseMenuActivity {
         prato = (Prato) getIntent().getExtras().getSerializable("prato");
 
         iniciaElementos();
+        getEstrelas();
+        setMinhaAvaliacaoPrato();
 
        /* RecyclerView rcvComentario = (RecyclerView) findViewById(R.id.rcvComentarios);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -125,11 +129,12 @@ public class PratoActivity extends BaseMenuActivity {
         txtNomePrato = (TextView) findViewById(R.id.txtNomePrato);
         txtNomeCriador = (TextView) findViewById(R.id.txtNomeCriador);
         txtNivelCriador = (TextView) findViewById(R.id.txtNivelCriador);
-        imgAvaliacao1 = (ImageView) findViewById(R.id.imgAvaliacao1);
-        imgAvaliacao2 = (ImageView) findViewById(R.id.imgAvaliacao2);
-        imgAvaliacao3 = (ImageView) findViewById(R.id.imgAvaliacao3);
-        imgAvaliacao4 = (ImageView) findViewById(R.id.imgAvaliacao4);
-        imgAvaliacao5 = (ImageView) findViewById(R.id.imgAvaliacao5);
+        estrelasAvaliacao = new ArrayList<>();
+        estrelasAvaliacao.add((ImageView) findViewById(R.id.imgAvaliacao1));
+        estrelasAvaliacao.add((ImageView) findViewById(R.id.imgAvaliacao2));
+        estrelasAvaliacao.add((ImageView) findViewById(R.id.imgAvaliacao3));
+        estrelasAvaliacao.add((ImageView) findViewById(R.id.imgAvaliacao4));
+        estrelasAvaliacao.add((ImageView) findViewById(R.id.imgAvaliacao5));
         rcvIngredientes = (RecyclerView) findViewById(R.id.rcvIngredientes);
         txtModoPreparo = (TextView) findViewById(R.id.txtModoPreparo);
         txtTempoPreparo = (TextView) findViewById(R.id.txtTempoPreparo);
@@ -138,7 +143,43 @@ public class PratoActivity extends BaseMenuActivity {
         fab = (FloatingActionButton) findViewById(R.id.fab);
 
         txtNomePrato.setText(prato.getNome());
-        txtNomeCriador.setText(prato.getCriador().getNome());
+        txtNomeCriador.setText("Criado por " + prato.getCriador().getNome());
+        txtNivelCriador.setText("Cozinheiro nível " + prato.getCriador().getClassificacao().getDescricao());
         txtModoPreparo.setText(prato.getModoPreparo());
+
+        for (int i = 0; i < estrelasAvaliacao.size(); i++) {
+            estrelasAvaliacao.get(i).setOnClickListener(setAvaliacao(i));
+        }
+
+    }
+
+    private void getEstrelas() {
+        estrelaSelecionada = estrelasAvaliacao.get(0).getDrawable();
+        estrela = estrelasAvaliacao.get(4).getDrawable();
+    }
+
+    private void setMinhaAvaliacaoPrato(){
+        for (ImageView imagem: estrelasAvaliacao) {
+            imagem.setImageDrawable(estrela);
+        }
+        for(int i = 0 ; i < prato.getAvaliacao(); i++){
+            estrelasAvaliacao.get(i).setImageDrawable(estrelaSelecionada);
+        }
+    }
+
+    private View.OnClickListener setAvaliacao(final int i){
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (int j = 0; j < estrelasAvaliacao.size(); j++) {
+                    estrelasAvaliacao.get(j).setImageDrawable(estrela);
+                }
+
+                for(int j = 0; j <= i  ; j++){
+                    estrelasAvaliacao.get(j).setImageDrawable(estrelaSelecionada);
+                }
+            }
+        };
+        return onClickListener;
     }
 }

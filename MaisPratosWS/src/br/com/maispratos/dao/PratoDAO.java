@@ -15,6 +15,7 @@ import java.util.List;
 import com.mysql.jdbc.Statement;
 
 import br.com.maispratos.util.GerenciadorJDBC;
+import br.com.meuspratos.model.Classificacao;
 import br.com.meuspratos.model.Ingrediente;
 import br.com.meuspratos.model.Prato;
 import br.com.meuspratos.model.UnidadeMedida;
@@ -149,7 +150,8 @@ public class PratoDAO {
 					   + "		 PI.quantidade, "
 					   + "		 UM.sigla, "
 					   + "		 U.nome NOME_USUARIO, "
-					   + "		 C.descricao "
+					   + "		 C.descricao, "
+					   + "		 PU.avaliacao_prato "
 					   + "	FROM prato P "
 					   + " INNER JOIN prato_ingrediente PI "
 					   + "	  ON PI.prato_id = P.id "
@@ -183,9 +185,14 @@ public class PratoDAO {
 					prato.setNome(rs.getString("NOME_PRATO"));
 					prato.setModoPreparo(rs.getString("MODO_PREPARO"));
 					prato.setTempoPreparo(rs.getInt("TEMPO_PREPARO"));
+					prato.setAvaliacao(rs.getInt("AVALIACAO_PRATO"));
 					
 					Usuario usuario = new Usuario();
 					usuario.setNome(rs.getString("NOME_USUARIO"));
+					
+					Classificacao classificacao = new Classificacao();
+					classificacao.setDescricao(rs.getString("DESCRICAO"));
+					usuario.setClassificacao(classificacao);
 					
 					prato.setCriador(usuario);
 					

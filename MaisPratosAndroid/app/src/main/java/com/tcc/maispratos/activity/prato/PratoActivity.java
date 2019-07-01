@@ -12,16 +12,24 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.comentario.Comentario;
 import com.tcc.maispratos.comentario.ComentarioAdapter;
+import com.tcc.maispratos.ingrediente.Ingrediente;
 import com.tcc.maispratos.ingrediente.prato.IngredientePrato;
-import com.tcc.maispratos.ingrediente.prato.IngredientePratoAdapter;
 import com.tcc.maispratos.modopreparo.ModoPreparo;
 import com.tcc.maispratos.modopreparo.ModoPreparoAdapter;
+import com.tcc.maispratos.prato.IngredientePratoAdapter;
+import com.tcc.maispratos.prato.IngredientePratoDetalheAdapter;
 import com.tcc.maispratos.prato.Prato;
 import com.tcc.maispratos.util.BaseMenuActivity;
+import com.tcc.maispratos.util.Constants;
+import com.tcc.maispratos.util.TaskConnection;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +51,7 @@ public class PratoActivity extends BaseMenuActivity {
     private Prato prato;
     private Drawable estrelaSelecionada;
     private Drawable estrela;
+    private IngredientePratoDetalheAdapter adapterIngredientes;
 
 
     private ComentarioAdapter comentarioAdapter;
@@ -146,11 +155,16 @@ public class PratoActivity extends BaseMenuActivity {
         txtNomeCriador.setText("Criado por " + prato.getCriador().getNome());
         txtNivelCriador.setText("Cozinheiro nível " + prato.getCriador().getClassificacao().getDescricao());
         txtModoPreparo.setText(prato.getModoPreparo());
+        txtNotaPrato.setText(String.valueOf(prato.getNota()));
 
         for (int i = 0; i < estrelasAvaliacao.size(); i++) {
             estrelasAvaliacao.get(i).setOnClickListener(setAvaliacao(i));
         }
 
+        rcvIngredientes.setLayoutManager(new LinearLayoutManager(this));
+        adapterIngredientes = new IngredientePratoDetalheAdapter(new ArrayList<Ingrediente>(0), this);
+        rcvIngredientes.setAdapter(adapterIngredientes);
+        rcvIngredientes.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 
     private void getEstrelas() {
@@ -178,8 +192,34 @@ public class PratoActivity extends BaseMenuActivity {
                 for(int j = 0; j <= i  ; j++){
                     estrelasAvaliacao.get(j).setImageDrawable(estrelaSelecionada);
                 }
+
+                salvarAvaliacao(i + 1);
             }
         };
         return onClickListener;
+    }
+
+    private void salvarAvaliacao(final int avaliacao){
+        TaskConnection connection = new TaskConnection();
+        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.POST;
+        params[Constants.NOME_DO_RESOURCE] = "prato/avaliacao";
+
+        prato.setAvaliacao(avaliacao);
+        getUsuario().setPrato(prato);
+        String gson = new Gson().toJson(getUsuario());
+        try {
+            params[Constants.OBJETO] = new JSONObject(gson);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        connection.execute(params);
+
+        try {
+            getUsuario().setPrato(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            exibirErro("Ocorreu um problema ao avaliar. Tente novamente mais tarde.");
+        }
     }
 }

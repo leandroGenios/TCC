@@ -17,6 +17,7 @@ public class Prato implements Serializable {
     private int tempoPreparo;
     private Usuario criador;
     private int avaliacao;
+    private int nota;
 
     public int getId() {
         return id;
@@ -96,5 +97,13 @@ public class Prato implements Serializable {
 
     public void setAvaliacao(int avaliacao) {
         this.avaliacao = avaliacao;
+    }
+
+    public int getNota() {
+        return nota;
+    }
+
+    public void setNota(int nota) {
+        this.nota = nota;
     }
 }

@@ -53,4 +53,21 @@ public class PratoResource {
 					.build();
 		}
 	}
+	
+	@POST
+	@Path("/avaliacao")
+	public Response setAvaliacaoPrato(Usuario usuario) {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(dao.setAvaliacaoPrato(usuario))
+					.build();				
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
 }

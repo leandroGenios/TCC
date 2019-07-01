@@ -13,6 +13,7 @@ public class Prato {
 	private int tempoPreparo;
 	private Usuario criador;
 	private int avaliacao;
+	private int nota;
 
 	public int getAvaliacao() {
 		return avaliacao;
@@ -73,5 +74,11 @@ public class Prato {
 	}
 	public void setCriador(Usuario criador) {
 		this.criador = criador;
+	}
+	public int getNota() {
+		return nota;
+	}
+	public void setNota(int nota) {
+		this.nota = nota;
 	}
 }

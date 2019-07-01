@@ -37,6 +37,7 @@ public class PratoAdapter extends RecyclerView.Adapter<LinePratoHolder> {
     public void onBindViewHolder(@NonNull LinePratoHolder linePratoHolder, final int i) {
         linePratoHolder.txtNomePrato.setText(pratos.get(i).getNome());
         linePratoHolder.txtIngredientesCompativeis.setText(pratos.get(i).getIngredientesCompativeis() + " ingredientes compatíveis");
+        linePratoHolder.txtNota.setText(String.valueOf(pratos.get(i).getNota()));
 
         if(pratos.get(i).getImagemBase64() != null){
             byte[] bitMapData = Base64.decode(pratos.get(i).getImagemBase64(),Base64.DEFAULT);

@@ -131,7 +131,7 @@ public class PratoDAO {
 		return true;
 	}
 	
-	public List<Prato> listPratos(List<Ingrediente> ingredientes) throws SQLException{
+	public List<Prato> listPratos(List<Ingrediente> ingredientes, int idUsuario) throws SQLException{
 		List<Prato> pratos = new ArrayList<Prato>();
 		
 		Connection conn = null;
@@ -179,13 +179,15 @@ public class PratoDAO {
 					"	 ON C.id = UC.classificacao_id\r\n" + 
 					"  LEFT JOIN prato_avaliacao PA\r\n" + 
 					"     ON PA.prato_id = P.ID \r\n" + 
-					"	AND PA.usuario_id = 2\r\n" + 
+					"	AND PA.usuario_id = ?\r\n" + 
 					"   LEFT JOIN prato_avaliacao PA2\r\n" + 
 					"     ON PA2.prato_id = P.ID \r\n" + 
 					"  WHERE TRUE\r\n" + 
 					"  GROUP BY I.nome, PA.avaliacao\r\n" + 
 					"  ORDER BY P.nome";
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setInt(1, idUsuario);
 			
 			ResultSet rs = stmt.executeQuery();
 			int pratoId = 0;
@@ -217,6 +219,7 @@ public class PratoDAO {
 					ingredientesPrato = new ArrayList<>();
 					prato.setIngredientes(ingredientesPrato);
 					prato.setNota(rs.getInt("MEDIA"));
+					prato.setAvaliacao(rs.getInt("AVALIACAO"));
 					
 					pratos.add(prato);
 				}

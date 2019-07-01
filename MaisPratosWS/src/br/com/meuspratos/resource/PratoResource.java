@@ -43,7 +43,7 @@ public class PratoResource {
 		try {
 			return Response
 					.status(Response.Status.OK)
-					.entity(dao.listPratos(new IngredienteDAO().getIngredientes(idUsuario)))
+					.entity(dao.listPratos(new IngredienteDAO().getIngredientes(idUsuario), idUsuario))
 					.build();				
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -3,7 +3,9 @@ package com.tcc.maispratos.activity.prato;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -52,6 +54,7 @@ public class PratoActivity extends BaseMenuActivity {
     private Drawable estrelaSelecionada;
     private Drawable estrela;
     private IngredientePratoDetalheAdapter adapterIngredientes;
+    private CoordinatorLayout coordinatorLayout;
 
 
     private ComentarioAdapter comentarioAdapter;
@@ -67,6 +70,7 @@ public class PratoActivity extends BaseMenuActivity {
         iniciaElementos();
         getEstrelas();
         setMinhaAvaliacaoPrato();
+        montaListaIngredientes(prato.getIngredientes());
 
        /* RecyclerView rcvComentario = (RecyclerView) findViewById(R.id.rcvComentarios);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -150,6 +154,7 @@ public class PratoActivity extends BaseMenuActivity {
         rcvComentarios = (RecyclerView) findViewById(R.id.rcvComentarios);
         btnDeixarComentario = (Button) findViewById(R.id.btnDeixarComentario);
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.actPrato);
 
         txtNomePrato.setText(prato.getNome());
         txtNomeCriador.setText("Criado por " + prato.getCriador().getNome());
@@ -165,6 +170,17 @@ public class PratoActivity extends BaseMenuActivity {
         adapterIngredientes = new IngredientePratoDetalheAdapter(new ArrayList<Ingrediente>(0), this);
         rcvIngredientes.setAdapter(adapterIngredientes);
         rcvIngredientes.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+
+        Snackbar snackbar = Snackbar
+                .make(coordinatorLayout, "www.journaldev.com", Snackbar.LENGTH_LONG)
+                .setAction("RETRY", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                    }
+                });
+        snackbar.setText("fsdfsdf");
+        snackbar.show();
     }
 
     private void getEstrelas() {
@@ -176,6 +192,7 @@ public class PratoActivity extends BaseMenuActivity {
         for (ImageView imagem: estrelasAvaliacao) {
             imagem.setImageDrawable(estrela);
         }
+        System.out.println(prato.getAvaliacao());
         for(int i = 0 ; i < prato.getAvaliacao(); i++){
             estrelasAvaliacao.get(i).setImageDrawable(estrelaSelecionada);
         }
@@ -220,6 +237,12 @@ public class PratoActivity extends BaseMenuActivity {
         } catch (Exception e) {
             e.printStackTrace();
             exibirErro("Ocorreu um problema ao avaliar. Tente novamente mais tarde.");
+        }
+    }
+
+    private void montaListaIngredientes(List<Ingrediente> ingredientes){
+        for (Ingrediente ingrediente: ingredientes) {
+            adapterIngredientes.updateList(ingrediente);
         }
     }
 }

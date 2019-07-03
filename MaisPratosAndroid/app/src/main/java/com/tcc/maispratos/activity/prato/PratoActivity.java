@@ -3,6 +3,8 @@ package com.tcc.maispratos.activity.prato;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -33,8 +35,13 @@ import com.tcc.maispratos.util.TaskConnection;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class PratoActivity extends BaseMenuActivity {
 
@@ -55,6 +62,11 @@ public class PratoActivity extends BaseMenuActivity {
     private Drawable estrela;
     private IngredientePratoDetalheAdapter adapterIngredientes;
     private CoordinatorLayout coordinatorLayout;
+    private Snackbar snackbar;
+    private long minutos;
+    private long segundos;
+    private Drawable iconFab;
+    private CountDownTimer countTime;
 
 
     private ComentarioAdapter comentarioAdapter;
@@ -72,6 +84,8 @@ public class PratoActivity extends BaseMenuActivity {
         setMinhaAvaliacaoPrato();
         montaListaIngredientes(prato.getIngredientes());
 
+        prato.setUltimoPreparo(Calendar.getInstance().getTime());
+        verificarPreparo();
        /* RecyclerView rcvComentario = (RecyclerView) findViewById(R.id.rcvComentarios);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rcvComentario.setLayoutManager(layoutManager);
@@ -91,76 +105,34 @@ public class PratoActivity extends BaseMenuActivity {
         comentarioAdapter.updateList(comentario1);
         comentarioAdapter.updateList(comentario1);
         comentarioAdapter.updateList(comentario1);
-        comentarioAdapter.updateList(comentario1);
-
-
-
-        RecyclerView rcvIngrediente = (RecyclerView) findViewById(R.id.rcvIngredientes);
-        LinearLayoutManager layoutManager1 = new LinearLayoutManager(this);
-        rcvIngrediente.setLayoutManager(layoutManager1);
-        IngredientePratoAdapter ingredientePratoAdapter = new IngredientePratoAdapter(new ArrayList<IngredientePrato>(0), this);
-        rcvIngrediente.setAdapter(ingredientePratoAdapter);
-        rcvIngrediente.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-
-        IngredientePrato ingredientePrato = new IngredientePrato();
-        ingredientePrato.setNome("Arroz");
-        ingredientePrato.setQuantidade(1);
-        ingredientePrato.setTipo("Kg");
-
-        ingredientePratoAdapter.updateList(ingredientePrato);
-        ingredientePratoAdapter.updateList(ingredientePrato);
-        ingredientePratoAdapter.updateList(ingredientePrato);
-        ingredientePratoAdapter.updateList(ingredientePrato);
-        ingredientePratoAdapter.updateList(ingredientePrato);
-        ingredientePratoAdapter.updateList(ingredientePrato);
-        ingredientePratoAdapter.updateList(ingredientePrato);
-
-
-        RecyclerView rcvModoPreparo = (RecyclerView) findViewById(R.id.rcvModoPreparo);
-        LinearLayoutManager layoutManager2 = new LinearLayoutManager(this);
-        rcvModoPreparo.setLayoutManager(layoutManager2);
-        ModoPreparoAdapter modoPreparoAdapter = new ModoPreparoAdapter(new ArrayList<ModoPreparo>(0), this);
-        rcvModoPreparo.setAdapter(modoPreparoAdapter);
-        rcvModoPreparo.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-
-        ModoPreparo modoPreparo = new ModoPreparo();
-        modoPreparo.setOrdem(1);
-        modoPreparo.setDescricao("Descasque as bataras");
-
-        modoPreparoAdapter.updateList(modoPreparo);
-        modoPreparoAdapter.updateList(modoPreparo);
-        modoPreparoAdapter.updateList(modoPreparo);
-        modoPreparoAdapter.updateList(modoPreparo);
-        modoPreparoAdapter.updateList(modoPreparo);
-        modoPreparoAdapter.updateList(modoPreparo);
-        modoPreparoAdapter.updateList(modoPreparo);
-        modoPreparoAdapter.updateList(modoPreparo);*/
+        comentarioAdapter.updateList(comentario1);*/
     }
 
     public void iniciaElementos(){
-        txtNotaPrato = (TextView) findViewById(R.id.txtNotaPrato);
-        txtNomePrato = (TextView) findViewById(R.id.txtNomePrato);
-        txtNomeCriador = (TextView) findViewById(R.id.txtNomeCriador);
-        txtNivelCriador = (TextView) findViewById(R.id.txtNivelCriador);
+        txtNotaPrato = findViewById(R.id.txtNotaPrato);
+        txtNomePrato = findViewById(R.id.txtNomePrato);
+        txtNomeCriador = findViewById(R.id.txtNomeCriador);
+        txtNivelCriador = findViewById(R.id.txtNivelCriador);
         estrelasAvaliacao = new ArrayList<>();
         estrelasAvaliacao.add((ImageView) findViewById(R.id.imgAvaliacao1));
         estrelasAvaliacao.add((ImageView) findViewById(R.id.imgAvaliacao2));
         estrelasAvaliacao.add((ImageView) findViewById(R.id.imgAvaliacao3));
         estrelasAvaliacao.add((ImageView) findViewById(R.id.imgAvaliacao4));
         estrelasAvaliacao.add((ImageView) findViewById(R.id.imgAvaliacao5));
-        rcvIngredientes = (RecyclerView) findViewById(R.id.rcvIngredientes);
-        txtModoPreparo = (TextView) findViewById(R.id.txtModoPreparo);
-        txtTempoPreparo = (TextView) findViewById(R.id.txtTempoPreparo);
-        rcvComentarios = (RecyclerView) findViewById(R.id.rcvComentarios);
-        btnDeixarComentario = (Button) findViewById(R.id.btnDeixarComentario);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.actPrato);
+        rcvIngredientes = findViewById(R.id.rcvIngredientes);
+        txtModoPreparo = findViewById(R.id.txtModoPreparo);
+        txtTempoPreparo = findViewById(R.id.txtTempoPreparo);
+        rcvComentarios = findViewById(R.id.rcvComentarios);
+        btnDeixarComentario = findViewById(R.id.btnDeixarComentario);
+        fab = findViewById(R.id.fab);
+        coordinatorLayout = findViewById(R.id.actPrato);
 
         txtNomePrato.setText(prato.getNome());
         txtNomeCriador.setText("Criado por " + prato.getCriador().getNome());
         txtNivelCriador.setText("Cozinheiro nível " + prato.getCriador().getClassificacao().getDescricao());
         txtModoPreparo.setText(prato.getModoPreparo());
         txtNotaPrato.setText(String.valueOf(prato.getNota()));
+        txtTempoPreparo.setText(prato.getTempoPreparo() + " minutos");
 
         for (int i = 0; i < estrelasAvaliacao.size(); i++) {
             estrelasAvaliacao.get(i).setOnClickListener(setAvaliacao(i));
@@ -171,16 +143,8 @@ public class PratoActivity extends BaseMenuActivity {
         rcvIngredientes.setAdapter(adapterIngredientes);
         rcvIngredientes.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
-        Snackbar snackbar = Snackbar
-                .make(coordinatorLayout, "www.journaldev.com", Snackbar.LENGTH_LONG)
-                .setAction("RETRY", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                    }
-                });
-        snackbar.setText("fsdfsdf");
-        snackbar.show();
+        fab.setOnClickListener(fabAction());
+        snackbar = criarTimer();
     }
 
     private void getEstrelas() {
@@ -192,7 +156,6 @@ public class PratoActivity extends BaseMenuActivity {
         for (ImageView imagem: estrelasAvaliacao) {
             imagem.setImageDrawable(estrela);
         }
-        System.out.println(prato.getAvaliacao());
         for(int i = 0 ; i < prato.getAvaliacao(); i++){
             estrelasAvaliacao.get(i).setImageDrawable(estrelaSelecionada);
         }
@@ -243,6 +206,87 @@ public class PratoActivity extends BaseMenuActivity {
     private void montaListaIngredientes(List<Ingrediente> ingredientes){
         for (Ingrediente ingrediente: ingredientes) {
             adapterIngredientes.updateList(ingrediente);
+        }
+    }
+
+    private Snackbar criarTimer(){
+        return Snackbar.make(coordinatorLayout, "", Snackbar.LENGTH_INDEFINITE);
+    }
+
+    private View.OnClickListener fabAction(){
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(snackbar.isShown()){
+                    iconFab = getResources().getDrawable(android.R.drawable.ic_media_play);
+                    snackbar.dismiss();
+                    getTimer(prato.getTempoPreparo() * 60000).cancel();
+                }else{
+                    salvarInicioPreparo();
+                    iconFab = getResources().getDrawable(android.R.drawable.ic_media_pause);
+                    getTimer(prato.getTempoPreparo() * 60000).start();
+                    snackbar.show();
+                }
+                fab.setImageDrawable(iconFab);
+            }
+        };
+        return onClickListener;
+    }
+
+    private CountDownTimer getTimer(long tempo){
+        if(countTime == null){
+            countTime = new CountDownTimer(tempo, 1000) {
+                public void onTick(long millisUntilFinished) {
+                    minutos = (millisUntilFinished / 60000);
+                    segundos = ((millisUntilFinished % 60000) / 1000);
+                    snackbar.setText("Tempo restante: " + (minutos < 10 ? "0" : "") + minutos + ":" + (segundos < 10 ? "0" : "") + segundos);
+                }
+                public void onFinish() {
+                    snackbar.setText("Concluído!!!");
+                }
+            };
+        }
+        return countTime;
+    }
+
+    private void salvarInicioPreparo(){
+        TaskConnection connection = new TaskConnection();
+        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.POST;
+        params[Constants.NOME_DO_RESOURCE] = "prato/setInicioPreparo";
+
+        prato.setHoraPreparo(Calendar.getInstance().getTime());
+        getUsuario().setPrato(prato);
+        String gson = new Gson().toJson(getUsuario());
+        try {
+            params[Constants.OBJETO] = new JSONObject(gson);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        connection.execute(params);
+
+        try {
+            getUsuario().setPrato(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            exibirErro("Ocorreu um problema ao avaliar. Tente novamente mais tarde.");
+        }
+    }
+
+    private Long verificarPreparo(){
+        if(prato.getUltimoPreparo() != null){
+            int tempoPreparo = prato.getTempoPreparo() * 60000;
+            long tempoFinal = prato.getUltimoPreparo().getTime() + tempoPreparo;
+            if(tempoFinal > Calendar.getInstance().getTime().getTime()){
+                iconFab = getResources().getDrawable(android.R.drawable.ic_media_pause);
+                getTimer(tempoFinal - prato.getUltimoPreparo().getTime()).start();
+                snackbar.show();
+                return tempoFinal;
+            }else{
+                return null;
+            }
+        }else{
+            return null;
         }
     }
 }

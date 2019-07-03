@@ -4,6 +4,7 @@ import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.ingrediente.Ingrediente;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 public class Prato implements Serializable {
@@ -18,6 +19,8 @@ public class Prato implements Serializable {
     private Usuario criador;
     private int avaliacao;
     private int nota;
+    private Date horaPreparo;
+    private Date ultimoPreparo;
 
     public int getId() {
         return id;
@@ -105,5 +108,21 @@ public class Prato implements Serializable {
 
     public void setNota(int nota) {
         this.nota = nota;
+    }
+
+    public Date getHoraPreparo() {
+        return horaPreparo;
+    }
+
+    public void setHoraPreparo(Date horaPreparo) {
+        this.horaPreparo = horaPreparo;
+    }
+
+    public Date getUltimoPreparo() {
+        return ultimoPreparo;
+    }
+
+    public void setUltimoPreparo(Date ultimoPreparo) {
+        this.ultimoPreparo = ultimoPreparo;
     }
 }

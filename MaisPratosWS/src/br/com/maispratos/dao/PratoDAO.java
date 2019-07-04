@@ -335,7 +335,7 @@ public class PratoDAO {
 			
 			stmt.setInt(1, usuario.getPrato().getId());
 			stmt.setInt(2, usuario.getId());
-			stmt.setDate(3, (Date) usuario.getPrato().getHoraPreparo());
+			stmt.setLong(3, usuario.getPrato().getHoraPreparo());
 			
 			stmt.executeUpdate();
 		}

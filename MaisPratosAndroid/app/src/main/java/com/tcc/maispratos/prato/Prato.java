@@ -19,8 +19,8 @@ public class Prato implements Serializable {
     private Usuario criador;
     private int avaliacao;
     private int nota;
-    private Date horaPreparo;
-    private Date ultimoPreparo;
+    private long horaPreparo;
+    private long ultimoPreparo;
 
     public int getId() {
         return id;
@@ -110,19 +110,19 @@ public class Prato implements Serializable {
         this.nota = nota;
     }
 
-    public Date getHoraPreparo() {
+    public long getHoraPreparo() {
         return horaPreparo;
     }
 
-    public void setHoraPreparo(Date horaPreparo) {
+    public void setHoraPreparo(long horaPreparo) {
         this.horaPreparo = horaPreparo;
     }
 
-    public Date getUltimoPreparo() {
+    public long getUltimoPreparo() {
         return ultimoPreparo;
     }
 
-    public void setUltimoPreparo(Date ultimoPreparo) {
+    public void setUltimoPreparo(long ultimoPreparo) {
         this.ultimoPreparo = ultimoPreparo;
     }
 }

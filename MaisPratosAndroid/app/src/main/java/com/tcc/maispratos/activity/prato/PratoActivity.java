@@ -253,7 +253,7 @@ public class PratoActivity extends BaseMenuActivity {
         params[Constants.TIPO_DE_REQUISICAO] = Constants.POST;
         params[Constants.NOME_DO_RESOURCE] = "prato/setInicioPreparo";
 
-        prato.setHoraPreparo(Calendar.getInstance().getTime());
+        prato.setHoraPreparo(Calendar.getInstance().getTime().getTime());
         getUsuario().setPrato(prato);
         String gson = new Gson().toJson(getUsuario());
         try {
@@ -272,9 +272,9 @@ public class PratoActivity extends BaseMenuActivity {
     }
 
     private Long verificarPreparo(){
-        if(prato.getUltimoPreparo() != null){
+        if(prato.getUltimoPreparo() != 0){
             int tempoPreparo = prato.getTempoPreparo() * 60000;
-            long tempoFinal = prato.getUltimoPreparo().getTime() + tempoPreparo;
+            long tempoFinal = prato.getUltimoPreparo() + tempoPreparo;
             if(tempoFinal > Calendar.getInstance().getTime().getTime()){
                 iconFab = getResources().getDrawable(android.R.drawable.ic_media_pause);
                 getTimer(tempoFinal - Calendar.getInstance().getTime().getTime()).start();

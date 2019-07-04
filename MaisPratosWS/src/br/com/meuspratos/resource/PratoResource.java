@@ -70,4 +70,21 @@ public class PratoResource {
 					.build();
 		}
 	}
+	
+	@POST
+	@Path("/setInicioPreparo")
+	public Response setPreparo(Usuario usuario) {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(dao.setPreparo(usuario))
+					.build();				
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
 }

@@ -83,8 +83,6 @@ public class PratoActivity extends BaseMenuActivity {
         getEstrelas();
         setMinhaAvaliacaoPrato();
         montaListaIngredientes(prato.getIngredientes());
-
-        prato.setUltimoPreparo(Calendar.getInstance().getTime());
         verificarPreparo();
        /* RecyclerView rcvComentario = (RecyclerView) findViewById(R.id.rcvComentarios);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -279,7 +277,7 @@ public class PratoActivity extends BaseMenuActivity {
             long tempoFinal = prato.getUltimoPreparo().getTime() + tempoPreparo;
             if(tempoFinal > Calendar.getInstance().getTime().getTime()){
                 iconFab = getResources().getDrawable(android.R.drawable.ic_media_pause);
-                getTimer(tempoFinal - prato.getUltimoPreparo().getTime()).start();
+                getTimer(tempoFinal - Calendar.getInstance().getTime().getTime()).start();
                 snackbar.show();
                 return tempoFinal;
             }else{

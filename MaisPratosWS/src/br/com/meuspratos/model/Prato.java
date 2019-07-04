@@ -1,5 +1,6 @@
 package br.com.meuspratos.model;
 
+import java.util.Date;
 import java.util.List;
 
 public class Prato {
@@ -14,6 +15,8 @@ public class Prato {
 	private Usuario criador;
 	private int avaliacao;
 	private int nota;
+    private Date horaPreparo;
+    private Date ultimoPreparo;
 
 	public int getAvaliacao() {
 		return avaliacao;
@@ -80,5 +83,17 @@ public class Prato {
 	}
 	public void setNota(int nota) {
 		this.nota = nota;
+	}
+	public Date getHoraPreparo() {
+		return horaPreparo;
+	}
+	public void setHoraPreparo(Date horaPreparo) {
+		this.horaPreparo = horaPreparo;
+	}
+	public Date getUltimoPreparo() {
+		return ultimoPreparo;
+	}
+	public void setUltimoPreparo(Date ultimoPreparo) {
+		this.ultimoPreparo = ultimoPreparo;
 	}
 }

@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -313,6 +314,28 @@ public class PratoDAO {
 			stmt.setInt(1, usuario.getPrato().getAvaliacao());
 			stmt.setInt(2, usuario.getPrato().getId());
 			stmt.setInt(3, usuario.getId());
+			
+			stmt.executeUpdate();
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		return true;
+	}
+	
+	public boolean setPreparo(Usuario usuario) throws SQLException{
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "INSERT INTO prato_preparo (prato_id, usuario_id, inicio_preparo) values (?,?,?)";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setInt(1, usuario.getPrato().getId());
+			stmt.setInt(2, usuario.getId());
+			stmt.setDate(3, (Date) usuario.getPrato().getHoraPreparo());
 			
 			stmt.executeUpdate();
 		}

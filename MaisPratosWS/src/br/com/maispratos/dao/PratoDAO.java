@@ -162,7 +162,12 @@ public class PratoDAO {
 					"		C.descricao,\r\n" + 
 					"		PA.avaliacao,\r\n" + 
 					"		PA2.avaliacao,\r\n" + 
-					"		AVG(PA2.avaliacao) AS media\r\n" + 
+					"		AVG(PA2.avaliacao) AS media,\r\n" +
+					"		(SELECT inicio_preparo\r\n"+
+					"		   FROM prato_preparo\r\n"+
+					"		  WHERE prato_id = P.id\r\n"+
+					"		  ORDER BY inicio_preparo DESC\r\n"+
+					"		  LIMIT 1)inicio_preparo\r\n" + 
 					"   FROM prato P\r\n" + 
 					"  INNER JOIN prato_ingrediente PI\r\n" + 
 					"     ON PI.prato_id = P.id\r\n" + 
@@ -178,16 +183,17 @@ public class PratoDAO {
 					"	 ON UC.usuario_id = U.id\r\n" + 
 					"  INNER JOIN classificacao C\r\n" + 
 					"	 ON C.id = UC.classificacao_id\r\n" + 
-					"  LEFT JOIN prato_avaliacao PA\r\n" + 
-					"     ON PA.prato_id = P.ID \r\n" + 
+					"   LEFT JOIN prato_avaliacao PA\r\n" + 
+					"    ON PA.prato_id = P.ID \r\n" + 
 					"	AND PA.usuario_id = ?\r\n" + 
 					"   LEFT JOIN prato_avaliacao PA2\r\n" + 
-					"     ON PA2.prato_id = P.ID \r\n" + 
+					"    ON PA2.prato_id = P.ID \r\n" + 
 					"  WHERE TRUE\r\n" + 
 					"  GROUP BY I.nome, PA.avaliacao\r\n" + 
 					"  ORDER BY P.nome";
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
+			System.out.println(sql);
 			stmt.setInt(1, idUsuario);
 			
 			ResultSet rs = stmt.executeQuery();
@@ -221,6 +227,7 @@ public class PratoDAO {
 					prato.setIngredientes(ingredientesPrato);
 					prato.setNota(rs.getInt("MEDIA"));
 					prato.setAvaliacao(rs.getInt("AVALIACAO"));
+					prato.setUltimoPreparo(rs.getLong("inicio_preparo"));
 					
 					pratos.add(prato);
 				}

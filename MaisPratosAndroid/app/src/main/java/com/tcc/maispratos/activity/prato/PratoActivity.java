@@ -143,6 +143,8 @@ public class PratoActivity extends BaseMenuActivity {
 
         fab.setOnClickListener(fabAction());
         snackbar = criarTimer();
+
+        btnDeixarComentario.setOnClickListener(addComentario());
     }
 
     private void getEstrelas() {
@@ -163,15 +165,21 @@ public class PratoActivity extends BaseMenuActivity {
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int j = 0; j < estrelasAvaliacao.size(); j++) {
-                    estrelasAvaliacao.get(j).setImageDrawable(estrela);
-                }
+                int tempoPreparo = prato.getTempoPreparo() * 60000;
+                long tempoFinal = prato.getUltimoPreparo() + tempoPreparo;
+                if(prato.getUltimoPreparo() != 0 && tempoFinal < Calendar.getInstance().getTime().getTime()){
+                    for (int j = 0; j < estrelasAvaliacao.size(); j++) {
+                        estrelasAvaliacao.get(j).setImageDrawable(estrela);
+                    }
 
-                for(int j = 0; j <= i  ; j++){
-                    estrelasAvaliacao.get(j).setImageDrawable(estrelaSelecionada);
-                }
+                    for(int j = 0; j <= i  ; j++){
+                        estrelasAvaliacao.get(j).setImageDrawable(estrelaSelecionada);
+                    }
 
-                salvarAvaliacao(i + 1);
+                    salvarAvaliacao(i + 1);
+                }else{
+                    exibirMensagem("Você precisa preparar o prato para poder avaliar.");
+                }
             }
         };
         return onClickListener;
@@ -277,6 +285,7 @@ public class PratoActivity extends BaseMenuActivity {
             long tempoFinal = prato.getUltimoPreparo() + tempoPreparo;
             if(tempoFinal > Calendar.getInstance().getTime().getTime()){
                 iconFab = getResources().getDrawable(android.R.drawable.ic_media_pause);
+                fab.setImageDrawable(iconFab);
                 getTimer(tempoFinal - Calendar.getInstance().getTime().getTime()).start();
                 snackbar.show();
                 return tempoFinal;
@@ -286,5 +295,24 @@ public class PratoActivity extends BaseMenuActivity {
         }else{
             return null;
         }
+    }
+
+    private View.OnClickListener addComentario(){
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int tempoPreparo = prato.getTempoPreparo() * 60000;
+                long tempoFinal = prato.getUltimoPreparo() + tempoPreparo;
+                if(prato.getUltimoPreparo() != 0 && tempoFinal < Calendar.getInstance().getTime().getTime()){
+                    Intent intent = new Intent(getApplicationContext(), ComentarioActivity.class);
+                    intent.putExtra("usuario", getUsuario());
+                    intent.putExtra("prato", prato);
+                    startActivity(intent);
+                }else{
+                    exibirMensagem("Você precisa preparar o prato para poder avaliar.");
+                }
+            }
+        };
+        return onClickListener;
     }
 }

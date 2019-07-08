@@ -9,7 +9,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -17,7 +16,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.usuario.Usuario;
-import com.tcc.maispratos.ingrediente.Ingrediente;
 import com.tcc.maispratos.prato.Prato;
 import com.tcc.maispratos.prato.PratoAdapter;
 import com.tcc.maispratos.util.BaseMenuActivity;
@@ -29,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PratosActivity extends BaseMenuActivity {
-    private Toolbar toolbar;
     private FloatingActionButton fab;
     private RecyclerView rcvPratos;
     private PratoAdapter adapter;
@@ -41,10 +38,10 @@ public class PratosActivity extends BaseMenuActivity {
         setTitle("Lista de pratos");
         setUsuario((Usuario) getIntent().getExtras().getSerializable("usuario"));
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        rcvPratos = (RecyclerView) findViewById(R.id.rcvPratos);
+        rcvPratos = findViewById(R.id.rcvPratos);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rcvPratos.setLayoutManager(layoutManager);
         adapter = new PratoAdapter(new ArrayList<Prato>(0), this);
@@ -60,14 +57,17 @@ public class PratosActivity extends BaseMenuActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_home:
+                case R.id.navigation_geral:
                     listGeral();
                     return true;
-                case R.id.navigation_dashboard:
+                case R.id.navigation_favoritos:
                     listGeral();
                     return true;
-                case R.id.navigation_notifications:
+                case R.id.navigation_historico:
                     listGeral();
+                    return true;
+                case R.id.navigation_meus:
+                    listMeusPratos();
                     return true;
             }
             return false;
@@ -75,7 +75,7 @@ public class PratosActivity extends BaseMenuActivity {
     };
 
     private void iniciaElementos(){
-        fab = (FloatingActionButton) findViewById(R.id.flbAddPrato);
+        fab = findViewById(R.id.flbAddPrato);
         fab.setOnClickListener(addPrato());
     }
 
@@ -118,23 +118,27 @@ public class PratosActivity extends BaseMenuActivity {
         }
     }
 
-    private List<Ingrediente> getIngredientes(){
-        List<Ingrediente> list = null;
+    private void listMeusPratos(){
+        List<Prato> list = null;
         TaskConnection connection = new TaskConnection();
-        String[] params = new String[Constants.QUERY_SEM_ENVIO_DE_OBJETO];
+        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
         params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
-        params[Constants.NOME_DO_RESOURCE] = "ingrediente/" + getUsuario().getId();
-
+        params[Constants.NOME_DO_RESOURCE] = "prato/meus" + getUsuario().getId();
         String json = null;
         connection.execute(params);
         try {
             json = (String) connection.get();
-            Type listType = new TypeToken<ArrayList<Ingrediente>>(){}.getType();
+            Type listType = new TypeToken<ArrayList<Prato>>(){}.getType();
             list = new Gson().fromJson(json, listType);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return list;
+        adapter.clear();
+        if(list != null){
+            for (Prato prato: list) {
+                adapter.updateList(prato);
+            }
+        }
     }
 }

@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,6 +16,7 @@ import com.mysql.jdbc.Statement;
 
 import br.com.maispratos.util.GerenciadorJDBC;
 import br.com.meuspratos.model.Classificacao;
+import br.com.meuspratos.model.Comentario;
 import br.com.meuspratos.model.Ingrediente;
 import br.com.meuspratos.model.Prato;
 import br.com.meuspratos.model.UnidadeMedida;
@@ -193,7 +193,6 @@ public class PratoDAO {
 					"  ORDER BY P.nome";
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
-			System.out.println(sql);
 			stmt.setInt(1, idUsuario);
 			
 			ResultSet rs = stmt.executeQuery();
@@ -350,5 +349,61 @@ public class PratoDAO {
 			GerenciadorJDBC.close(conn, stmt);
 		}
 		return true;
+	}
+	
+	public boolean setComentario(Usuario usuario) throws SQLException{
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "INSERT INTO comentario (prato_id, usuario_id, descricao) values (?,?,?)";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setInt(1, usuario.getPrato().getId());
+			stmt.setInt(2, usuario.getId());
+			stmt.setString(3, usuario.getPrato().getComentario());
+			
+			stmt.executeUpdate();
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		return true;
+	}
+	
+	public List<Comentario> listComentarios(int pratoId) throws SQLException{
+		List<Comentario> comentarios = new ArrayList<Comentario>();
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "SELECT C.ID, C.DESCRICAO, U.NOME FROM comentario C INNER JOIN USUARIO U ON U.ID = USUARIO_ID WHERE prato_id = ?";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setInt(1, pratoId);
+			
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				Comentario comentario = new Comentario();
+				comentario.setId(rs.getInt("ID"));
+				comentario.setTexto(rs.getString("DESCRICAO"));
+				
+				Usuario usuario = new Usuario();
+				usuario.setNome(rs.getString("NOME"));
+				comentario.setUsuario(usuario);
+				
+				comentarios.add(comentario);
+			}
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		
+		return comentarios;
 	}
 }

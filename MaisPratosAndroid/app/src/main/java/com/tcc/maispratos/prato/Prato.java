@@ -21,6 +21,7 @@ public class Prato implements Serializable {
     private int nota;
     private long horaPreparo;
     private long ultimoPreparo;
+    private String comentario;
 
     public int getId() {
         return id;
@@ -124,5 +125,13 @@ public class Prato implements Serializable {
 
     public void setUltimoPreparo(long ultimoPreparo) {
         this.ultimoPreparo = ultimoPreparo;
+    }
+
+    public String getComentario() {
+        return comentario;
+    }
+
+    public void setComentario(String comentario) {
+        this.comentario = comentario;
     }
 }

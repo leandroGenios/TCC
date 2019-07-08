@@ -2,21 +2,25 @@ package com.tcc.maispratos.activity.prato;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.comentario.Comentario;
@@ -35,6 +39,9 @@ import com.tcc.maispratos.util.TaskConnection;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,6 +49,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static com.google.zxing.integration.android.IntentIntegrator.REQUEST_CODE;
 
 public class PratoActivity extends BaseMenuActivity {
 
@@ -83,27 +92,9 @@ public class PratoActivity extends BaseMenuActivity {
         getEstrelas();
         setMinhaAvaliacaoPrato();
         montaListaIngredientes(prato.getIngredientes());
+        montaListaIngredientes(prato.getId());
         verificarPreparo();
-       /* RecyclerView rcvComentario = (RecyclerView) findViewById(R.id.rcvComentarios);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        rcvComentario.setLayoutManager(layoutManager);
-        comentarioAdapter = new ComentarioAdapter(new ArrayList<Comentario>(0), this);
-        rcvComentario.setAdapter(comentarioAdapter);
-        rcvComentario.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
-        Usuario usuario1 = new Usuario();
-        usuario1.setNome("ALESSANDRA");
-
-        Comentario comentario1 = new Comentario();
-        comentario1.setTexto("Este prato é muito bom e o tempo de preparo está certinho.");
-        comentario1.setUsuario(usuario1);
-
-        comentarioAdapter.updateList(comentario1);
-        comentarioAdapter.updateList(comentario1);
-        comentarioAdapter.updateList(comentario1);
-        comentarioAdapter.updateList(comentario1);
-        comentarioAdapter.updateList(comentario1);
-        comentarioAdapter.updateList(comentario1);*/
     }
 
     public void iniciaElementos(){
@@ -140,6 +131,11 @@ public class PratoActivity extends BaseMenuActivity {
         adapterIngredientes = new IngredientePratoDetalheAdapter(new ArrayList<Ingrediente>(0), this);
         rcvIngredientes.setAdapter(adapterIngredientes);
         rcvIngredientes.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+
+        rcvComentarios.setLayoutManager(new LinearLayoutManager(this));
+        comentarioAdapter = new ComentarioAdapter(new ArrayList<Comentario>(0), this);
+        rcvComentarios.setAdapter(comentarioAdapter);
+        rcvComentarios.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         fab.setOnClickListener(fabAction());
         snackbar = criarTimer();
@@ -307,12 +303,59 @@ public class PratoActivity extends BaseMenuActivity {
                     Intent intent = new Intent(getApplicationContext(), ComentarioActivity.class);
                     intent.putExtra("usuario", getUsuario());
                     intent.putExtra("prato", prato);
-                    startActivity(intent);
+                    startActivityForResult(intent, 1);
                 }else{
                     exibirMensagem("Você precisa preparar o prato para poder avaliar.");
                 }
             }
         };
         return onClickListener;
+    }
+
+    private void montaListaIngredientes(int idPrato){
+        List<Comentario> list = null;
+        TaskConnection connection = new TaskConnection();
+        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
+        params[Constants.NOME_DO_RESOURCE] = "prato/comentario/" + idPrato;
+        String json = null;
+        connection.execute(params);
+        try {
+            json = (String) connection.get();
+            Type listType = new TypeToken<ArrayList<Comentario>>(){}.getType();
+            list = new Gson().fromJson(json, listType);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        comentarioAdapter.clear();
+        if(list != null){
+            for (Comentario comentario: list) {
+                comentarioAdapter.updateList(comentario);
+            }
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+            switch (requestCode) {
+                case REQUEST_CODE:
+                    break;
+                case 1:
+                    if (resultCode == RESULT_FIRST_USER) {
+                        Comentario comentario = new Comentario();
+                        comentario.setTexto((String) data.getExtras().getSerializable("comentario"));
+                        comentario.setUsuario(getUsuario());
+                        comentarioAdapter.updateList(comentario);
+                    }
+                    break;
+            }
+        } catch (Exception e) {
+            Log.e("Erro", "Exception in onActivityResult : " + e.getMessage());
+        }
+
+        if (resultCode == RESULT_OK && data != null) {
+        }
     }
 }

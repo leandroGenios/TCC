@@ -54,6 +54,23 @@ public class PratoResource {
 		}
 	}
 	
+	@GET
+	@Path("/meus/{idUsuario}")
+	public Response listMeusPratos(@PathParam("idUsuario") int idUsuario) {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(dao.listPratos(new IngredienteDAO().getIngredientes(idUsuario), idUsuario))
+					.build();				
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
+	
 	@POST
 	@Path("/avaliacao")
 	public Response setAvaliacaoPrato(Usuario usuario) {
@@ -78,6 +95,40 @@ public class PratoResource {
 			return Response
 					.status(Response.Status.OK)
 					.entity(dao.setPreparo(usuario))
+					.build();				
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
+	
+	@POST
+	@Path("/comentario")
+	public Response setComentario(Usuario usuario) {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(dao.setComentario(usuario))
+					.build();				
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
+	
+	@GET
+	@Path("/comentario/{idPrato}")
+	public Response listComentarios(@PathParam("idPrato") int idPrato) {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(dao.listComentarios(idPrato))
 					.build();				
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -16,6 +16,7 @@ public class Prato {
 	private int nota;
     private long horaPreparo;
     private long ultimoPreparo;
+    private String comentario;
 
 	public int getAvaliacao() {
 		return avaliacao;
@@ -94,5 +95,11 @@ public class Prato {
 	}
 	public void setUltimoPreparo(long ultimoPreparo) {
 		this.ultimoPreparo = ultimoPreparo;
+	}
+	public String getComentario() {
+		return comentario;
+	}
+	public void setComentario(String comentario) {
+		this.comentario = comentario;
 	}
 }

@@ -132,7 +132,7 @@ public class PratoDAO {
 		return true;
 	}
 	
-	public List<Prato> listPratos(List<Ingrediente> ingredientes, int idUsuario) throws SQLException{
+	public List<Prato> listPratos(List<Ingrediente> ingredientes, int idUsuario, String where) throws SQLException{
 		List<Prato> pratos = new ArrayList<Prato>();
 		
 		Connection conn = null;
@@ -188,9 +188,135 @@ public class PratoDAO {
 					"	AND PA.usuario_id = ?\r\n" + 
 					"   LEFT JOIN prato_avaliacao PA2\r\n" + 
 					"    ON PA2.prato_id = P.ID \r\n" + 
-					"  WHERE TRUE\r\n" + 
-					"  GROUP BY I.nome, PA.avaliacao\r\n" + 
+					"  WHERE TRUE\r\n";
+			sql +=  where;
+			sql +=  "  GROUP BY I.nome, PA.avaliacao\r\n" + 
 					"  ORDER BY P.nome";
+			
+			System.out.println(sql);
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setInt(1, idUsuario);
+			
+			ResultSet rs = stmt.executeQuery();
+			int pratoId = 0;
+			Prato prato = null;
+			List<Ingrediente> ingredientesPrato;
+			while (rs.next()) {
+				if(pratoId != rs.getInt("ID")) {
+					pratoId = rs.getInt("ID");
+					prato = new Prato();
+					prato.setId(rs.getInt("ID"));
+					prato.setNome(rs.getString("NOME_PRATO"));
+					prato.setModoPreparo(rs.getString("MODO_PREPARO"));
+					prato.setTempoPreparo(rs.getInt("TEMPO_PREPARO"));
+					
+					Usuario usuario = new Usuario();
+					usuario.setNome(rs.getString("NOME_USUARIO"));
+					
+					Classificacao classificacao = new Classificacao();
+					classificacao.setDescricao(rs.getString("DESCRICAO"));
+					usuario.setClassificacao(classificacao);
+					
+					prato.setCriador(usuario);
+					
+					Blob blob = rs.getBlob("IMAGEM");
+					if(blob != null){
+						String base64String = Base64.getEncoder().encodeToString(blob.getBytes(1, (int)blob.length()));
+						prato.setImagemBase64(base64String);						
+					}
+					ingredientesPrato = new ArrayList<>();
+					prato.setIngredientes(ingredientesPrato);
+					prato.setNota(rs.getInt("MEDIA"));
+					prato.setAvaliacao(rs.getInt("AVALIACAO"));
+					prato.setUltimoPreparo(rs.getLong("inicio_preparo"));
+					
+					pratos.add(prato);
+				}
+				
+				Ingrediente ingrediente = new Ingrediente();
+				ingrediente.setCodigoBarras(rs.getDouble("CODIGO_BARRAS"));
+				ingrediente.setNome(rs.getString("NOME"));
+				ingrediente.setQuantidade(rs.getFloat("QUANTIDADE"));
+				UnidadeMedida unidadeMedida = new UnidadeMedida();
+				unidadeMedida.setSigla(rs.getString("SIGLA"));
+				ingrediente.setUnidadeMedida(unidadeMedida);
+				
+				prato.getIngredientes().add(ingrediente);
+				if(rs.getInt("COMPATIVEL") > 0) {
+					prato.setIngredientesCompativeis(prato.getIngredientesCompativeis() + 1);
+				}
+			}
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		
+		return pratos;
+	}
+	
+	public List<Prato> listMeusPratos(List<Ingrediente> ingredientes, int idUsuario) throws SQLException{
+		String where = "  AND PU.USUARIO_ID = " + idUsuario;
+		return listPratos(ingredientes, idUsuario, where);
+	}
+	
+	public List<Prato> listPratosPreparados(List<Ingrediente> ingredientes, int idUsuario) throws SQLException{
+		List<Prato> pratos = new ArrayList<Prato>();
+		
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			String ingredientesNome = "";
+			for (Ingrediente ingrediente : ingredientes) {
+				ingredientesNome += ingrediente.getNome();
+				if(ingrediente != ingredientes.get(ingredientes.size() - 1)) {
+					ingredientesNome += ",";
+				}
+			}
+			
+			String sql = "SELECT P.id,\r\n" +
+						 "		 P.nome NOME_PRATO, \r\n" +
+					     "		 P.modo_preparo, \r\n" +
+					     "		 P.tempo_preparo, \r\n" +
+					     "		 P.imagem, \r\n" +
+					     "		 I.codigo_barras, \r\n" +
+					     "		 I.nome, \r\n" +
+					     "		 FIND_IN_SET(I.NOME,'" + ingredientesNome + "') COMPATIVEL, \r\n" +
+					     "		 PI.quantidade, \r\n" +
+					     "		 UM.sigla, \r\n" +
+					     "		 U.nome NOME_USUARIO, \r\n" +
+					     "		 C.descricao, \r\n" +
+					     "		 PA.avaliacao, \r\n" +
+					     "		 PA2.avaliacao,\r\n" + 
+						 "		 AVG(PA2.avaliacao) AS media,\r\n" +
+					     "		 pp.inicio_preparo \r\n" +
+					     "	FROM prato_preparo PP \r\n" +
+					     " INNER JOIN prato P \r\n" +
+					     "	  ON P.id = PP.prato_id \r\n" +
+					     " INNER JOIN prato_ingrediente PI \r\n" +
+					     "	  ON PI.prato_id =P.id \r\n" +
+					     " INNER JOIN ingrediente I \r\n" +
+					     "    ON I.id = PI.ingrediente_id \r\n" +
+					     " INNER JOIN unidade_medida UM \r\n" +
+					     "	  ON UM.id = PI.unidade_medida_id \r\n" +
+					     " INNER JOIN prato_usuario PU \r\n" +
+					     " ON PU.prato_id = P.id \r\n" +
+					     " INNER JOIN usuario U \r\n" +
+					     "	  ON U.id = PU.usuario_id \r\n" +
+					     " INNER JOIN usuario_classificacao UC \r\n" +
+					     "    ON UC.usuario_id = U.id \r\n" +
+					     " INNER JOIN classificacao C \r\n" +
+					     "	  ON C.id = UC.classificacao_id \r\n" +
+					     "  LEFT JOIN prato_avaliacao PA \r\n" +
+					     "    ON PA.prato_id = P.ID \r\n" +
+					     "  LEFT JOIN prato_avaliacao PA2\r\n" + 
+						 "    ON PA2.prato_id = P.ID \r\n" + 
+					     " WHERE PP.usuario_id = ? \r\n" +
+					     " ORDER BY pp.inicio_preparo DESC \r\n";
+			
+			System.out.println(sql);
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
 			stmt.setInt(1, idUsuario);

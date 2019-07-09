@@ -8,16 +8,16 @@
 
     <item
         android:id="@+id/navigation_favoritos"
-        android:icon="@drawable/ic_home_black_24dp"
+        android:icon="@android:drawable/star_off"
         android:title="Favoritos" />
 
     <item
         android:id="@+id/navigation_historico"
-        android:icon="@drawable/ic_home_black_24dp"
+        android:icon="@android:drawable/ic_menu_today"
         android:title="Histórico" />
     <item
         android:id="@+id/navigation_meus"
-        android:icon="@drawable/ic_home_black_24dp"
+        android:icon="@android:drawable/ic_menu_save"
         android:title="Meus" />
 
 </menu>

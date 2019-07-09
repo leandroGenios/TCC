@@ -52,7 +52,6 @@ public class PratoAdapter extends RecyclerView.Adapter<LinePratoHolder> {
                 intent.putExtra("usuario", activity.getUsuario());
                 intent.putExtra("prato", pratos.get(i));
                 activity.startActivity(intent);
-                activity.finish();
             }
         });
     }

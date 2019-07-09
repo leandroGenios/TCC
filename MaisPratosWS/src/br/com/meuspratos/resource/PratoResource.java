@@ -43,7 +43,7 @@ public class PratoResource {
 		try {
 			return Response
 					.status(Response.Status.OK)
-					.entity(dao.listPratos(new IngredienteDAO().getIngredientes(idUsuario), idUsuario))
+					.entity(dao.listPratos(new IngredienteDAO().getIngredientes(idUsuario), idUsuario, ""))
 					.build();				
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -60,7 +60,24 @@ public class PratoResource {
 		try {
 			return Response
 					.status(Response.Status.OK)
-					.entity(dao.listPratos(new IngredienteDAO().getIngredientes(idUsuario), idUsuario))
+					.entity(dao.listMeusPratos(new IngredienteDAO().getIngredientes(idUsuario), idUsuario))
+					.build();				
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
+	
+	@GET
+	@Path("/historico/{idUsuario}")
+	public Response listPratosPreparados(@PathParam("idUsuario") int idUsuario) {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(dao.listPratosPreparados(new IngredienteDAO().getIngredientes(idUsuario), idUsuario))
 					.build();				
 		} catch (SQLException e) {
 			e.printStackTrace();

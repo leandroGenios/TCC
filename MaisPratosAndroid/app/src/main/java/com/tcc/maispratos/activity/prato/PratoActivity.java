@@ -1,5 +1,7 @@
 package com.tcc.maispratos.activity.prato;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.tcc.maispratos.R;
+import com.tcc.maispratos.activity.ingrediente.UpdateIngredienteActivity;
 import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.comentario.Comentario;
 import com.tcc.maispratos.comentario.ComentarioAdapter;
@@ -50,6 +53,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static android.view.View.INVISIBLE;
 import static com.google.zxing.integration.android.IntentIntegrator.REQUEST_CODE;
 
 public class PratoActivity extends BaseMenuActivity {
@@ -76,6 +80,8 @@ public class PratoActivity extends BaseMenuActivity {
     private long segundos;
     private Drawable iconFab;
     private CountDownTimer countTime;
+    private List<Ingrediente> meusIngredientes;
+    private List<Ingrediente> ingredientesFaltantes;
 
 
     private ComentarioAdapter comentarioAdapter;
@@ -94,7 +100,6 @@ public class PratoActivity extends BaseMenuActivity {
         montaListaIngredientes(prato.getIngredientes());
         montaListaIngredientes(prato.getId());
         verificarPreparo();
-
     }
 
     public void iniciaElementos(){
@@ -141,6 +146,9 @@ public class PratoActivity extends BaseMenuActivity {
         snackbar = criarTimer();
 
         btnDeixarComentario.setOnClickListener(addComentario());
+
+        meusIngredientes = listMeusIngredientes();
+        ingredientesFaltantes = new ArrayList<>();
     }
 
     private void getEstrelas() {
@@ -220,19 +228,55 @@ public class PratoActivity extends BaseMenuActivity {
             @Override
             public void onClick(View v) {
                 if(snackbar.isShown()){
-                    iconFab = getResources().getDrawable(android.R.drawable.ic_media_play);
-                    snackbar.dismiss();
-                    getTimer(prato.getTempoPreparo() * 60000).cancel();
+                    if(prato.isPreparadoSemIngredientes()){
+                        exibirMensagem("O preparo desse prato não pode ser interrompido.");
+                    }else{
+                        iconFab = getResources().getDrawable(android.R.drawable.ic_media_play);
+                        snackbar.dismiss();
+                        getTimer(prato.getTempoPreparo() * 60000).cancel();
+                        cancelarPreparo();
+                    }
                 }else{
-                    salvarInicioPreparo();
-                    iconFab = getResources().getDrawable(android.R.drawable.ic_media_pause);
-                    getTimer(prato.getTempoPreparo() * 60000).start();
-                    snackbar.show();
+                    if(verificaIngredientesCompativeis()){
+                        prato.setPreparadoSemIngredientes(false);
+                        salvarInicioPreparo();
+                        descontarIngredientes();
+                        iconFab = getResources().getDrawable(android.R.drawable.ic_media_pause);
+                        getTimer(prato.getTempoPreparo() * 60000).start();
+                        snackbar.show();
+                    }else{
+                        exibirIngredientesFaltantes();
+                        iconFab = getResources().getDrawable(android.R.drawable.ic_media_play);
+                    }
                 }
                 fab.setImageDrawable(iconFab);
             }
         };
         return onClickListener;
+    }
+
+    private boolean verificaIngredientesCompativeis(){
+        Ingrediente ingrediente;
+        for (Ingrediente ingredientePrato: prato.getIngredientes()) {
+            ingrediente = null;
+            for (Ingrediente meuIngrediente: meusIngredientes) {
+                if(ingredientePrato.getNome().toLowerCase().equals(meuIngrediente.getNome().toLowerCase())){
+                    ingrediente = meuIngrediente;
+                }
+            }
+
+            if(ingrediente == null){
+                ingredientesFaltantes.add(ingredientePrato);
+            }else{
+                if(ingrediente.getQuantidade() < ingredientePrato.getQuantidade()){
+                    ingrediente.setQuantidade(ingredientePrato.getQuantidade() - ingrediente.getQuantidade());
+                    ingredientesFaltantes.add(ingrediente);
+                }
+            }
+        }
+
+        return ingredientesFaltantes.size() == 0 ? true : false;
+
     }
 
     private CountDownTimer getTimer(long tempo){
@@ -356,6 +400,176 @@ public class PratoActivity extends BaseMenuActivity {
         }
 
         if (resultCode == RESULT_OK && data != null) {
+        }
+    }
+
+    private List<Ingrediente> listMeusIngredientes(){
+        List<Ingrediente> list = null;
+        TaskConnection connection = new TaskConnection();
+        String[] params = new String[Constants.QUERY_SEM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
+        params[Constants.NOME_DO_RESOURCE] = "ingrediente/" + getUsuario().getId();
+
+        String json = null;
+        connection.execute(params);
+        try {
+            json = (String) connection.get();
+            Type listType = new TypeToken<ArrayList<Ingrediente>>(){}.getType();
+            list = new Gson().fromJson(json, listType);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    private void exibirIngredientesFaltantes() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Atenção");
+        builder.setMessage(montarMensagem());
+        builder.setPositiveButton("Preparar mesmo assim", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                prato.setPreparadoSemIngredientes(true);
+                descontarIngredientes();
+                salvarInicioPreparo();
+                iconFab = getResources().getDrawable(android.R.drawable.ic_media_pause);
+                getTimer(prato.getTempoPreparo() * 60000).start();
+                snackbar.show();
+            }
+        });
+        builder.setNegativeButton("Enviar para lista de compras", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+
+            }
+        });
+
+        builder.setNeutralButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        AlertDialog alerta = builder.create();
+        alerta.show();
+    }
+
+    private String montarMensagem(){
+        String mensagem = "Faltam ingredientes para preparar esse prato\n";
+        for (Ingrediente ingrediente: ingredientesFaltantes) {
+            mensagem += ingrediente.getNome() + " " + ingrediente.getQuantidade() + ingrediente.getUnidadeMedida().getSigla() + "\n";
+        }
+        return mensagem;
+    }
+
+    private void descontarIngredientes(){
+        for (Ingrediente ingredientePrato: prato.getIngredientes()) {
+            for (Ingrediente meuIngrediente: meusIngredientes) {
+                if(ingredientePrato.getNome().toLowerCase().equals(meuIngrediente.getNome().toLowerCase())){
+                    meuIngrediente.setQuantidade(meuIngrediente.getQuantidade() - ingredientePrato.getQuantidade());
+                }
+            }
+        }
+
+        for (Ingrediente ingrediente: meusIngredientes) {
+            if(ingrediente.getQuantidade() >= 0){
+                alterarIngrediente(ingrediente);
+            }else{
+                deletarIngrediente(ingrediente);
+            }
+        }
+    }
+
+    private void alterarIngrediente(Ingrediente ingrediente){
+        getUsuario().setIngrediente(ingrediente);
+
+        TaskConnection connection = new TaskConnection();
+        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.PUT;
+        params[Constants.NOME_DO_RESOURCE] = "ingrediente";
+        String gson = new Gson().toJson(getUsuario());
+        try {
+            params[Constants.OBJETO] = new JSONObject(gson);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        connection.execute(params);
+
+        try {
+            ((String) connection.get()).equals("true");
+        } catch (Exception e) {
+            e.printStackTrace();
+            exibirErro("Ocorreu um problema ao atualizar. Tente novamente mais tarde.");
+        }
+    }
+
+    private void deletarIngrediente(Ingrediente ingrediente){
+        TaskConnection connection = new TaskConnection();
+        Object[] params = new Object[Constants.QUERY_SEM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.DELETE;
+        params[Constants.NOME_DO_RESOURCE] = "ingrediente/" + getUsuario().getId() + "/" + ingrediente.getId();
+        connection.execute(params);
+
+        try {
+            ((String) connection.get()).equals("true");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void cancelarPreparo(){
+        Ingrediente ingrediente;
+        for (Ingrediente ingredientePrato: prato.getIngredientes()) {
+            ingrediente = null;
+            for (Ingrediente meuIngrediente: meusIngredientes) {
+                if(ingredientePrato.getNome().toLowerCase().equals(meuIngrediente.getNome().toLowerCase())){
+                    ingrediente = meuIngrediente;
+                }
+            }
+
+            if(ingrediente != null){
+                ingrediente.setQuantidade(ingrediente.getQuantidade() + ingredientePrato.getQuantidade());
+                alterarIngrediente(ingrediente);
+            }else{
+                addIngrediente(ingrediente);
+            }
+        }
+
+        removerPreparo();
+    }
+
+    private void addIngrediente(Ingrediente ingrediente){
+        getUsuario().setIngrediente(ingrediente);
+
+        TaskConnection connection = new TaskConnection();
+        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.POST;
+        params[Constants.NOME_DO_RESOURCE] = "ingrediente";
+        String gson = new Gson().toJson(getUsuario());
+        try {
+            params[Constants.OBJETO] = new JSONObject(gson);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        connection.execute(params);
+
+        try {
+            ((String) connection.get()).equals("true");
+        } catch (Exception e) {
+            e.printStackTrace();
+            exibirErro("Ocorreu um problema ao cadastrar. Tente novamente mais tarde.");
+        }
+    }
+
+    private void removerPreparo(){
+        TaskConnection connection = new TaskConnection();
+        Object[] params = new Object[Constants.QUERY_SEM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.DELETE;
+        params[Constants.NOME_DO_RESOURCE] = "prato/preparo/" + getUsuario().getId() + "/" + prato.getId() + "/" + prato.getUltimoPreparo();
+        connection.execute(params);
+
+        try {
+            ((String) connection.get()).equals("true");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

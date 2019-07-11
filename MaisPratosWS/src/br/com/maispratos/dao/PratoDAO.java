@@ -167,7 +167,7 @@ public class PratoDAO {
 					"		   FROM prato_preparo\r\n"+
 					"		  WHERE prato_id = P.id\r\n"+
 					"		  ORDER BY inicio_preparo DESC\r\n"+
-					"		  LIMIT 1)inicio_preparo\r\n" + 
+					"		  LIMIT 1)inicio_preparo,\r\n" + 
 					"   FROM prato P\r\n" + 
 					"  INNER JOIN prato_ingrediente PI\r\n" + 
 					"     ON PI.prato_id = P.id\r\n" + 
@@ -230,6 +230,7 @@ public class PratoDAO {
 					prato.setNota(rs.getInt("MEDIA"));
 					prato.setAvaliacao(rs.getInt("AVALIACAO"));
 					prato.setUltimoPreparo(rs.getLong("inicio_preparo"));
+					prato.setPreparadoSemIngredientes(rs.getBoolean("PREPARO_SEM_INGREDIENTES"));
 					
 					pratos.add(prato);
 				}
@@ -291,7 +292,8 @@ public class PratoDAO {
 					     "		 PA.avaliacao, \r\n" +
 					     "		 PA2.avaliacao,\r\n" + 
 						 "		 AVG(PA2.avaliacao) AS media,\r\n" +
-					     "		 pp.inicio_preparo \r\n" +
+					     "		 pp.inicio_preparo, \r\n" +
+					     "		 pp.preparo_sem_ingredientes \r\n" +
 					     "	FROM prato_preparo PP \r\n" +
 					     " INNER JOIN prato P \r\n" +
 					     "	  ON P.id = PP.prato_id \r\n" +
@@ -353,6 +355,7 @@ public class PratoDAO {
 					prato.setNota(rs.getInt("MEDIA"));
 					prato.setAvaliacao(rs.getInt("AVALIACAO"));
 					prato.setUltimoPreparo(rs.getLong("inicio_preparo"));
+					prato.setPreparadoSemIngredientes(rs.getBoolean("PREPARO_SEM_INGREDIENTES"));
 					
 					pratos.add(prato);
 				}
@@ -531,5 +534,30 @@ public class PratoDAO {
 		}
 		
 		return comentarios;
+	}
+
+	public boolean removerPreparo(int idUsuario, int idPrato, long data) throws SQLException{
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "DELETE FROM prato_preparo "
+					   + " WHERE usuario_id = ? "
+					   + "   AND prato_id = ?"
+					   + "   AND inicio_preparo = ?";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setInt(1, idUsuario);
+			stmt.setInt(2, idPrato);
+			stmt.setLong(3, data);
+			
+			stmt.executeUpdate();
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		return true;
 	}
 }

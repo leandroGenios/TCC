@@ -17,6 +17,7 @@ public class Prato {
     private long horaPreparo;
     private long ultimoPreparo;
     private String comentario;
+    private boolean preparadoSemIngredientes;
 
 	public int getAvaliacao() {
 		return avaliacao;
@@ -101,5 +102,11 @@ public class Prato {
 	}
 	public void setComentario(String comentario) {
 		this.comentario = comentario;
+	}
+	public boolean isPreparadoSemIngredientes() {
+		return preparadoSemIngredientes;
+	}
+	public void setPreparadoSemIngredientes(boolean preparadoSemIngredientes) {
+		this.preparadoSemIngredientes = preparadoSemIngredientes;
 	}
 }

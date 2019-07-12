@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.mysql.jdbc.Statement;
@@ -168,6 +170,11 @@ public class PratoDAO {
 					"		  WHERE prato_id = P.id\r\n"+
 					"		  ORDER BY inicio_preparo DESC\r\n"+
 					"		  LIMIT 1)inicio_preparo,\r\n" + 
+					"		 (SELECT preparo_sem_ingredientes \r\n" +
+					"			FROM prato_preparo \r\n" +
+					"		   WHERE prato_id = P.id \r\n" +
+					"		   ORDER BY inicio_preparo DESC \r\n" +
+					"		   LIMIT 1)preparo_sem_ingredientes \r\n" +
 					"   FROM prato P\r\n" + 
 					"  INNER JOIN prato_ingrediente PI\r\n" + 
 					"     ON PI.prato_id = P.id\r\n" + 
@@ -253,6 +260,9 @@ public class PratoDAO {
 			GerenciadorJDBC.close(conn, stmt);
 		}
 		
+		Comparator<Prato> compareById = (Prato o1, Prato o2) -> o1.getNome().compareTo( o2.getNome());
+		
+		Collections.sort(pratos, compareById);
 		return pratos;
 	}
 	
@@ -290,10 +300,9 @@ public class PratoDAO {
 					     "		 U.nome NOME_USUARIO, \r\n" +
 					     "		 C.descricao, \r\n" +
 					     "		 PA.avaliacao, \r\n" +
-					     "		 PA2.avaliacao,\r\n" + 
-						 "		 AVG(PA2.avaliacao) AS media,\r\n" +
 					     "		 pp.inicio_preparo, \r\n" +
-					     "		 pp.preparo_sem_ingredientes \r\n" +
+					     "		 pp.preparo_sem_ingredientes, \r\n" +
+					     "		 (select AVG(PA2.avaliacao) AS media from prato_avaliacao PA2 where pa2.prato_id = P.id AND PA2.usuario_id = U.id) MEDIA \r\n" +
 					     "	FROM prato_preparo PP \r\n" +
 					     " INNER JOIN prato P \r\n" +
 					     "	  ON P.id = PP.prato_id \r\n" +
@@ -313,8 +322,6 @@ public class PratoDAO {
 					     "	  ON C.id = UC.classificacao_id \r\n" +
 					     "  LEFT JOIN prato_avaliacao PA \r\n" +
 					     "    ON PA.prato_id = P.ID \r\n" +
-					     "  LEFT JOIN prato_avaliacao PA2\r\n" + 
-						 "    ON PA2.prato_id = P.ID \r\n" + 
 					     " WHERE PP.usuario_id = ? \r\n" +
 					     " ORDER BY pp.inicio_preparo DESC \r\n";
 			
@@ -324,12 +331,12 @@ public class PratoDAO {
 			stmt.setInt(1, idUsuario);
 			
 			ResultSet rs = stmt.executeQuery();
-			int pratoId = 0;
+			long ultimoPreparo = 0;
 			Prato prato = null;
 			List<Ingrediente> ingredientesPrato;
 			while (rs.next()) {
-				if(pratoId != rs.getInt("ID")) {
-					pratoId = rs.getInt("ID");
+				if(ultimoPreparo != rs.getLong("inicio_preparo")) {
+					ultimoPreparo = rs.getLong("inicio_preparo");
 					prato = new Prato();
 					prato.setId(rs.getInt("ID"));
 					prato.setNome(rs.getString("NOME_PRATO"));
@@ -352,8 +359,8 @@ public class PratoDAO {
 					}
 					ingredientesPrato = new ArrayList<>();
 					prato.setIngredientes(ingredientesPrato);
-					prato.setNota(rs.getInt("MEDIA"));
 					prato.setAvaliacao(rs.getInt("AVALIACAO"));
+					prato.setNota(rs.getInt("MEDIA"));
 					prato.setUltimoPreparo(rs.getLong("inicio_preparo"));
 					prato.setPreparadoSemIngredientes(rs.getBoolean("PREPARO_SEM_INGREDIENTES"));
 					
@@ -465,12 +472,13 @@ public class PratoDAO {
 		try {
 			conn = GerenciadorJDBC.getConnection();
 			
-			String sql = "INSERT INTO prato_preparo (prato_id, usuario_id, inicio_preparo) values (?,?,?)";
+			String sql = "INSERT INTO prato_preparo (prato_id, usuario_id, inicio_preparo, preparo_sem_ingredientes) values (?,?,?,?)";
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
 			stmt.setInt(1, usuario.getPrato().getId());
 			stmt.setInt(2, usuario.getId());
 			stmt.setLong(3, usuario.getPrato().getHoraPreparo());
+			stmt.setBoolean(4, usuario.getPrato().isPreparadoSemIngredientes());
 			
 			stmt.executeUpdate();
 		}

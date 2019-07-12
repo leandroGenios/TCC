@@ -8,6 +8,7 @@ public class Prato {
 	private List<Ingrediente> ingredientes;
 	private String modoPreparo;
 	private int ingredientesCompativeis = 0;
+	private String ingredientesCompativeisString;
 	private byte[] imagem;
 	private String imagemBase64;
 	private int tempoPreparo;
@@ -108,5 +109,11 @@ public class Prato {
 	}
 	public void setPreparadoSemIngredientes(boolean preparadoSemIngredientes) {
 		this.preparadoSemIngredientes = preparadoSemIngredientes;
+	}
+	public String getIngredientesCompativeisString() {
+		return ingredientesCompativeisString;
+	}
+	public void setIngredientesCompativeisString(String ingredientesCompativeisString) {
+		this.ingredientesCompativeisString = ingredientesCompativeisString;
 	}
 }

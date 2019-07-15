@@ -1,8 +1,11 @@
 package com.tcc.maispratos.activity.prato;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -68,6 +71,8 @@ public class PratoActivity extends BaseMenuActivity {
     private RecyclerView rcvComentarios;
     private Button btnDeixarComentario;
     private FloatingActionButton fab;
+    private FloatingActionButton fabFavorito;
+    private FloatingActionButton fabEditar;
     private List<ImageView> estrelasAvaliacao;
 
     private Prato prato;
@@ -100,6 +105,8 @@ public class PratoActivity extends BaseMenuActivity {
         montaListaIngredientes(prato.getIngredientes());
         montaListaIngredientes(prato.getId());
         verificarPreparo();
+        varificarFavorito();
+        verificarCriador();
     }
 
     public void iniciaElementos(){
@@ -118,6 +125,8 @@ public class PratoActivity extends BaseMenuActivity {
         txtTempoPreparo = findViewById(R.id.txtTempoPreparo);
         rcvComentarios = findViewById(R.id.rcvComentarios);
         btnDeixarComentario = findViewById(R.id.btnDeixarComentario);
+        fabFavorito = findViewById(R.id.fabFavorito);
+        fabEditar = findViewById(R.id.fabEditar);
         fab = findViewById(R.id.fab);
         coordinatorLayout = findViewById(R.id.actPrato);
 
@@ -142,8 +151,11 @@ public class PratoActivity extends BaseMenuActivity {
         rcvComentarios.setAdapter(comentarioAdapter);
         rcvComentarios.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
+        fabFavorito.setOnClickListener(favoritar());
         fab.setOnClickListener(fabAction());
         snackbar = criarTimer();
+
+        fabEditar.setOnClickListener(editarPrato());
 
         btnDeixarComentario.setOnClickListener(addComentario());
 
@@ -223,6 +235,45 @@ public class PratoActivity extends BaseMenuActivity {
         return Snackbar.make(coordinatorLayout, "", Snackbar.LENGTH_INDEFINITE);
     }
 
+    private View.OnClickListener favoritar(){
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getUsuario().setPrato(prato);
+                TaskConnection connection = new TaskConnection();
+                Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+                params[Constants.TIPO_DE_REQUISICAO] = Constants.PUT;
+                params[Constants.NOME_DO_RESOURCE] = "prato/favorito";
+                String gson = new Gson().toJson(getUsuario());
+                try {
+                    params[Constants.OBJETO] = new JSONObject(gson);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                connection.execute(params);
+
+                try {
+                    boolean isFavorito = ((String) connection.get()).equals("true");
+                    prato.setFavorito(isFavorito);
+                    if(isFavorito){
+                        Snackbar.make(coordinatorLayout, "Prato salvo nos favoritos", Snackbar.LENGTH_LONG).show();
+                        fabFavorito.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
+                        fabFavorito.setImageDrawable(estrelaSelecionada);
+                    }else{
+                        Snackbar.make(coordinatorLayout, "Prato removido dos favoritos", Snackbar.LENGTH_LONG).show();
+                        fabFavorito.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorInativo)));
+                        fabFavorito.setImageDrawable(estrela);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    exibirErro("Ocorreu um problema ao atualizar. Tente novamente mais tarde.");
+                }
+
+            }
+        };
+        return onClickListener;
+    }
+
     private View.OnClickListener fabAction(){
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
@@ -250,6 +301,19 @@ public class PratoActivity extends BaseMenuActivity {
                     }
                 }
                 fab.setImageDrawable(iconFab);
+            }
+        };
+        return onClickListener;
+    }
+
+    private View.OnClickListener editarPrato(){
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), UpdatePratoActivity.class);
+                intent.putExtra("usuario", getUsuario());
+                intent.putExtra("prato", prato);
+                startActivityForResult(intent, 1);
             }
         };
         return onClickListener;
@@ -570,6 +634,24 @@ public class PratoActivity extends BaseMenuActivity {
             ((String) connection.get()).equals("true");
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void varificarFavorito(){
+        System.out.println(prato.getFavorito());
+        if(prato.getFavorito() != null && prato.getFavorito()){
+            fabFavorito.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
+            fabFavorito.setImageDrawable(estrelaSelecionada);
+        }else{
+            fabFavorito.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorInativo)));
+            fabFavorito.setImageDrawable(estrela);
+        }
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void verificarCriador(){
+        if(getUsuario().getId() != prato.getCriador().getId()){
+            fabEditar.setVisibility(View.GONE);
         }
     }
 }

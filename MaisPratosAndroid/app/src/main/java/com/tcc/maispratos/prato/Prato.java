@@ -13,6 +13,7 @@ public class Prato implements Serializable {
     private List<Ingrediente> ingredientes;
     private String modoPreparo;
     private int ingredientesCompativeis = 0;
+    private String ingredientesCompativeisString;
     private byte[] imagem;
     private String imagemBase64;
     private int tempoPreparo;
@@ -23,6 +24,7 @@ public class Prato implements Serializable {
     private long ultimoPreparo;
     private String comentario;
     private boolean preparadoSemIngredientes;
+    private Boolean favorito;
 
     public int getId() {
         return id;
@@ -142,5 +144,21 @@ public class Prato implements Serializable {
 
     public void setPreparadoSemIngredientes(boolean preparadoSemIngredientes) {
         this.preparadoSemIngredientes = preparadoSemIngredientes;
+    }
+
+    public String getIngredientesCompativeisString() {
+        return ingredientesCompativeisString;
+    }
+
+    public void setIngredientesCompativeisString(String ingredientesCompativeisString) {
+        this.ingredientesCompativeisString = ingredientesCompativeisString;
+    }
+
+    public Boolean getFavorito() {
+        return favorito;
+    }
+
+    public void setFavorito(Boolean favorito) {
+        this.favorito = favorito;
     }
 }

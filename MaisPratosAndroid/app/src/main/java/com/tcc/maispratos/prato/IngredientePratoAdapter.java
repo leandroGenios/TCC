@@ -1,5 +1,6 @@
 package com.tcc.maispratos.prato;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,8 +13,10 @@ import android.view.ViewGroup;
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.ingrediente.UpdateIngredienteActivity;
 import com.tcc.maispratos.activity.prato.CadastroPratoActivity;
+import com.tcc.maispratos.activity.prato.UpdatePratoActivity;
 import com.tcc.maispratos.ingrediente.Ingrediente;
 import com.tcc.maispratos.ingrediente.LineIngredienteHolder;
+import com.tcc.maispratos.util.BaseMenuActivity;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
 
@@ -21,11 +24,25 @@ import java.util.List;
 
 public class IngredientePratoAdapter extends RecyclerView.Adapter<LineIngredienteHolder> {
     private final List<Ingrediente> ingredientes;
-    private CadastroPratoActivity activity;
+    private CadastroPratoActivity activityCadastro;
+    private UpdatePratoActivity activityUpdate;
 
     public IngredientePratoAdapter(List<Ingrediente> ingredientes, CadastroPratoActivity activity) {
-        this.activity = activity;
+        this.activityCadastro = activity;
         this.ingredientes = ingredientes;
+    }
+
+    public IngredientePratoAdapter(List<Ingrediente> ingredientes, UpdatePratoActivity activity) {
+        this.activityUpdate = activity;
+        this.ingredientes = ingredientes;
+    }
+
+    private BaseMenuActivity getActivity(){
+        if(activityCadastro != null){
+            return activityCadastro;
+        }else{
+            return activityUpdate;
+        }
     }
 
     @NonNull
@@ -71,7 +88,7 @@ public class IngredientePratoAdapter extends RecyclerView.Adapter<LineIngredient
 
 
     private void exibeDialogo(final Ingrediente ingrediente) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Atenção");
         builder.setMessage("Qual a ação desejada?");
         builder.setPositiveButton("Excluir", new DialogInterface.OnClickListener() {
@@ -81,11 +98,11 @@ public class IngredientePratoAdapter extends RecyclerView.Adapter<LineIngredient
         });
         builder.setNegativeButton("Alterar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                Intent intent = new Intent(activity.getApplicationContext(), UpdateIngredienteActivity.class);
+                Intent intent = new Intent(getActivity().getApplicationContext(), UpdateIngredienteActivity.class);
                 intent.putExtra("ingrediente", ingrediente);
-                intent.putExtra("usuario", activity.getUsuario());
-                activity.startActivity(intent);
-                activity.finish();
+                intent.putExtra("usuario", getActivity().getUsuario());
+                getActivity().startActivity(intent);
+                getActivity().finish();
             }
         });
 
@@ -99,7 +116,7 @@ public class IngredientePratoAdapter extends RecyclerView.Adapter<LineIngredient
     }
 
     private void exibeDialogoDelete(final Ingrediente ingrediente) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Atenção");
         builder.setMessage("Deseja realmente excluir o ingrediente " + ingrediente.getNome().toUpperCase() + "?");
         builder.setPositiveButton("Excluir", new DialogInterface.OnClickListener() {
@@ -107,7 +124,7 @@ public class IngredientePratoAdapter extends RecyclerView.Adapter<LineIngredient
                 TaskConnection connection = new TaskConnection();
                 Object[] params = new Object[Constants.QUERY_SEM_ENVIO_DE_OBJETO];
                 params[Constants.TIPO_DE_REQUISICAO] = Constants.DELETE;
-                params[Constants.NOME_DO_RESOURCE] = "ingrediente/" + activity.getUsuario().getId() + "/" + ingrediente.getId();
+                params[Constants.NOME_DO_RESOURCE] = "ingrediente/" + getActivity().getUsuario().getId() + "/" + ingrediente.getId();
                 connection.execute(params);
 
                 try {
@@ -128,7 +145,7 @@ public class IngredientePratoAdapter extends RecyclerView.Adapter<LineIngredient
     }
 
     private void exibeMensagem(String mensagem){
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Atenção");
         builder.setMessage(mensagem);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {

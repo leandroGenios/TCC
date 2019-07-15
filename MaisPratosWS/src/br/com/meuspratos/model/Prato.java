@@ -19,6 +19,7 @@ public class Prato {
     private long ultimoPreparo;
     private String comentario;
     private boolean preparadoSemIngredientes;
+    private Boolean favorito;
 
 	public int getAvaliacao() {
 		return avaliacao;
@@ -115,5 +116,11 @@ public class Prato {
 	}
 	public void setIngredientesCompativeisString(String ingredientesCompativeisString) {
 		this.ingredientesCompativeisString = ingredientesCompativeisString;
+	}
+	public Boolean getFavorito() {
+		return favorito;
+	}
+	public void setFavorito(Boolean favorito) {
+		this.favorito = favorito;
 	}
 }

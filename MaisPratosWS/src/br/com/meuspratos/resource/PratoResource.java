@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -62,6 +63,23 @@ public class PratoResource {
 			return Response
 					.status(Response.Status.OK)
 					.entity(dao.listMeusPratos(new IngredienteDAO().getIngredientes(idUsuario), idUsuario))
+					.build();				
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
+
+	@GET
+	@Path("/favorito/{idUsuario}")
+	public Response listMeusFavoritos(@PathParam("idUsuario") int idUsuario) {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(dao.listMeusFavoritos(new IngredienteDAO().getIngredientes(idUsuario), idUsuario))
 					.build();				
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -164,6 +182,23 @@ public class PratoResource {
 			return Response
 					.status(Response.Status.OK)
 					.entity(dao.removerPreparo(idUsuario, idPrato, data))
+					.build();				
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
+	
+	@PUT
+	@Path("/favorito")
+	public Response favorito(Usuario usuario) {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(usuario.getPrato().getFavorito() == null ? dao.setFavorito(usuario) : dao.updateFavorito(usuario))
 					.build();				
 		} catch (SQLException e) {
 			e.printStackTrace();

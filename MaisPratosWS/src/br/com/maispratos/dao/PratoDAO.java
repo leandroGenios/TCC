@@ -150,7 +150,7 @@ public class PratoDAO {
 				}
 			}
 			
-			String sql = "SELECT 	P.id,\r\n" + 
+			String sql = "SELECT P.id,\r\n" + 
 					"		P.nome NOME_PRATO,\r\n" + 
 					"		P.modo_preparo,\r\n" + 
 					"		P.tempo_preparo,\r\n" + 
@@ -161,6 +161,7 @@ public class PratoDAO {
 					"		PI.quantidade,\r\n" + 
 					"		UM.sigla,\r\n" + 
 					"		U.nome NOME_USUARIO,\r\n" + 
+					"		U.id usuario_id,\r\n" + 
 					"		C.descricao,\r\n" + 
 					"		PA.avaliacao,\r\n" + 
 					"		PA2.avaliacao,\r\n" + 
@@ -170,31 +171,35 @@ public class PratoDAO {
 					"		  WHERE prato_id = P.id\r\n"+
 					"		  ORDER BY inicio_preparo DESC\r\n"+
 					"		  LIMIT 1)inicio_preparo,\r\n" + 
-					"		 (SELECT preparo_sem_ingredientes \r\n" +
-					"			FROM prato_preparo \r\n" +
-					"		   WHERE prato_id = P.id \r\n" +
-					"		   ORDER BY inicio_preparo DESC \r\n" +
-					"		   LIMIT 1)preparo_sem_ingredientes \r\n" +
+					"		(SELECT preparo_sem_ingredientes \r\n" +
+					"		   FROM prato_preparo \r\n" +
+					"		  WHERE prato_id = P.id \r\n" +
+					"		  ORDER BY inicio_preparo DESC \r\n" +
+					"		  LIMIT 1)preparo_sem_ingredientes, \r\n" +
+					"		 PF.favorito \r\n" +
 					"   FROM prato P\r\n" + 
 					"  INNER JOIN prato_ingrediente PI\r\n" + 
 					"     ON PI.prato_id = P.id\r\n" + 
 					"  INNER JOIN ingrediente I\r\n" + 
-					"	 ON I.id = PI.ingrediente_id\r\n" + 
+					"	  ON I.id = PI.ingrediente_id\r\n" + 
 					"  INNER JOIN unidade_medida UM\r\n" + 
-					"	 ON UM.id = PI.unidade_medida_id\r\n" + 
+					"	  ON UM.id = PI.unidade_medida_id\r\n" + 
 					"  INNER JOIN prato_usuario PU\r\n" + 
-					"	 ON PU.prato_id = P.id\r\n" + 
+					"	  ON PU.prato_id = P.id\r\n" + 
 					"  INNER JOIN usuario U\r\n" + 
-					"	 ON U.id = PU.usuario_id\r\n" + 
+					"	  ON U.id = PU.usuario_id\r\n" + 
 					"  INNER JOIN usuario_classificacao UC\r\n" + 
-					"	 ON UC.usuario_id = U.id\r\n" + 
+					"	  ON UC.usuario_id = U.id\r\n" + 
 					"  INNER JOIN classificacao C\r\n" + 
-					"	 ON C.id = UC.classificacao_id\r\n" + 
+					"	  ON C.id = UC.classificacao_id\r\n" + 
 					"   LEFT JOIN prato_avaliacao PA\r\n" + 
-					"    ON PA.prato_id = P.ID \r\n" + 
-					"	AND PA.usuario_id = ?\r\n" + 
+					"     ON PA.prato_id = P.ID \r\n" + 
+					"	 AND PA.usuario_id = ?\r\n" + 
 					"   LEFT JOIN prato_avaliacao PA2\r\n" + 
-					"    ON PA2.prato_id = P.ID \r\n" + 
+					"     ON PA2.prato_id = P.ID \r\n" + 
+					"	LEFT JOIN prato_favorito PF \r\n" +
+				    "	  ON PF.prato_id = P.id \r\n" +
+				    "	 AND PF.usuario_id = ? \r\n" +
 					"  WHERE TRUE\r\n";
 			sql +=  where;
 			sql +=  "  GROUP BY I.nome, PA.avaliacao\r\n" + 
@@ -204,6 +209,7 @@ public class PratoDAO {
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
 			stmt.setInt(1, idUsuario);
+			stmt.setInt(2, idUsuario);
 			
 			ResultSet rs = stmt.executeQuery();
 			int pratoId = 0;
@@ -219,6 +225,7 @@ public class PratoDAO {
 					prato.setTempoPreparo(rs.getInt("TEMPO_PREPARO"));
 					
 					Usuario usuario = new Usuario();
+					usuario.setId(rs.getInt("USUARIO_ID"));
 					usuario.setNome(rs.getString("NOME_USUARIO"));
 					
 					Classificacao classificacao = new Classificacao();
@@ -238,6 +245,7 @@ public class PratoDAO {
 					prato.setAvaliacao(rs.getInt("AVALIACAO"));
 					prato.setUltimoPreparo(rs.getLong("inicio_preparo"));
 					prato.setPreparadoSemIngredientes(rs.getBoolean("PREPARO_SEM_INGREDIENTES"));
+					prato.setFavorito(rs.getBoolean("FAVORITO"));
 					
 					pratos.add(prato);
 				}
@@ -253,6 +261,7 @@ public class PratoDAO {
 				prato.getIngredientes().add(ingrediente);
 				if(rs.getInt("COMPATIVEL") > 0) {
 					prato.setIngredientesCompativeis(prato.getIngredientesCompativeis() + 1);
+					prato.setIngredientesCompativeisString("" + prato.getIngredientesCompativeis());
 				}
 			}
 		}
@@ -260,14 +269,19 @@ public class PratoDAO {
 			GerenciadorJDBC.close(conn, stmt);
 		}
 		
-		Comparator<Prato> compareById = (Prato o1, Prato o2) -> o1.getNome().compareTo( o2.getNome());
+		Comparator<Prato> compareByConpativeis = (Prato o1, Prato o2) -> o1.getIngredientesCompativeisString().compareTo( o2.getIngredientesCompativeisString());
 		
-		Collections.sort(pratos, compareById);
+		Collections.sort(pratos, compareByConpativeis.reversed());
 		return pratos;
 	}
 	
 	public List<Prato> listMeusPratos(List<Ingrediente> ingredientes, int idUsuario) throws SQLException{
 		String where = "  AND PU.USUARIO_ID = " + idUsuario;
+		return listPratos(ingredientes, idUsuario, where);
+	}
+	
+	public List<Prato> listMeusFavoritos(List<Ingrediente> ingredientes, int idUsuario) throws SQLException{
+		String where = "  AND PF.FAVORITO = true";
 		return listPratos(ingredientes, idUsuario, where);
 	}
 	
@@ -298,11 +312,13 @@ public class PratoDAO {
 					     "		 PI.quantidade, \r\n" +
 					     "		 UM.sigla, \r\n" +
 					     "		 U.nome NOME_USUARIO, \r\n" +
+					     "		 U.id usuario_id,\r\n" + 
 					     "		 C.descricao, \r\n" +
 					     "		 PA.avaliacao, \r\n" +
 					     "		 pp.inicio_preparo, \r\n" +
 					     "		 pp.preparo_sem_ingredientes, \r\n" +
-					     "		 (select AVG(PA2.avaliacao) AS media from prato_avaliacao PA2 where pa2.prato_id = P.id AND PA2.usuario_id = U.id) MEDIA \r\n" +
+					     "		 (select AVG(PA2.avaliacao) AS media from prato_avaliacao PA2 where pa2.prato_id = P.id AND PA2.usuario_id = U.id) MEDIA, \r\n" + 
+					     "		 PF.favorito \r\n" +
 					     "	FROM prato_preparo PP \r\n" +
 					     " INNER JOIN prato P \r\n" +
 					     "	  ON P.id = PP.prato_id \r\n" +
@@ -321,7 +337,10 @@ public class PratoDAO {
 					     " INNER JOIN classificacao C \r\n" +
 					     "	  ON C.id = UC.classificacao_id \r\n" +
 					     "  LEFT JOIN prato_avaliacao PA \r\n" +
-					     "    ON PA.prato_id = P.ID \r\n" +
+					     "    ON PA.prato_id = P.ID \r\n" + 
+						 "	LEFT JOIN prato_favorito PF \r\n" +
+					     "	  ON PF.prato_id = P.id \r\n" +
+					     "	 AND PF.usuario_id = ? \r\n" +
 					     " WHERE PP.usuario_id = ? \r\n" +
 					     " ORDER BY pp.inicio_preparo DESC \r\n";
 			
@@ -329,6 +348,7 @@ public class PratoDAO {
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
 			stmt.setInt(1, idUsuario);
+			stmt.setInt(2, idUsuario);
 			
 			ResultSet rs = stmt.executeQuery();
 			long ultimoPreparo = 0;
@@ -344,6 +364,7 @@ public class PratoDAO {
 					prato.setTempoPreparo(rs.getInt("TEMPO_PREPARO"));
 					
 					Usuario usuario = new Usuario();
+					usuario.setId(rs.getInt("USUARIO_ID"));
 					usuario.setNome(rs.getString("NOME_USUARIO"));
 					
 					Classificacao classificacao = new Classificacao();
@@ -363,6 +384,7 @@ public class PratoDAO {
 					prato.setNota(rs.getInt("MEDIA"));
 					prato.setUltimoPreparo(rs.getLong("inicio_preparo"));
 					prato.setPreparadoSemIngredientes(rs.getBoolean("PREPARO_SEM_INGREDIENTES"));
+					prato.setFavorito(rs.getBoolean("FAVORITO"));
 					
 					pratos.add(prato);
 				}
@@ -567,5 +589,50 @@ public class PratoDAO {
 			GerenciadorJDBC.close(conn, stmt);
 		}
 		return true;
+	}
+
+	public boolean setFavorito(Usuario usuario) throws SQLException{
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "INSERT INTO prato_favorito (prato_id, usuario_id, favorito) values (?,?,?)";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setInt(1, usuario.getPrato().getId());
+			stmt.setInt(2, usuario.getId());
+			stmt.setBoolean(3, true);
+			
+			stmt.executeUpdate();
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		return true;
+	}
+
+	public boolean updateFavorito(Usuario usuario) throws SQLException{
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "UPDATE prato_favorito SET FAVORITO = ? WHERE prato_id = ? AND usuario_id = ?";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setBoolean(1, !usuario.getPrato().getFavorito());
+			stmt.setInt(2, usuario.getPrato().getId());
+			stmt.setInt(3, usuario.getId());
+			
+			stmt.executeUpdate();
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		
+		return !usuario.getPrato().getFavorito();
 	}
 }

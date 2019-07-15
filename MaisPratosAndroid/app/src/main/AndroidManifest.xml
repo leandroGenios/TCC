@@ -15,7 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.prato.ComentarioActivity"></activity>
+        <activity android:name=".activity.prato.UpdatePratoActivity"></activity>
+        <activity android:name=".activity.perfil.PerfilActivity" />
+        <activity android:name=".activity.prato.ComentarioActivity" />
         <activity android:name=".activity.prato.CadastroIngredientePratoActivity" />
         <activity android:name=".activity.prato.CadastroPratoActivity" />
         <activity android:name=".activity.listacompras.UpdateListaComprasActivity" />

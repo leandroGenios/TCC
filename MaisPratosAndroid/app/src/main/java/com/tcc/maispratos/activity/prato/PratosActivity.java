@@ -61,7 +61,7 @@ public class PratosActivity extends BaseMenuActivity {
                     listGeral();
                     return true;
                 case R.id.navigation_favoritos:
-                    listGeral();
+                    listMeusFavoritos();
                     return true;
                 case R.id.navigation_historico:
                     listPratosPreparados();
@@ -124,6 +124,30 @@ public class PratosActivity extends BaseMenuActivity {
         Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
         params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
         params[Constants.NOME_DO_RESOURCE] = "prato/meus/" + getUsuario().getId();
+        String json = null;
+        connection.execute(params);
+        try {
+            json = (String) connection.get();
+            Type listType = new TypeToken<ArrayList<Prato>>(){}.getType();
+            list = new Gson().fromJson(json, listType);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        adapter.clear();
+        if(list != null){
+            for (Prato prato: list) {
+                adapter.updateList(prato);
+            }
+        }
+    }
+
+    private void listMeusFavoritos(){
+        List<Prato> list = null;
+        TaskConnection connection = new TaskConnection();
+        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
+        params[Constants.NOME_DO_RESOURCE] = "prato/favorito/" + getUsuario().getId();
         String json = null;
         connection.execute(params);
         try {

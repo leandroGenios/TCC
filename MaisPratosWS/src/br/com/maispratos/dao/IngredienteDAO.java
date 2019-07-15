@@ -29,7 +29,7 @@ public class IngredienteDAO {
 			String sql = "SELECT I.id ID_INGREDIENTE," + 
 					"	         I.codigo_barras CODIGO_BARRAS," + 
 					"            I.nome NOME_INGREDIENTE" + 
-					"       FROM ingrediente I";
+					"       FROM ingrediente I ";
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
 			ResultSet rs = stmt.executeQuery();

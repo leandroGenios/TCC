@@ -57,6 +57,7 @@ public class UpdatePratoActivity extends BaseMenuActivity {
         setUsuario((Usuario) getIntent().getExtras().getSerializable("usuario"));
         prato = (Prato) getIntent().getExtras().getSerializable("prato");
         iniciaElementos();
+        carregaIngredientes();
     }
 
     private void iniciaElementos(){
@@ -86,8 +87,14 @@ public class UpdatePratoActivity extends BaseMenuActivity {
             imgBtnAddImage.setImageBitmap(bitmap);
         }
 
-        mltModoPreparo.setText(prato.getModoPreparo());
-        edtTempoPreparo.setText(prato.getTempoPreparo());
+        mltModoPreparo.setText(String.valueOf(prato.getModoPreparo()));
+        edtTempoPreparo.setText(String.valueOf(prato.getTempoPreparo()));
+    }
+
+    private void carregaIngredientes(){
+        for (Ingrediente ingrediente: prato.getIngredientes()) {
+            adapter.updateList(ingrediente);
+        }
     }
 
     private View.OnClickListener addIngrediente(){
@@ -136,7 +143,13 @@ public class UpdatePratoActivity extends BaseMenuActivity {
     }
 
     private void addIngrediente(Ingrediente ingrediente){
-        adapter.updateList(ingrediente);
+        for (Ingrediente ing: adapter.getIngredientes()) {
+            if(ing.getNome().toLowerCase().equals(ingrediente.getNome().toLowerCase())){
+                adapter.getIngredientes().remove(ing);
+                adapter.updateList(ingrediente);
+                break;
+            }
+        }
     }
 
     private View.OnClickListener salvar(){

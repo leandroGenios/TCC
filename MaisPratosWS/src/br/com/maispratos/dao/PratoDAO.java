@@ -247,6 +247,8 @@ public class PratoDAO {
 					prato.setPreparadoSemIngredientes(rs.getBoolean("PREPARO_SEM_INGREDIENTES"));
 					prato.setFavorito(rs.getBoolean("FAVORITO"));
 					
+					prato.setIngredientesCompativeisString("0");
+					
 					pratos.add(prato);
 				}
 				

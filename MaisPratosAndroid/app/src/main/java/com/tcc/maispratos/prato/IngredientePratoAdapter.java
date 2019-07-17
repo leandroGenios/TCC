@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.ingrediente.UpdateIngredienteActivity;
 import com.tcc.maispratos.activity.prato.CadastroPratoActivity;
+import com.tcc.maispratos.activity.prato.UpdateIngredientePratoActivity;
 import com.tcc.maispratos.activity.prato.UpdatePratoActivity;
 import com.tcc.maispratos.ingrediente.Ingrediente;
 import com.tcc.maispratos.ingrediente.LineIngredienteHolder;
@@ -74,7 +75,9 @@ public class IngredientePratoAdapter extends RecyclerView.Adapter<LineIngredient
 
     private void insertItem(Ingrediente ingrediente) {
         ingredientes.add(ingrediente);
+        System.out.println(ingrediente.getNome());
         notifyItemInserted(getItemCount());
+        notifyDataSetChanged();
     }
 
     public List<Ingrediente> getIngredientes(){
@@ -98,11 +101,10 @@ public class IngredientePratoAdapter extends RecyclerView.Adapter<LineIngredient
         });
         builder.setNegativeButton("Alterar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), UpdateIngredienteActivity.class);
+                Intent intent = new Intent(getActivity().getApplicationContext(), UpdateIngredientePratoActivity.class);
                 intent.putExtra("ingrediente", ingrediente);
                 intent.putExtra("usuario", getActivity().getUsuario());
-                getActivity().startActivity(intent);
-                getActivity().finish();
+                getActivity().startActivityForResult(intent, 1);
             }
         });
 
@@ -121,19 +123,8 @@ public class IngredientePratoAdapter extends RecyclerView.Adapter<LineIngredient
         builder.setMessage("Deseja realmente excluir o ingrediente " + ingrediente.getNome().toUpperCase() + "?");
         builder.setPositiveButton("Excluir", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                TaskConnection connection = new TaskConnection();
-                Object[] params = new Object[Constants.QUERY_SEM_ENVIO_DE_OBJETO];
-                params[Constants.TIPO_DE_REQUISICAO] = Constants.DELETE;
-                params[Constants.NOME_DO_RESOURCE] = "ingrediente/" + getActivity().getUsuario().getId() + "/" + ingrediente.getId();
-                connection.execute(params);
-
-                try {
-                    ((String) connection.get()).equals("true");
-                    ingredientes.remove(ingrediente);
-                    notifyDataSetChanged();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                ingredientes.remove(ingrediente);
+                notifyDataSetChanged();
             }
         });
         builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {

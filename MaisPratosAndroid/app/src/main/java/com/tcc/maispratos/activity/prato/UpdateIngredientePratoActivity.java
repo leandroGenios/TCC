@@ -15,6 +15,8 @@ import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.ingrediente.BaseIngrediente;
 import com.tcc.maispratos.ingrediente.Ingrediente;
 import com.tcc.maispratos.unidademedida.UnidadeMedida;
+import com.tcc.maispratos.util.Constants;
+import com.tcc.maispratos.util.Utils;
 
 public class UpdateIngredientePratoActivity extends BaseIngrediente {
     private Ingrediente ingrediente;
@@ -24,14 +26,15 @@ public class UpdateIngredientePratoActivity extends BaseIngrediente {
         setContentView(R.layout.activity_update_ingrediente_prato);
         setTitle("Alterar ingrediente");
         setUsuario((Usuario) getIntent().getExtras().getSerializable("usuario"));
+        ingrediente = (Ingrediente) getIntent().getExtras().getSerializable("ingrediente");
         iniciaElementos();
         iniciaAutoCompleteUnidadeMedida();
         iniciaAutoCompleteIngrediente();
+        carregarCampos(ingrediente);
     }
 
     @Override
     public void iniciaElementos(){
-        ingrediente = (Ingrediente) getIntent().getExtras().getSerializable("ingrediente");
         btnInserirCodBarras = (Button) findViewById(R.id.btnCodBarras);
         edtCodigoBarras = (EditText) findViewById(R.id.edtCodBarras);
         aucNomeIngrediente = (AutoCompleteTextView) findViewById(R.id.aucNome);
@@ -42,11 +45,6 @@ public class UpdateIngredientePratoActivity extends BaseIngrediente {
         btnInserirCodBarras.setOnClickListener(getCodigoBarras());
         edtCodigoBarras.setOnFocusChangeListener(focusOutCodigoBarras());
         btnAdicionar.setOnClickListener(salvarIngrediente());
-
-        edtCodigoBarras.setText(String.valueOf(ingrediente.getCodigoBarras()));
-        aucNomeIngrediente.setText(ingrediente.getNome());
-        edtQuantidade.setText(String.valueOf(ingrediente.getQuantidade()));
-        aucUnidadeMedida.setText(ingrediente.getUnidadeMedida().getSigla());
     }
 
     @Override

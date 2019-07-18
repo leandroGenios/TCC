@@ -158,7 +158,7 @@ public class UpdatePratoActivity extends BaseMenuActivity {
             public void onClick(View v) {
                 if(validarCampos()){
                     if(updatePrato()){
-                        Intent intent = new Intent(getApplicationContext(), PratosActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), PratoActivity.class);
                         intent.putExtra("usuario", getUsuario());
                         startActivity(intent);
                         finish();

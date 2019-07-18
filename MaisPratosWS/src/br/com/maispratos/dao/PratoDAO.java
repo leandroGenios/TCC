@@ -160,6 +160,7 @@ public class PratoDAO {
 					"		FIND_IN_SET(I.NOME,'" + ingredientesNome + "') COMPATIVEL,\r\n" + 
 					"		PI.quantidade,\r\n" + 
 					"		UM.sigla,\r\n" + 
+					"		UM.id UNIDADE_MEDIDA_ID,\r\n" + 
 					"		U.nome NOME_USUARIO,\r\n" + 
 					"		U.id usuario_id,\r\n" + 
 					"		C.descricao,\r\n" + 
@@ -258,6 +259,7 @@ public class PratoDAO {
 				ingrediente.setQuantidade(rs.getFloat("QUANTIDADE"));
 				UnidadeMedida unidadeMedida = new UnidadeMedida();
 				unidadeMedida.setSigla(rs.getString("SIGLA"));
+				unidadeMedida.setId(rs.getInt("UNIDADE_MEDIDA_ID"));
 				ingrediente.setUnidadeMedida(unidadeMedida);
 				
 				prato.getIngredientes().add(ingrediente);
@@ -313,6 +315,7 @@ public class PratoDAO {
 					     "		 FIND_IN_SET(I.NOME,'" + ingredientesNome + "') COMPATIVEL, \r\n" +
 					     "		 PI.quantidade, \r\n" +
 					     "		 UM.sigla, \r\n" +
+					     "		 UM.id UNIDADE_MEDIDA_ID,\r\n" +
 					     "		 U.nome NOME_USUARIO, \r\n" +
 					     "		 U.id usuario_id,\r\n" + 
 					     "		 C.descricao, \r\n" +
@@ -397,6 +400,7 @@ public class PratoDAO {
 				ingrediente.setQuantidade(rs.getFloat("QUANTIDADE"));
 				UnidadeMedida unidadeMedida = new UnidadeMedida();
 				unidadeMedida.setSigla(rs.getString("SIGLA"));
+				unidadeMedida.setId(rs.getInt("UNIDADE_MEDIDA_ID"));
 				ingrediente.setUnidadeMedida(unidadeMedida);
 				
 				prato.getIngredientes().add(ingrediente);
@@ -636,5 +640,40 @@ public class PratoDAO {
 		}
 		
 		return !usuario.getPrato().getFavorito();
+	}
+
+	public Object updatePrato(Usuario usuario) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "UPDATE prato SET nome = ?, modo_preparo = ?, tempo_preparo = ?, imagem = ? WHERE ID = ?";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setString(1, usuario.getPrato().getNome());
+			stmt.setString(2, usuario.getPrato().getModoPreparo());
+			stmt.setInt(3, usuario.getPrato().getTempoPreparo());
+			
+			if(usuario.getPrato().getImagem() != null){
+				InputStream myInputStream = new ByteArrayInputStream(usuario.getPrato().getImagem()); 
+				stmt.setBinaryStream(4, myInputStream);				
+			}else{
+				stmt.setNull(4, Types.BLOB);
+			}
+			
+			stmt.setInt(5, usuario.getPrato().getId());
+			
+			stmt.executeUpdate();
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		
+		IngredienteDAO ingDao = new IngredienteDAO();
+		ingDao.deleteIngredienteByPrato(usuario.getPrato().getId());
+		addIngredientesPrato(usuario.getPrato());
+		return true;
 	}
 }

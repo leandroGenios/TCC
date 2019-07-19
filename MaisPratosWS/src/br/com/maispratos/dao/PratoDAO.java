@@ -203,7 +203,7 @@ public class PratoDAO {
 				    "	 AND PF.usuario_id = ? \r\n" +
 					"  WHERE TRUE\r\n";
 			sql +=  where;
-			sql +=  "  GROUP BY I.nome, PA.avaliacao\r\n" + 
+			sql +=  "  GROUP BY P.nome, I.nome, PA.avaliacao\r\n" + 
 					"  ORDER BY P.nome";
 			
 			System.out.println(sql);

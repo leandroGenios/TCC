@@ -38,6 +38,7 @@ import com.tcc.maispratos.modopreparo.ModoPreparoAdapter;
 import com.tcc.maispratos.prato.IngredientePratoAdapter;
 import com.tcc.maispratos.prato.IngredientePratoDetalheAdapter;
 import com.tcc.maispratos.prato.Prato;
+import com.tcc.maispratos.unidademedida.UnidadeMedida;
 import com.tcc.maispratos.util.BaseMenuActivity;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
@@ -503,7 +504,7 @@ public class PratoActivity extends BaseMenuActivity {
         });
         builder.setNegativeButton("Enviar para lista de compras", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-
+                cadastrarIngredienteListaCompras(ingredientesFaltantes);
             }
         });
 
@@ -652,6 +653,31 @@ public class PratoActivity extends BaseMenuActivity {
     private void verificarCriador(){
         if(getUsuario().getId() != prato.getCriador().getId()){
             fabEditar.setVisibility(View.GONE);
+        }
+    }
+
+    private void cadastrarIngredienteListaCompras(List<Ingrediente> ingredientes){
+        for (Ingrediente ingrediente: ingredientes) {
+            getUsuario().setIngrediente(ingrediente);
+
+            TaskConnection connection = new TaskConnection();
+            Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+            params[Constants.TIPO_DE_REQUISICAO] = Constants.POST;
+            params[Constants.NOME_DO_RESOURCE] = "listaCompras";
+            String gson = new Gson().toJson(getUsuario());
+            try {
+                params[Constants.OBJETO] = new JSONObject(gson);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            connection.execute(params);
+
+            try {
+                connection.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+                exibirErro("Ocorreu um problema ao cadastrar lista de compras. Tente novamente mais tarde.");
+            }
         }
     }
 }

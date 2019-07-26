@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import com.mysql.jdbc.Statement;
 
 import br.com.maispratos.util.GerenciadorJDBC;
+import br.com.meuspratos.model.Classificacao;
 import br.com.meuspratos.model.Usuario;
 
 public class UsuarioDAO {
@@ -112,7 +113,18 @@ public class UsuarioDAO {
 		try {
 			conn = GerenciadorJDBC.getConnection();
 			
-			String sql = "SELECT * FROM USUARIO WHERE EMAIL = ?";
+			String sql = "SELECT u.id usuario_id,"
+					   + "		 u.nome usuario_nome,"
+					   + "		 u.email usuario_email,"
+					   + "		 u.senha usuario_senha,"
+					   + "		 c.descricao classificacao"
+					   + "	FROM usuario u"
+					   + " inner join usuario_classificacao uc"
+					   + "	  on uc.usuario_id = u.id"
+					   + " inner join classificacao c"
+					   + "	  on c.id = uc.classificacao_id"
+					   + " WHERE EMAIL = ?";
+			System.out.println(sql);
 			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
 			stmt.setString(1, email);
@@ -122,15 +134,45 @@ public class UsuarioDAO {
 			Usuario usuario = null;
 			while (rs.next()) {
 				usuario = new Usuario();
-				usuario.setId(rs.getInt("id"));
-				usuario.setEmail(rs.getString("email"));
-				usuario.setNome(rs.getString("nome"));
-				usuario.setSenha(rs.getString("senha"));
+				usuario.setId(rs.getInt("USUARIO_ID"));
+				usuario.setEmail(rs.getString("USUARIO_EMAIL"));
+				usuario.setNome(rs.getString("USUARIO_NOME"));
+				usuario.setSenha(rs.getString("USUARIO_SENHA"));
+				Classificacao classificacao = new Classificacao();
+				classificacao.setDescricao(rs.getString("CLASSIFICACAO"));
+				usuario.setClassificacao(classificacao);
 			}
+			System.out.println(usuario.getClassificacao().getDescricao());
 			return usuario;
 		}
 		finally {
 			GerenciadorJDBC.close(conn, stmt);
 		}
+	}
+	
+	public String getClassificacao(int qtde) throws SQLException{
+		String classificacao = "";
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "SELECT c.descricao"
+					   + "  FROM classificacao c"
+					   + " WHERE ? >= c.menor_valor"
+					   + "   AND ? <= c.maior_valor";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			stmt.setInt(1, qtde);
+			stmt.setInt(2, qtde);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				classificacao = rs.getString("DESCRICAO");
+			}
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+
+		return classificacao;
 	}
 }

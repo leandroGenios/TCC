@@ -11,6 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import br.com.maispratos.dao.PratoDAO;
 import br.com.maispratos.dao.UsuarioDAO;
 import br.com.meuspratos.model.Usuario;
 
@@ -69,6 +70,42 @@ public class UsuarioResource {
 						.entity(false)
 						.build();								
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
+	
+	@GET
+	@Path("classificacao/{id}")
+	public Response classificacao(@PathParam("id")int usuario_id) {
+		try {
+			int count = new PratoDAO().listPratosBoaAvaliacao(usuario_id).size();
+			
+			return Response
+					.status(Response.Status.OK)
+					.entity(dao.getClassificacao(count))
+					.build();				
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
+	
+	@GET
+	@Path("proximoNivel/{id}")
+	public Response proximoNivel(@PathParam("id")int usuario_id) {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(5 - (new PratoDAO().listPratosBoaAvaliacao(usuario_id).size() % 5))
+					.build();				
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return Response

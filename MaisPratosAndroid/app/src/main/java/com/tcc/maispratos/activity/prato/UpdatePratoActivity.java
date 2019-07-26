@@ -160,6 +160,7 @@ public class UpdatePratoActivity extends BaseMenuActivity {
                     if(updatePrato()){
                         Intent intent = new Intent(getApplicationContext(), PratoActivity.class);
                         intent.putExtra("usuario", getUsuario());
+                        intent.putExtra("prato", prato);
                         startActivity(intent);
                         finish();
                     }
@@ -200,7 +201,6 @@ public class UpdatePratoActivity extends BaseMenuActivity {
     }
 
     private boolean updatePrato(){
-        Prato prato = new Prato();
         prato.setNome(edtNome.getText().toString());
         prato.setIngredientes(adapter.getIngredientes());
         prato.setModoPreparo(mltModoPreparo.getText().toString());

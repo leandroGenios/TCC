@@ -123,12 +123,8 @@ public class LoginActivity extends AppCompatActivity {
         try {
             json = (String) connection.get();
             if(usuarioLogado(json)){
-                usuario = new Usuario();
-                JSONObject jsonObj = new JSONObject(json);
-                usuario.setId(jsonObj.getInt("id"));
-                usuario.setNome(jsonObj.getString("nome"));
-                usuario.setEmail(jsonObj.getString("email"));
-                usuario.setSenha(jsonObj.getString("senha"));
+                Type type = new TypeToken<Usuario>(){}.getType();
+                usuario = new Gson().fromJson(json, type);
             }
         } catch (Exception e) {
             e.printStackTrace();

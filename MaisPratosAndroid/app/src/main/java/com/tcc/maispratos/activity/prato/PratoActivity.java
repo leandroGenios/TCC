@@ -5,13 +5,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
-import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -27,18 +23,12 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.tcc.maispratos.R;
-import com.tcc.maispratos.activity.ingrediente.UpdateIngredienteActivity;
 import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.comentario.Comentario;
 import com.tcc.maispratos.comentario.ComentarioAdapter;
 import com.tcc.maispratos.ingrediente.Ingrediente;
-import com.tcc.maispratos.ingrediente.prato.IngredientePrato;
-import com.tcc.maispratos.modopreparo.ModoPreparo;
-import com.tcc.maispratos.modopreparo.ModoPreparoAdapter;
-import com.tcc.maispratos.prato.IngredientePratoAdapter;
 import com.tcc.maispratos.prato.IngredientePratoDetalheAdapter;
 import com.tcc.maispratos.prato.Prato;
-import com.tcc.maispratos.unidademedida.UnidadeMedida;
 import com.tcc.maispratos.util.BaseMenuActivity;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
@@ -46,18 +36,11 @@ import com.tcc.maispratos.util.TaskConnection;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.lang.reflect.Type;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import static android.view.View.INVISIBLE;
 import static com.google.zxing.integration.android.IntentIntegrator.REQUEST_CODE;
 
 public class PratoActivity extends BaseMenuActivity {
@@ -112,7 +95,7 @@ public class PratoActivity extends BaseMenuActivity {
 
     public void iniciaElementos(){
         txtNotaPrato = findViewById(R.id.txtNotaPrato);
-        txtNomePrato = findViewById(R.id.txtNomePrato);
+        txtNomePrato = findViewById(R.id.txtNomePessoa);
         txtNomeCriador = findViewById(R.id.txtNomeCriador);
         txtNivelCriador = findViewById(R.id.txtNivelCriador);
         estrelasAvaliacao = new ArrayList<>();

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -27,6 +28,22 @@ public class UsuarioResource {
 			return Response
 					.status(Response.Status.OK)
 					.entity(dao.setUsuario(usuario))
+					.build();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
+	
+	@PUT
+	public Response updateUsuario(Usuario usuario) {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(dao.updateUsuario(usuario))
 					.build();
 		} catch (SQLException e) {
 			e.printStackTrace();

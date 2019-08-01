@@ -15,6 +15,7 @@ import com.google.gson.reflect.TypeToken;
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.prato.CadastroPratoActivity;
 import com.tcc.maispratos.activity.prato.PratosActivity;
+import com.tcc.maispratos.activity.usuario.UpdatePerfilActivity;
 import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.util.BaseMenuActivity;
 import com.tcc.maispratos.util.Constants;
@@ -63,6 +64,7 @@ public class PerfilActivity extends BaseMenuActivity {
         txtNomeUsuario.setText(getUsuario().getNome());
         txtEmailUsuario.setText(getUsuario().getEmail());
         btnMeusPratos.setOnClickListener(exibirMeusPratos());
+        btnEditarDados.setOnClickListener(editarDados());
     }
 
     public View.OnClickListener exibirMeusPratos(){
@@ -70,6 +72,19 @@ public class PerfilActivity extends BaseMenuActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), PratosActivity.class);
+                intent.putExtra("usuario", getUsuario());
+                intent.putExtra("aba", "MEUS");
+                startActivity(intent);
+            }
+        };
+        return onClickListener;
+    }
+
+    public View.OnClickListener editarDados(){
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), UpdatePerfilActivity.class);
                 intent.putExtra("usuario", getUsuario());
                 intent.putExtra("aba", "MEUS");
                 startActivity(intent);

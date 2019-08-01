@@ -41,6 +41,64 @@ public class UsuarioDAO {
 		return usuario;
 	}
 	
+	public Usuario updateUsuario(Usuario usuario) throws SQLException{
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String parametros = "NOME";
+			String sql = "UPDATE usuario SET ";
+			if(usuario.getEmail() != null && !usuario.getEmail().equals("")){
+				sql += " EMAIL = ?,";
+				parametros += "/EMAIL";
+			}
+			if(usuario.getSenha() != null && !usuario.getSenha().equals("")){
+				sql += " SENHA = ?,";
+				parametros += "/SENHA";
+			}
+			sql += " NOME = ?";
+			sql += " WHERE ID = ?";
+			System.out.println(sql);
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			switch (parametros) {
+			case "NOME":
+				System.out.println(usuario.getNome());
+				System.out.println(usuario.getId());
+				stmt.setString(1, usuario.getNome());
+				stmt.setInt(2, usuario.getId());
+				break;
+			case "NOME/EMAIL":
+				stmt.setString(1, usuario.getEmail());
+				stmt.setString(2, usuario.getNome());
+				stmt.setInt(3, usuario.getId());
+				break;
+			case "NOME/SENHA":
+				stmt.setString(1, usuario.getSenha());
+				stmt.setString(2, usuario.getNome());
+				stmt.setInt(3, usuario.getId());
+				break;
+			case "NOME/EMAIL/SENHA":
+				stmt.setString(1, usuario.getEmail());
+				stmt.setString(2, usuario.getSenha());
+				stmt.setString(3, usuario.getNome());
+				stmt.setInt(4, usuario.getId());
+				break;
+			default:
+				break;
+			}
+			
+			
+			stmt.executeUpdate();
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		return usuario;
+	}
+	
 	public Usuario setClassificacao(Usuario usuario) throws SQLException{
 		Connection conn = null;
 		PreparedStatement stmt = null;

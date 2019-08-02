@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.tcc.maispratos.BuildConfig;
@@ -13,7 +14,7 @@ public class LinePessoaHolder extends RecyclerView.ViewHolder{
     public TextView txtNomePessoa;
     public TextView txtClassificacaoPessoa;
     public TextView txtQtdePratosAdd;
-    public Button btnAdd;
+    public ImageButton btnAdd;
 
     public LinePessoaHolder(@NonNull View itemView) {
         super(itemView);

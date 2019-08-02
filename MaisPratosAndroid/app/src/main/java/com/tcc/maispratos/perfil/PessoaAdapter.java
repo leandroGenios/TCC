@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
 import com.tcc.maispratos.activity.ingrediente.UpdateIngredienteActivity;
@@ -23,6 +24,7 @@ import com.tcc.maispratos.util.TaskConnection;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class PessoaAdapter extends RecyclerView.Adapter<LinePessoaHolder> {
@@ -43,8 +45,8 @@ public class PessoaAdapter extends RecyclerView.Adapter<LinePessoaHolder> {
     @Override
     public void onBindViewHolder(@NonNull LinePessoaHolder linePessoaHolder, final int i) {
         linePessoaHolder.txtNomePessoa.setText(pessoas.get(i).getNome());
-        linePessoaHolder.txtClassificacaoPessoa.setText("");
-        linePessoaHolder.txtQtdePratosAdd.setText("");
+        linePessoaHolder.txtClassificacaoPessoa.setText(getClassificacao(pessoas.get(i)));
+        linePessoaHolder.txtQtdePratosAdd.setText(getCountMeusPratos(pessoas.get(i)) + " pratos cadastrados");
         linePessoaHolder.btnAdd.setOnClickListener(adicionarAmigo(pessoas.get(i)));
         linePessoaHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,5 +149,45 @@ public class PessoaAdapter extends RecyclerView.Adapter<LinePessoaHolder> {
         });
         AlertDialog alerta = builder.create();
         alerta.show();
+    }
+
+    private String getClassificacao(Usuario usuario){
+        TaskConnection connection = new TaskConnection();
+        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
+        params[Constants.NOME_DO_RESOURCE] = "usuario/classificacao/" + usuario.getId();
+        connection.execute(params);
+
+        String json = null;
+        try {
+            json = (String) connection.get();
+            Type type = new TypeToken<String>(){}.getType();
+            return new Gson().fromJson(json, type);
+        } catch (Exception e) {
+            e.printStackTrace();
+            exibirErro("Ocorreu um problema ao tentar buscar os dados. Tente novamente mais tarde.");
+        }
+
+        return "";
+    }
+
+    private Integer getCountMeusPratos(Usuario usuario){
+        TaskConnection connection = new TaskConnection();
+        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
+        params[Constants.NOME_DO_RESOURCE] = "prato/meusPratos/" + usuario.getId();
+        connection.execute(params);
+
+        String json = null;
+        try {
+            json = (String) connection.get();
+            Type type = new TypeToken<Integer>(){}.getType();
+            return new Gson().fromJson(json, type);
+        } catch (Exception e) {
+            e.printStackTrace();
+            exibirErro("Ocorreu um problema ao tentar buscar os dados. Tente novamente mais tarde.");
+        }
+
+        return 0;
     }
 }

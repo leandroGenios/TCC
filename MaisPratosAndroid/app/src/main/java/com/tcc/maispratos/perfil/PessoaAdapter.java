@@ -15,6 +15,8 @@ import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
 import com.tcc.maispratos.activity.ingrediente.UpdateIngredienteActivity;
 import com.tcc.maispratos.activity.perfil.AmigosActivity;
+import com.tcc.maispratos.activity.perfil.PerfilPublicoActivity;
+import com.tcc.maispratos.activity.prato.PratosActivity;
 import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.ingrediente.Ingrediente;
 import com.tcc.maispratos.ingrediente.LineIngredienteHolder;
@@ -48,10 +50,16 @@ public class PessoaAdapter extends RecyclerView.Adapter<LinePessoaHolder> {
         linePessoaHolder.txtClassificacaoPessoa.setText(getClassificacao(pessoas.get(i)));
         linePessoaHolder.txtQtdePratosAdd.setText(getCountMeusPratos(pessoas.get(i)) + " pratos cadastrados");
         linePessoaHolder.btnAdd.setOnClickListener(adicionarAmigo(pessoas.get(i)));
+        if(pessoas.get(i).isAmigo()){
+            linePessoaHolder.btnAdd.setVisibility(View.INVISIBLE);
+        }
         linePessoaHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                exibeDialogo(pessoas.get(i));
+                Intent intent = new Intent(activity.getApplicationContext(), PerfilPublicoActivity.class);
+                intent.putExtra("usuario", activity.getUsuario());
+                intent.putExtra("amigo", pessoas.get(i));
+                activity.startActivity(intent);
             }
         });
     }
@@ -108,7 +116,7 @@ public class PessoaAdapter extends RecyclerView.Adapter<LinePessoaHolder> {
         TaskConnection connection = new TaskConnection();
         Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
         params[Constants.TIPO_DE_REQUISICAO] = Constants.POST;
-        params[Constants.NOME_DO_RESOURCE] = "usuario/amigo";
+        params[Constants.NOME_DO_RESOURCE] = "usuario/amigo/" + activity.getUsuario().getId();
         String gson = new Gson().toJson(pessoa);
         try {
             params[Constants.OBJETO] = new JSONObject(gson);

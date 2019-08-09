@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.mysql.jdbc.Statement;
 
@@ -232,5 +234,93 @@ public class UsuarioDAO {
 		}
 
 		return classificacao;
+	}
+	
+	public boolean addAmigo(int codUsuario, Usuario usuario) throws SQLException{
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "INSERT INTO usuario_amigo VALUES (?, ?)";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setInt(1, codUsuario);
+			stmt.setInt(2, usuario.getId());
+			
+			stmt.executeUpdate();
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		return true;
+	}
+	
+	public List<Usuario> listAmigos(int idUsuario) throws SQLException{
+		List<Usuario> usuarios = new ArrayList<Usuario>();
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "SELECT u.id,\n"
+					   + "		 u.nome\n"
+					   + "  FROM usuario_amigo UA\n"
+					   + " INNER JOIN usuario u\n"
+					   + "	  ON u.id = ua.usuario_amigo_id\n" 
+					   + " WHERE UA.usuario_id = ?"
+					   + " ORDER BY U.NOME";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			stmt.setInt(1, idUsuario);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				Usuario usuario = new Usuario();
+				usuario.setId(rs.getInt("ID"));
+				usuario.setNome(rs.getString("NOME"));
+				usuario.setAmigo(true);
+				usuarios.add(usuario);
+			}
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+
+		return usuarios;
+	}
+	
+	public List<Usuario> listUsuarios(int idUsuario) throws SQLException{
+		List<Usuario> usuarios = new ArrayList<Usuario>();
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "SELECT u.id,\n"
+					   + "		 u.nome\n"
+					   + "	FROM usuario U "
+					   + " WHERE NOT EXISTS (SELECT * "
+					   + "					   FROM usuario_amigo UA "
+					   + "					  WHERE UA.usuario_amigo_id = U.id "
+					   + "						AND UA.usuario_id = ?) "
+					   + "   AND U.id <> ?"
+					   + " ORDER BY U.NOME";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			stmt.setInt(1, idUsuario);
+			stmt.setInt(2, idUsuario);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				Usuario usuario = new Usuario();
+				usuario.setId(rs.getInt("ID"));
+				usuario.setNome(rs.getString("NOME"));
+				usuario.setAmigo(false);
+				usuarios.add(usuario);
+			}
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+
+		return usuarios;
 	}
 }

@@ -55,7 +55,7 @@ public class UsuarioResource {
 	}
 	
 	@GET
-	@Path("emailExiste/{email}")
+	@Path("/emailExiste/{email}")
 	public Response emailExiste(@PathParam("email")String email) {
 		try {
 			return Response
@@ -72,7 +72,7 @@ public class UsuarioResource {
 	}
 	
 	@GET
-	@Path("login/{email}/{senha}")
+	@Path("/login/{email}/{senha}")
 	public Response login(@PathParam("email")String email, @PathParam("senha")String senha) {
 		try {
 			boolean usuarioExiste = dao.usuarioExiste(email, senha);
@@ -97,7 +97,7 @@ public class UsuarioResource {
 	}
 	
 	@GET
-	@Path("classificacao/{id}")
+	@Path("/classificacao/{id}")
 	public Response classificacao(@PathParam("id")int usuario_id) {
 		try {
 			int count = new PratoDAO().listPratosBoaAvaliacao(usuario_id).size();
@@ -116,13 +116,64 @@ public class UsuarioResource {
 	}
 	
 	@GET
-	@Path("proximoNivel/{id}")
+	@Path("/proximoNivel/{id}")
 	public Response proximoNivel(@PathParam("id")int usuario_id) {
 		try {
 			return Response
 					.status(Response.Status.OK)
 					.entity(5 - (new PratoDAO().listPratosBoaAvaliacao(usuario_id).size() % 5))
 					.build();				
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
+	
+	@POST
+	@Path("/amigo/{codUsuario}")
+	public Response addAmigo(@PathParam("codUsuario")int codUsuario, Usuario usuario) {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(dao.addAmigo(codUsuario, usuario))
+					.build();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
+	
+	@GET
+	@Path("/amigo/list/{codUsuario}")
+	public Response listAmigos(@PathParam("codUsuario")int codUsuario) {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(dao.listAmigos(codUsuario))
+					.build();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
+	
+	@GET
+	@Path("/{codUsuario}")
+	public Response listUsuarios(@PathParam("codUsuario")int codUsuario) {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(dao.listUsuarios(codUsuario))
+					.build();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return Response

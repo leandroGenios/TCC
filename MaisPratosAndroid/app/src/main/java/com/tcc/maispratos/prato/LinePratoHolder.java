@@ -17,8 +17,8 @@ public class LinePratoHolder extends RecyclerView.ViewHolder {
     public LinePratoHolder(@NonNull View itemView) {
         super(itemView);
         imgPrato = (ImageView) itemView.findViewById(R.id.imgPrato);
-        txtNomePrato = (TextView) itemView.findViewById(R.id.txtNomePrato);
-        txtIngredientesCompativeis = (TextView) itemView.findViewById(R.id.txtIngredientesCompativeis);
+        txtNomePrato = (TextView) itemView.findViewById(R.id.txtNomePessoa);
+        txtIngredientesCompativeis = (TextView) itemView.findViewById(R.id.txtClassificacaoPessoa);
         txtNota = (TextView) itemView.findViewById(R.id.txtNota);
     }
 

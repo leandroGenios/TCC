@@ -294,4 +294,25 @@ public class IngredienteDAO {
 		
 		return ingrediente;
 	}
+
+	public boolean deleteIngredienteByPrato(int pratoId) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "DELETE FROM prato_ingrediente "
+					   + " WHERE prato_id = ? ";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setInt(1, pratoId);
+			
+			stmt.executeUpdate();
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		return true;
+	}
 }

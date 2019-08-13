@@ -96,6 +96,11 @@ public class ListaComprasDAO {
 			stmt.setFloat(4, usuario.getIngrediente().getQuantidade());
 			
 			stmt.executeUpdate();
+		}catch (Exception e) {
+			if(e.getMessage().contains("Duplicate entry")){
+				GerenciadorJDBC.close(conn, stmt);
+				incrementIngredienteByUsuario(usuario);
+			}
 		}
 		finally {
 			GerenciadorJDBC.close(conn, stmt);
@@ -108,6 +113,28 @@ public class ListaComprasDAO {
 			return setIngredienteByUsuario(usuario);
 		}
 		return false;
+	}
+	
+	public boolean incrementIngredienteByUsuario(Usuario usuario) throws SQLException{
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "UPDATE lista_compra SET quantidade = quantidade + ? where usuario_id = ? and ingrediente_id = ?";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setFloat(1, usuario.getIngrediente().getQuantidade());
+			stmt.setInt(2, usuario.getId());
+			stmt.setInt(3, usuario.getIngrediente().getId());
+			
+			stmt.executeUpdate();
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		return true;
 	}
 	
 	public boolean deleteIngredienteByUsuario(int codUsuario, int codIngrediente) throws SQLException{

@@ -6,6 +6,6 @@ public class ApplicationConfig extends ResourceConfig {
 
 	public ApplicationConfig() {
 		register(new MyApplicationBinder());
-        packages("br.com.meuspratos.resource");
+        packages("br.com.meuspratos.resource"); 
     }
 }

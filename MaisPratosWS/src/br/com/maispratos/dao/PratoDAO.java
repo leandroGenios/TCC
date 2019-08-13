@@ -99,6 +99,7 @@ public class PratoDAO {
 				String sql = "INSERT INTO prato_ingrediente (prato_id, ingrediente_id, unidade_medida_id, quantidade) VALUES (?,?,?,?)";
 				stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 				
+				System.out.println(ingrediente.getId());
 				stmt.setInt(1, prato.getId());
 				stmt.setInt(2, ingrediente.getId());
 				stmt.setInt(3, ingrediente.getUnidadeMedida().getId());
@@ -155,11 +156,13 @@ public class PratoDAO {
 					"		P.modo_preparo,\r\n" + 
 					"		P.tempo_preparo,\r\n" + 
 					"		P.imagem,\r\n" + 
+					"		I.ID INGREDIENTE_ID,\r\n" + 
 					"		I.codigo_barras,\r\n" + 
 					"		I.nome,\r\n" + 
 					"		FIND_IN_SET(I.NOME,'" + ingredientesNome + "') COMPATIVEL,\r\n" + 
 					"		PI.quantidade,\r\n" + 
 					"		UM.sigla,\r\n" + 
+					"		UM.id UNIDADE_MEDIDA_ID,\r\n" + 
 					"		U.nome NOME_USUARIO,\r\n" + 
 					"		U.id usuario_id,\r\n" + 
 					"		C.descricao,\r\n" + 
@@ -202,7 +205,7 @@ public class PratoDAO {
 				    "	 AND PF.usuario_id = ? \r\n" +
 					"  WHERE TRUE\r\n";
 			sql +=  where;
-			sql +=  "  GROUP BY I.nome, PA.avaliacao\r\n" + 
+			sql +=  "  GROUP BY P.nome, I.nome, PA.avaliacao\r\n" + 
 					"  ORDER BY P.nome";
 			
 			System.out.println(sql);
@@ -247,15 +250,19 @@ public class PratoDAO {
 					prato.setPreparadoSemIngredientes(rs.getBoolean("PREPARO_SEM_INGREDIENTES"));
 					prato.setFavorito(rs.getBoolean("FAVORITO"));
 					
+					prato.setIngredientesCompativeisString("0");
+					
 					pratos.add(prato);
 				}
 				
 				Ingrediente ingrediente = new Ingrediente();
+				ingrediente.setId(rs.getInt("INGREDIENTE_ID"));
 				ingrediente.setCodigoBarras(rs.getDouble("CODIGO_BARRAS"));
 				ingrediente.setNome(rs.getString("NOME"));
 				ingrediente.setQuantidade(rs.getFloat("QUANTIDADE"));
 				UnidadeMedida unidadeMedida = new UnidadeMedida();
 				unidadeMedida.setSigla(rs.getString("SIGLA"));
+				unidadeMedida.setId(rs.getInt("UNIDADE_MEDIDA_ID"));
 				ingrediente.setUnidadeMedida(unidadeMedida);
 				
 				prato.getIngredientes().add(ingrediente);
@@ -311,6 +318,7 @@ public class PratoDAO {
 					     "		 FIND_IN_SET(I.NOME,'" + ingredientesNome + "') COMPATIVEL, \r\n" +
 					     "		 PI.quantidade, \r\n" +
 					     "		 UM.sigla, \r\n" +
+					     "		 UM.id UNIDADE_MEDIDA_ID,\r\n" +
 					     "		 U.nome NOME_USUARIO, \r\n" +
 					     "		 U.id usuario_id,\r\n" + 
 					     "		 C.descricao, \r\n" +
@@ -395,6 +403,7 @@ public class PratoDAO {
 				ingrediente.setQuantidade(rs.getFloat("QUANTIDADE"));
 				UnidadeMedida unidadeMedida = new UnidadeMedida();
 				unidadeMedida.setSigla(rs.getString("SIGLA"));
+				unidadeMedida.setId(rs.getInt("UNIDADE_MEDIDA_ID"));
 				ingrediente.setUnidadeMedida(unidadeMedida);
 				
 				prato.getIngredientes().add(ingrediente);
@@ -634,5 +643,128 @@ public class PratoDAO {
 		}
 		
 		return !usuario.getPrato().getFavorito();
+	}
+
+	public Object updatePrato(Usuario usuario) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "UPDATE prato SET nome = ?, modo_preparo = ?, tempo_preparo = ?, imagem = ? WHERE ID = ?";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setString(1, usuario.getPrato().getNome());
+			stmt.setString(2, usuario.getPrato().getModoPreparo());
+			stmt.setInt(3, usuario.getPrato().getTempoPreparo());
+			
+			if(usuario.getPrato().getImagem() != null){
+				InputStream myInputStream = new ByteArrayInputStream(usuario.getPrato().getImagem()); 
+				stmt.setBinaryStream(4, myInputStream);				
+			}else{
+				stmt.setNull(4, Types.BLOB);
+			}
+			
+			stmt.setInt(5, usuario.getPrato().getId());
+			
+			stmt.executeUpdate();
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		
+		IngredienteDAO ingDao = new IngredienteDAO();
+		System.out.println(usuario.getPrato().getId());
+		if(ingDao.deleteIngredienteByPrato(usuario.getPrato().getId())){
+			addIngredientesPrato(usuario.getPrato());
+		}
+		return true;
+	}
+	
+	public Integer countPratosAvaliados(int idUsuario) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		int count = 0;
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			String sql = "SELECT count(p.id) qtde "
+					   + "  FROM prato p"
+					   + " inner join prato_avaliacao pa"
+					   + "    on pa.usuario_id = ?"
+					   + "   and pa.prato_id = p.id";
+			
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setInt(1, idUsuario);
+			
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				count = rs.getInt("QTDE");
+			}
+		}finally{
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		
+		return count;
+	}
+	
+	public Integer countMeusPratos(int idUsuario) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		int count = 0;
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			String sql = "SELECT count(pu.prato_id) qtde "
+					   + "  FROM prato_usuario pu"
+					   + " where pu.usuario_id = ?";
+			
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setInt(1, idUsuario);
+			
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				count = rs.getInt("QTDE");
+			}
+		}finally{
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		
+		return count;
+	}
+	
+	public List<Prato> listPratosBoaAvaliacao(int idUsuario) throws SQLException {
+		List<Prato> pratos = new ArrayList<>();
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			String sql = "SELECT *, "
+					   + "		 AVG(PA.avaliacao) AS media"
+					   + "	FROM prato_usuario PU"
+					   + " INNER JOIN prato_avaliacao PA"
+					   + "	  ON PA.prato_id = PU.prato_id"
+					   + " WHERE PU.usuario_id = ?"
+					   + " GROUP BY PU.prato_id "
+					   + "HAVING AVG(PA.avaliacao) > 3";
+			
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setInt(1, idUsuario);
+			
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				Prato prato = new Prato();
+				prato.setId(rs.getInt("PRATO_ID"));
+				prato.setAvaliacao(rs.getInt("MEDIA"));
+				
+				pratos.add(prato);
+			}
+		}finally{
+			GerenciadorJDBC.close(conn, stmt);
+		}
+		
+		return pratos;
 	}
 }

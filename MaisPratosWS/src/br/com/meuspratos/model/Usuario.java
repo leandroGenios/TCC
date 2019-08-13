@@ -12,6 +12,8 @@ public class Usuario {
 	private Prato prato;
 	private List<Prato> pratos;
 	private Classificacao classificacao;
+	private List<Usuario> amigos;
+	private boolean amigo;
 	
 	public Prato getPrato() {
 		return prato;
@@ -66,5 +68,17 @@ public class Usuario {
 	}
 	public void setClassificacao(Classificacao classificacao) {
 		this.classificacao = classificacao;
+	}
+	public List<Usuario> getAmigos() {
+		return amigos;
+	}
+	public void setAmigos(List<Usuario> amigos) {
+		this.amigos = amigos;
+	}
+	public boolean isAmigo() {
+		return amigo;
+	}
+	public void setAmigo(boolean amigo) {
+		this.amigo = amigo;
 	}
 }

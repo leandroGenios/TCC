@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -57,12 +56,13 @@ public class UpdatePratoActivity extends BaseMenuActivity {
         setUsuario((Usuario) getIntent().getExtras().getSerializable("usuario"));
         prato = (Prato) getIntent().getExtras().getSerializable("prato");
         iniciaElementos();
+        carregaIngredientes();
     }
 
     private void iniciaElementos(){
         edtNome = (EditText) findViewById(R.id.edtNomePrato);
         btnAddIngrediente = (Button) findViewById(R.id.btnAddIngredientePrato);
-        rcvIngrediente = (RecyclerView) findViewById(R.id.rcvIngredientesPrato);
+        rcvIngrediente = (RecyclerView) findViewById(R.id.rcvAmigos);
         mltModoPreparo = (EditText) findViewById(R.id.mltModoPreparoPrato);
         edtTempoPreparo = (EditText) findViewById(R.id.edtTempoPreparo);
         btnSalvar = (Button) findViewById(R.id.btnSalvar);
@@ -86,8 +86,14 @@ public class UpdatePratoActivity extends BaseMenuActivity {
             imgBtnAddImage.setImageBitmap(bitmap);
         }
 
-        mltModoPreparo.setText(prato.getModoPreparo());
-        edtTempoPreparo.setText(prato.getTempoPreparo());
+        mltModoPreparo.setText(String.valueOf(prato.getModoPreparo()));
+        edtTempoPreparo.setText(String.valueOf(prato.getTempoPreparo()));
+    }
+
+    private void carregaIngredientes(){
+        for (Ingrediente ingrediente: prato.getIngredientes()) {
+            adapter.updateList(ingrediente);
+        }
     }
 
     private View.OnClickListener addIngrediente(){
@@ -136,7 +142,13 @@ public class UpdatePratoActivity extends BaseMenuActivity {
     }
 
     private void addIngrediente(Ingrediente ingrediente){
-        adapter.updateList(ingrediente);
+        for (Ingrediente ing: adapter.getIngredientes()) {
+            if(ing.getNome().toLowerCase().equals(ingrediente.getNome().toLowerCase())){
+                adapter.getIngredientes().remove(ing);
+                adapter.updateList(ingrediente);
+                break;
+            }
+        }
     }
 
     private View.OnClickListener salvar(){
@@ -145,8 +157,9 @@ public class UpdatePratoActivity extends BaseMenuActivity {
             public void onClick(View v) {
                 if(validarCampos()){
                     if(updatePrato()){
-                        Intent intent = new Intent(getApplicationContext(), PratosActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), PratoActivity.class);
                         intent.putExtra("usuario", getUsuario());
+                        intent.putExtra("prato", prato);
                         startActivity(intent);
                         finish();
                     }
@@ -187,7 +200,6 @@ public class UpdatePratoActivity extends BaseMenuActivity {
     }
 
     private boolean updatePrato(){
-        Prato prato = new Prato();
         prato.setNome(edtNome.getText().toString());
         prato.setIngredientes(adapter.getIngredientes());
         prato.setModoPreparo(mltModoPreparo.getText().toString());

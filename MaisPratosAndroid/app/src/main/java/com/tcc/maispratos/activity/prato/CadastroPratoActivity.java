@@ -55,13 +55,13 @@ public class CadastroPratoActivity extends BaseMenuActivity {
     }
 
     private void iniciaElementos(){
-        edtNome = (EditText) findViewById(R.id.edtNomePrato);
-        btnAddIngrediente = (Button) findViewById(R.id.btnAddIngredientePrato);
-        rcvIngrediente = (RecyclerView) findViewById(R.id.rcvIngredientesPrato);
-        mltModoPreparo = (EditText) findViewById(R.id.mltModoPreparoPrato);
-        edtTempoPreparo = (EditText) findViewById(R.id.edtTempoPreparo);
-        btnSalvar = (Button) findViewById(R.id.btnSalvar);
-        imgBtnAddImage = (ImageButton) findViewById(R.id.imgbtnAddImagem);
+        edtNome = findViewById(R.id.edtNomePrato);
+        btnAddIngrediente = findViewById(R.id.btnAddIngredientePrato);
+        rcvIngrediente = findViewById(R.id.rcvAmigos);
+        mltModoPreparo = findViewById(R.id.mltModoPreparoPrato);
+        edtTempoPreparo = findViewById(R.id.edtTempoPreparo);
+        btnSalvar = findViewById(R.id.btnSalvar);
+        imgBtnAddImage = findViewById(R.id.imgbtnAddImagem);
 
         rcvIngrediente.setLayoutManager(new LinearLayoutManager(this));
         adapter = new IngredientePratoAdapter(new ArrayList<Ingrediente>(0), this);

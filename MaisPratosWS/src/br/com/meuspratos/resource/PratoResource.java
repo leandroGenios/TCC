@@ -39,6 +39,22 @@ public class PratoResource {
 		}
 	}
 	
+	@PUT
+	public Response updatePrato(Usuario usuario) {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(dao.updatePrato(usuario))
+					.build();				
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
+	
 	@GET
 	@Path("/{idUsuario}")
 	public Response listPratos(@PathParam("idUsuario") int idUsuario) {
@@ -199,6 +215,40 @@ public class PratoResource {
 			return Response
 					.status(Response.Status.OK)
 					.entity(usuario.getPrato().getFavorito() == null ? dao.setFavorito(usuario) : dao.updateFavorito(usuario))
+					.build();				
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
+	
+	@GET
+	@Path("/minhasAvaliacoes/{idUsuario}")
+	public Response minhasAvaliacoes(@PathParam("idUsuario") int idUsuario) {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(dao.countPratosAvaliados(idUsuario))
+					.build();				
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
+	
+	@GET
+	@Path("/meusPratos/{idUsuario}")
+	public Response meusPratos(@PathParam("idUsuario") int idUsuario) {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(dao.countMeusPratos(idUsuario))
 					.build();				
 		} catch (SQLException e) {
 			e.printStackTrace();

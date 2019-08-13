@@ -3,6 +3,7 @@ package com.tcc.maispratos.activity.prato;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.internal.NavigationMenu;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -30,6 +31,8 @@ public class PratosActivity extends BaseMenuActivity {
     private FloatingActionButton fab;
     private RecyclerView rcvPratos;
     private PratoAdapter adapter;
+    private String aba;
+    private BottomNavigationView navegacao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,7 @@ public class PratosActivity extends BaseMenuActivity {
         setContentView(R.layout.activity_pratos);
         setTitle("Lista de pratos");
         setUsuario((Usuario) getIntent().getExtras().getSerializable("usuario"));
+        aba = (String) getIntent().getExtras().getSerializable("aba");
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -49,7 +53,20 @@ public class PratosActivity extends BaseMenuActivity {
         rcvPratos.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         iniciaElementos();
-        listGeral();
+
+        if(aba != null){
+            switch (aba) {
+                case "MEUS":
+                    listMeusPratos();
+                    navegacao.setSelectedItemId(R.id.navigation_meus);
+                    break;
+                default:
+                    listGeral();
+                    break;
+            }
+        }else{
+            listGeral();
+        }
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -76,6 +93,7 @@ public class PratosActivity extends BaseMenuActivity {
 
     private void iniciaElementos(){
         fab = findViewById(R.id.flbAddPrato);
+        navegacao = findViewById(R.id.navigation);
         fab.setOnClickListener(addPrato());
     }
 

@@ -51,6 +51,9 @@ public class PerfilPublicoActivity extends BaseMenuActivity {
         rcvPratos = findViewById(R.id.rcvPratos);
         btnAddAmigo = findViewById(R.id.btnAddAmigo);
 
+        txtNome.setText(amigo.getNome());
+        txtNivel.setText(getClassificacao());
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rcvPratos.setLayoutManager(layoutManager);
         adapter = new PratoPerfilPublicoAdapter(new ArrayList<Prato>(0), this);
@@ -76,9 +79,30 @@ public class PerfilPublicoActivity extends BaseMenuActivity {
 
         adapter.clear();
         if(list != null){
+            txtQtdePratos.setText(list.size() + " pratos adicionados");
             for (Prato prato: list) {
                 adapter.updateList(prato);
             }
         }
+    }
+
+    private String getClassificacao(){
+        TaskConnection connection = new TaskConnection();
+        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
+        params[Constants.NOME_DO_RESOURCE] = "usuario/classificacao/" + amigo.getId();
+        connection.execute(params);
+
+        String json = null;
+        try {
+            json = (String) connection.get();
+            Type type = new TypeToken<String>(){}.getType();
+            return new Gson().fromJson(json, type);
+        } catch (Exception e) {
+            e.printStackTrace();
+            exibirErro("Ocorreu um problema ao tentar buscar os dados. Tente novamente mais tarde.");
+        }
+
+        return "";
     }
 }

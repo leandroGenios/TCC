@@ -1,5 +1,7 @@
 package com.tcc.maispratos.activity.ingrediente;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -61,13 +63,17 @@ public class CadastroIngredienteActivity extends BaseIngrediente {
             @Override
             public void onClick(View v) {
                 if(validarCampos()){
-                    if(cadastrarIngrediente()){
-                        Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
-                        intent.putExtra("usuario", getUsuario());
-                        startActivity(intent);
-                        finish();
-                    }else{
-                        exibirErro("Não foi possível salvar o ingrediente. Tente novamente mais tarde.");
+                    Boolean retorno = cadastrarIngrediente();
+                    if(retorno != null){
+                        if(retorno == true){
+                            Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
+                            intent.putExtra("usuario", getUsuario());
+                            startActivity(intent);
+                            finish();
+                        }else if(retorno == false){
+
+                            exibirErro("Não foi possível salvar o ingrediente. Tente novamente mais tarde.");
+                        }
                     }
                 }
             }
@@ -82,7 +88,7 @@ public class CadastroIngredienteActivity extends BaseIngrediente {
         edtCodigoBarras.setText(codigo);
     }
 
-    private boolean cadastrarIngrediente(){
+    private Boolean cadastrarIngrediente(){
         Ingrediente ingrediente = new Ingrediente();
         if(edtCodigoBarras.getText() != null && !edtCodigoBarras.getText().toString().equals("")){
             ingrediente.setCodigoBarras(Double.parseDouble(edtCodigoBarras.getText().toString()));
@@ -123,7 +129,13 @@ public class CadastroIngredienteActivity extends BaseIngrediente {
         connection.execute(params);
 
         try {
-            return ((String) connection.get()).equals("true");
+            String retorno = ((String) connection.get());
+            if(retorno.toLowerCase().split("duplicate").length > 1){
+                exibirAlerta("A sua lista já contem este ingrediente");
+                return null;
+            }else{
+                return ((String) connection.get()).equals("true");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             exibirErro("Ocorreu um problema ao cadastrar. Tente novamente mais tarde.");
@@ -131,4 +143,21 @@ public class CadastroIngredienteActivity extends BaseIngrediente {
 
         return false;
     }
+
+    public void exibirAlerta(String mensagem){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Alerta");
+        builder.setMessage(mensagem);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
+                intent.putExtra("usuario", getUsuario());
+                startActivity(intent);
+                finish();
+            }
+        });
+        AlertDialog alerta = builder.create();
+        alerta.show();
+    }
+
 }

@@ -132,4 +132,8 @@ public class IngredienteAdapter extends RecyclerView.Adapter<LineIngredienteHold
         AlertDialog alerta = builder.create();
         alerta.show();
     }
+
+    public List<Ingrediente> getIngredientes(){
+        return ingredientes;
+    }
 }

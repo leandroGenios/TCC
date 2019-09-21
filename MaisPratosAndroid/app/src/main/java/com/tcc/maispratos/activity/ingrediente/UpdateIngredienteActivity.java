@@ -100,6 +100,7 @@ public class UpdateIngredienteActivity extends BaseIngrediente {
                 break;
             }
         }
+
         if(ingrediente.getNome() == null){
             if(aucNomeIngrediente.getText() != null && !aucNomeIngrediente.getText().toString().equals("")){
                 ingrediente.setNome(aucNomeIngrediente.getText().toString());
@@ -120,6 +121,7 @@ public class UpdateIngredienteActivity extends BaseIngrediente {
         params[Constants.TIPO_DE_REQUISICAO] = Constants.PUT;
         params[Constants.NOME_DO_RESOURCE] = "ingrediente";
         String gson = new Gson().toJson(getUsuario());
+
         try {
             params[Constants.OBJETO] = new JSONObject(gson);
         } catch (JSONException e) {

@@ -127,6 +127,7 @@ public class IngredienteDAO {
 	
 	public boolean setIngredienteByUsuario(Usuario usuario) throws SQLException{
 		Ingrediente ingrediente = null;
+		System.out.println(usuario.getIngrediente().getNome());
 		if(usuario.getIngrediente().getCodigoBarras() != 0)
 			ingrediente = getIngredienteByCodigoBarras(usuario.getIngrediente().getCodigoBarras());
 		else
@@ -203,6 +204,8 @@ public class IngredienteDAO {
 			}else{
 				stmt.setNull(1, Types.DOUBLE);
 			}
+			
+			System.out.println(ingrediente.getNome());
 			stmt.setString(2, ingrediente.getNome().toUpperCase());
 			
 			stmt.executeUpdate();
@@ -241,6 +244,8 @@ public class IngredienteDAO {
 			stmt.setInt(2, codIngrediente);
 			
 			stmt.executeUpdate();
+		}catch (Exception e) {
+			e.printStackTrace();
 		}
 		finally {
 			GerenciadorJDBC.close(conn, stmt);

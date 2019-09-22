@@ -127,7 +127,6 @@ public class IngredienteDAO {
 	
 	public boolean setIngredienteByUsuario(Usuario usuario) throws SQLException{
 		Ingrediente ingrediente = null;
-		System.out.println(usuario.getIngrediente().getNome());
 		if(usuario.getIngrediente().getCodigoBarras() != 0)
 			ingrediente = getIngredienteByCodigoBarras(usuario.getIngrediente().getCodigoBarras());
 		else

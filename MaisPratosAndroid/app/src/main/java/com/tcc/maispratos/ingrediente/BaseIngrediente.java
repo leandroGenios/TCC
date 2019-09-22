@@ -80,15 +80,20 @@ public class BaseIngrediente extends BaseMenuActivity {
         return focus;
     }
 
-    private boolean verificarCodigoBarras(){
+    public boolean verificarCodigoBarras(){
         return edtCodigoBarras.getText().toString().length() == Constants.QTDE_DIGITOS_CODIGO_MARRAS;
     }
 
-    private void verificarIngrediente(Ingrediente ingrediente){
-        aucNomeIngrediente.setText(ingrediente != null ? ingrediente.getNome() : "");
+    public void verificarIngrediente(Ingrediente ingrediente){
+        if(ingrediente != null){
+            aucNomeIngrediente.setText(ingrediente != null ? ingrediente.getNome() : "");
+            aucNomeIngrediente.setEnabled(false);
+        }else{
+            aucNomeIngrediente.setEnabled(true);
+        }
     }
 
-    private Ingrediente getIngredienteByCodigoBarras(){
+    public Ingrediente getIngredienteByCodigoBarras(){
         Ingrediente ingrediente = null;
         TaskConnection connection = new TaskConnection();
         Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];

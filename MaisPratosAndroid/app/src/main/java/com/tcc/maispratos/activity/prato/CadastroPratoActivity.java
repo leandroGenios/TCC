@@ -179,7 +179,7 @@ public class CadastroPratoActivity extends BaseMenuActivity {
 
         if(bitmap != null){
             ByteArrayOutputStream blob = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 0, blob);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, blob);
             prato.setImagem(blob.toByteArray());
         }
 

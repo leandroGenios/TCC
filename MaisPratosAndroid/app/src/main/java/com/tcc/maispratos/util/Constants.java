@@ -6,7 +6,7 @@ public class Constants {
     public static final String POST = "post";
     public static final String PUT = "put";
     public static final String DELETE = "delete";
-    public static final String ENDERECO_REST = "http://192.168.137.1:8080/MaisPratosWS/rest/";
+    public static final String ENDERECO_REST = "http://192.168.1.7:8080/MaisPratosWS/rest/";
     public static final int TIPO_DE_REQUISICAO = 0;
     public static final int NOME_DO_RESOURCE = 1;
     public static final int OBJETO = 2;

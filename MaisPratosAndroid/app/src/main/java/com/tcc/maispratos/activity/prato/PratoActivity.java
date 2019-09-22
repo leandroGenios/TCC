@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -14,6 +16,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -58,6 +61,7 @@ public class PratoActivity extends BaseMenuActivity {
     private FloatingActionButton fabFavorito;
     private FloatingActionButton fabEditar;
     private List<ImageView> estrelasAvaliacao;
+    private ImageView imagem;
 
     private Prato prato;
     private Drawable estrelaSelecionada;
@@ -91,6 +95,7 @@ public class PratoActivity extends BaseMenuActivity {
         verificarPreparo();
         varificarFavorito();
         verificarCriador();
+        getImagem();
     }
 
     public void iniciaElementos(){
@@ -113,6 +118,7 @@ public class PratoActivity extends BaseMenuActivity {
         fabEditar = findViewById(R.id.fabEditar);
         fab = findViewById(R.id.fab);
         coordinatorLayout = findViewById(R.id.actPrato);
+        imagem = findViewById(R.id.imgPrato);
 
         txtNomePrato.setText(prato.getNome());
         txtNomeCriador.setText("Criado por " + prato.getCriador().getNome());
@@ -263,6 +269,7 @@ public class PratoActivity extends BaseMenuActivity {
             @Override
             public void onClick(View v) {
                 if(snackbar.isShown()){
+                    fab.setEnabled(false);
                     if(prato.isPreparadoSemIngredientes()){
                         exibirMensagem("O preparo desse prato não pode ser interrompido.");
                     }else{
@@ -272,6 +279,7 @@ public class PratoActivity extends BaseMenuActivity {
                         cancelarPreparo();
                     }
                 }else{
+                    fab.setEnabled(true);
                     if(verificaIngredientesCompativeis()){
                         prato.setPreparadoSemIngredientes(false);
                         salvarInicioPreparo();
@@ -622,7 +630,6 @@ public class PratoActivity extends BaseMenuActivity {
     }
 
     private void varificarFavorito(){
-        System.out.println(prato.getFavorito());
         if(prato.getFavorito() != null && prato.getFavorito()){
             fabFavorito.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
             fabFavorito.setImageDrawable(estrelaSelecionada);
@@ -661,6 +668,14 @@ public class PratoActivity extends BaseMenuActivity {
                 e.printStackTrace();
                 exibirErro("Ocorreu um problema ao cadastrar lista de compras. Tente novamente mais tarde.");
             }
+        }
+    }
+
+    private void getImagem(){
+        if(prato.getImagemBase64() != null){
+            byte[] bitMapData = Base64.decode(prato.getImagemBase64(),Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bitMapData, 0, bitMapData.length);
+            imagem.setImageBitmap(bitmap);
         }
     }
 }

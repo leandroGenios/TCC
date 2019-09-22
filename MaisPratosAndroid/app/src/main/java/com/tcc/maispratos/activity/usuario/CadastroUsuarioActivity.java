@@ -67,17 +67,18 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
             return false;
         }
         if(!compararEmails()){
-            edtEmail.requestFocus();
             exibirMensagem("Os campos de e-mail não estão iguais.");
             return false;
         }
         if(!compararSenhas()){
-            edtSenha.requestFocus();
             exibirMensagem("Os campos de senha não estão iguais.");
             return false;
         }
+        if(nomeExiste()){
+            exibirMensagem("O nome informado já existe. Por favor, tente com outro nome.");
+            return false;
+        }
         if(emailExiste()){
-            edtEmail.requestFocus();
             exibirMensagem("O e-mail informado já existe.");
             return false;
         }
@@ -87,23 +88,18 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
 
     private boolean verificarPreenchimento(){
         if(edtNome.getText() == null || edtNome.getText().toString().equals("")){
-            edtNome.requestFocus();
             return false;
         }
         if(edtEmail.getText() == null || edtEmail.getText().toString().equals("")){
-            edtEmail.requestFocus();
             return false;
         }
         if(edtConfirmaEmail.getText() == null || edtConfirmaEmail.getText().toString().equals("")){
-            edtConfirmaEmail.requestFocus();
             return false;
         }
         if(edtSenha.getText() == null || edtSenha.getText().toString().equals("")){
-            edtSenha.requestFocus();
             return false;
         }
         if(edtConfirmaSenha.getText() == null || edtConfirmaSenha.getText().toString().equals("")){
-            edtConfirmaSenha.requestFocus();
             return false;
         }
         return true;
@@ -137,6 +133,31 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
 
         if(!json.equals("true") && !json.equals("false")){
             exibirErro("Ocorreu um problema ao tentar validar o e-mail. Tente novamente mais tarde.");
+        }
+
+        return json.equals("true");
+    }
+
+    private boolean nomeExiste(){
+        TaskConnection connection = new TaskConnection();
+        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
+        params[Constants.NOME_DO_RESOURCE] = "usuario/nomeExiste/" + edtNome.getText().toString();
+        connection.execute(params);
+
+        String json = null;
+        try {
+            json = (String) connection.get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            exibirErro("Ocorreu um problema ao tentar validar o nome. Tente novamente mais tarde.");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            exibirErro("Ocorreu um problema ao tentar validar o nome. Tente novamente mais tarde.");
+        }
+
+        if(!json.equals("true") && !json.equals("false")){
+            exibirErro("Ocorreu um problema ao tentar validar o nome. Tente novamente mais tarde.");
         }
 
         return json.equals("true");

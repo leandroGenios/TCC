@@ -23,6 +23,7 @@ public class BaseMenuActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = new Intent(getApplicationContext(), MenusAction.onActionMenu(item.getItemId()));
         intent.putExtra("usuario", getUsuario());
+        intent.putExtra("acao", "");
         startActivity(intent);
         finish();
         return true;

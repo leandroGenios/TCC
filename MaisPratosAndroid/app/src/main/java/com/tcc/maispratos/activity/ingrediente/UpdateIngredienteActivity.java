@@ -47,6 +47,37 @@ public class UpdateIngredienteActivity extends BaseIngrediente {
     }
 
     @Override
+    public void carregarCampos(Ingrediente ingrediente){
+        super.carregarCampos(ingrediente);
+        aucNomeIngrediente.setEnabled(edtCodigoBarras.getText().length() > 0 ? false : true);
+    }
+
+    @Override
+    public View.OnFocusChangeListener focusOutCodigoBarras(){
+        aucNomeIngrediente.setEnabled(false);
+        View.OnFocusChangeListener focus = new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if(!hasFocus && edtCodigoBarras.getText().toString().length() > 0){
+                    aucNomeIngrediente.setEnabled(false);
+                    if(verificarCodigoBarras()){
+                        verificarIngrediente(getIngredienteByCodigoBarras());
+                    }else{
+                        exibirMensagem("O código precisa ter " + Constants.QTDE_DIGITOS_CODIGO_MARRAS + " dígitos.");
+                        aucNomeIngrediente.setText("");
+                    }
+                }else{
+                    if(!hasFocus){
+                        aucNomeIngrediente.setEnabled(true);
+                    }
+                }
+            }
+        };
+
+        return focus;
+    }
+
+    @Override
     public void iniciaElementos(){
         btnInserirCodBarras = (Button) findViewById(R.id.btnCodBarras);
         edtCodigoBarras = (EditText) findViewById(R.id.edtCodBarras);
@@ -69,6 +100,7 @@ public class UpdateIngredienteActivity extends BaseIngrediente {
                     if(atualizarIngrediente()){
                         Intent intent = new Intent(getApplicationContext(), IngredientesActivity.class);
                         intent.putExtra("usuario", getUsuario());
+                        intent.putExtra("acao", "Cadastro atualizado");
                         startActivity(intent);
                         finish();
                     }else{
@@ -85,6 +117,14 @@ public class UpdateIngredienteActivity extends BaseIngrediente {
         IntentResult result = IntentIntegrator.parseActivityResult(resultCode, data);
         String codigo = result.getContents();
         edtCodigoBarras.setText(codigo);
+        if(edtCodigoBarras.getText().toString().length() > 0){
+            if(verificarCodigoBarras()){
+                verificarIngrediente(getIngredienteByCodigoBarras());
+            }else{
+                exibirMensagem("O código precisa ter " + Constants.QTDE_DIGITOS_CODIGO_MARRAS + " dígitos.");
+                aucNomeIngrediente.setText("");
+            }
+        }
     }
 
     private boolean atualizarIngrediente(){

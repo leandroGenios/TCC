@@ -145,6 +145,26 @@ public class UsuarioDAO {
 		}
 	}
 	
+	public boolean nomeExiste(String nome) throws SQLException{
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = GerenciadorJDBC.getConnection();
+			
+			String sql = "SELECT * FROM USUARIO WHERE LOWER(nome) = LOWER(?)";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setString(1, nome);
+			
+			ResultSet rs = stmt.executeQuery();
+			return rs.next();
+		}
+		finally {
+			GerenciadorJDBC.close(conn, stmt);
+		}
+	}
+	
 	public boolean usuarioExiste(String email, String senha) throws SQLException{
 		Connection conn = null;
 		PreparedStatement stmt = null;

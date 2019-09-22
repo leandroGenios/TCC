@@ -7,6 +7,7 @@
     tools:context=".activity.prato.UpdatePratoActivity">
 
     <ScrollView
+        android:id="@+id/scrollView2"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -28,9 +29,9 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:ems="10"
+                android:hint="Nome"
                 android:inputType="textPersonName"
                 android:text=""
-                android:hint="Nome"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -42,7 +43,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:scaleType="fitXY"
+                android:scaleType="fitCenter"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/edtNomePrato"
@@ -114,9 +115,9 @@
                 android:layout_marginEnd="8dp"
                 android:digits="0123456789"
                 android:ems="10"
+                android:hint="Tempo de preparo em minutos"
                 android:inputType="numberDecimal"
                 android:text=""
-                android:hint="Tempo de preparo em minutos"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView16" />
@@ -135,4 +136,5 @@
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
+
 </android.support.constraint.ConstraintLayout>

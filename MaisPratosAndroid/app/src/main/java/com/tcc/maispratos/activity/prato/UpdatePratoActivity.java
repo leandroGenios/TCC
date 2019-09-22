@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 
 import com.google.gson.Gson;
 import com.tcc.maispratos.R;
@@ -82,7 +83,7 @@ public class UpdatePratoActivity extends BaseMenuActivity {
 
         if(prato.getImagemBase64() != null){
             byte[] bitMapData = Base64.decode(prato.getImagemBase64(),Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bitMapData, 0, bitMapData.length);
+            bitmap = BitmapFactory.decodeByteArray(bitMapData, 0, bitMapData.length);
             imgBtnAddImage.setImageBitmap(bitmap);
         }
 
@@ -205,10 +206,12 @@ public class UpdatePratoActivity extends BaseMenuActivity {
         prato.setModoPreparo(mltModoPreparo.getText().toString());
         prato.setTempoPreparo(Integer.parseInt(edtTempoPreparo.getText().toString()));
 
+        System.out.println(bitmap);
         if(bitmap != null){
             ByteArrayOutputStream blob = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 0, blob);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, blob);
             prato.setImagem(blob.toByteArray());
+            prato.setImagemBase64(Base64.encodeToString(blob.toByteArray(), Base64.DEFAULT));
         }
 
         getUsuario().setPrato(prato);
@@ -223,8 +226,8 @@ public class UpdatePratoActivity extends BaseMenuActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        connection.execute(params);
 
+        connection.execute(params);
         try {
             getUsuario().setPrato(null);
             return ((String) connection.get()).equals("true");

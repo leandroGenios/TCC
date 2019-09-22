@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
@@ -108,6 +109,7 @@ public class IngredienteAdapter extends RecyclerView.Adapter<LineIngredienteHold
                     ((String) connection.get()).equals("true");
                     ingredientes.remove(ingrediente);
                     notifyDataSetChanged();
+                    Toast.makeText(activity.getApplicationContext(), "Ingrediente removido",Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

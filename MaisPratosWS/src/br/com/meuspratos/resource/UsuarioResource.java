@@ -71,6 +71,24 @@ public class UsuarioResource {
 		}
 	}
 	
+	
+	@GET
+	@Path("/nomeExiste/{nome}")
+	public Response nomeExiste(@PathParam("nome")String nome) {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(dao.nomeExiste(nome))
+					.build();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
+	
 	@GET
 	@Path("/login/{email}/{senha}")
 	public Response login(@PathParam("email")String email, @PathParam("senha")String senha) {

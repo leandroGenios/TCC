@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -42,6 +43,11 @@ public class IngredientesActivity extends BaseMenuActivity {
 
         iniciaElementos();
         montaLista(getIngredientes());
+
+        String acao = (String) getIntent().getExtras().get("acao");
+        if(acao != null && !acao.equals("")){
+            Toast.makeText(getApplicationContext(), acao,Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void iniciaElementos(){

@@ -230,14 +230,14 @@ public class UsuarioDAO {
 		}
 	}
 	
-	public String getClassificacao(int qtde) throws SQLException{
-		String classificacao = "";
+	public Classificacao getClassificacao(int qtde) throws SQLException{
+		Classificacao classificacao = null;
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		try {
 			conn = GerenciadorJDBC.getConnection();
 			
-			String sql = "SELECT c.descricao"
+			String sql = "SELECT *"
 					   + "  FROM classificacao c"
 					   + " WHERE ? >= c.menor_valor"
 					   + "   AND ? <= c.maior_valor";
@@ -246,7 +246,11 @@ public class UsuarioDAO {
 			stmt.setInt(2, qtde);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				classificacao = rs.getString("DESCRICAO");
+				classificacao = new Classificacao();
+				classificacao.setId(rs.getInt("ID"));
+				classificacao.setDescricao(rs.getString("DESCRICAO"));
+				classificacao.setMenorValor(rs.getInt("MENOR_VALOR"));
+				classificacao.setMaiorValor(rs.getInt("MAIOR_VALOR"));
 			}
 		}
 		finally {

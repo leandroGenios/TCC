@@ -17,6 +17,7 @@ import com.tcc.maispratos.activity.prato.CadastroPratoActivity;
 import com.tcc.maispratos.activity.prato.PratosActivity;
 import com.tcc.maispratos.activity.usuario.UpdatePerfilActivity;
 import com.tcc.maispratos.activity.usuario.Usuario;
+import com.tcc.maispratos.prato.Classificacao;
 import com.tcc.maispratos.util.BaseMenuActivity;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
@@ -34,6 +35,7 @@ public class PerfilActivity extends BaseMenuActivity {
     private TextView txtEmailUsuario;
     private Button btnEditarDados;
     private Button btnMeusPratos;
+    private Classificacao classificacao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +57,12 @@ public class PerfilActivity extends BaseMenuActivity {
         btnEditarDados = findViewById(R.id.btnEditarDados);
         btnMeusPratos = findViewById(R.id.btnMeusPratos);
 
-        txtNivelCozinheiro.setText(getClassificacao());
-        int progresso = getPróximoNivel();
-        progressBar.setProgress((100 / 5) * (5 - progresso));
+        txtNivelCozinheiro.setText(getClassificacao().getDescricao());
+        int progresso = classificacao.getMaiorValor() + 1;
+        int boaAvaliacao = getCountPratosBoaAvaliacao();
+        int pratosClassificacaoAtual = boaAvaliacao - classificacao.getMenorValor();
+        int divisaoProgresso = (classificacao.getMaiorValor() + 1) - pratosClassificacaoAtual;
+        progressBar.setProgress((100 / divisaoProgresso) * ( - progresso));
         txtProximoNivel.setText("Faltam " + progresso + " pratos para o próximo nível");
         txtQtdePratosCadastrados.setText(getCountMeusPratos() + " pratos cadastrados");
         txtQtdePratosAvaliados.setText(getCountPratosAvaliados() + " pratos avaliados");
@@ -93,7 +98,7 @@ public class PerfilActivity extends BaseMenuActivity {
         return onClickListener;
     }
 
-    private String getClassificacao(){
+    private Classificacao getClassificacao(){
         TaskConnection connection = new TaskConnection();
         Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
         params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
@@ -103,14 +108,14 @@ public class PerfilActivity extends BaseMenuActivity {
         String json = null;
         try {
             json = (String) connection.get();
-            Type type = new TypeToken<String>(){}.getType();
-            return new Gson().fromJson(json, type);
+            Type type = new TypeToken<Classificacao>(){}.getType();
+            classificacao = new Gson().fromJson(json, type);
         } catch (Exception e) {
             e.printStackTrace();
             exibirErro("Ocorreu um problema ao tentar buscar os dados. Tente novamente mais tarde.");
         }
 
-        return "";
+        return classificacao;
     }
 
     private Integer getCountPratosAvaliados(){
@@ -118,6 +123,26 @@ public class PerfilActivity extends BaseMenuActivity {
         Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
         params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
         params[Constants.NOME_DO_RESOURCE] = "prato/minhasAvaliacoes/" + getUsuario().getId();
+        connection.execute(params);
+
+        String json = null;
+        try {
+            json = (String) connection.get();
+            Type type = new TypeToken<Integer>(){}.getType();
+            return new Gson().fromJson(json, type);
+        } catch (Exception e) {
+            e.printStackTrace();
+            exibirErro("Ocorreu um problema ao tentar buscar os dados. Tente novamente mais tarde.");
+        }
+
+        return 0;
+    }
+
+    private Integer getCountPratosBoaAvaliacao(){
+        TaskConnection connection = new TaskConnection();
+        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.GET;
+        params[Constants.NOME_DO_RESOURCE] = "prato/minhasAvaliacoesBoas/" + getUsuario().getId();
         connection.execute(params);
 
         String json = null;

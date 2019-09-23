@@ -248,7 +248,7 @@ public class PratoDAO {
 					prato.setAvaliacao(rs.getInt("AVALIACAO"));
 					prato.setUltimoPreparo(rs.getLong("inicio_preparo"));
 					prato.setPreparadoSemIngredientes(rs.getBoolean("PREPARO_SEM_INGREDIENTES"));
-					prato.setFavorito(rs.getBoolean("FAVORITO"));
+					prato.setFavorito(rs.getString("FAVORITO") == null ? null : rs.getBoolean("FAVORITO"));
 					
 					prato.setIngredientesCompativeisString("0");
 					

@@ -241,6 +241,23 @@ public class PratoResource {
 					.build();
 		}
 	}
+
+	@GET
+	@Path("/minhasAvaliacoesBoas/{idUsuario}")
+	public Response minhasAvaliacoesBoas(@PathParam("idUsuario") int idUsuario) {
+		try {
+			return Response
+					.status(Response.Status.OK)
+					.entity(dao.listPratosBoaAvaliacao(idUsuario).size())
+					.build();				
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.build();
+		}
+	}
 	
 	@GET
 	@Path("/meusPratos/{idUsuario}")

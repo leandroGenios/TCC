@@ -13,6 +13,7 @@ import com.google.gson.reflect.TypeToken;
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.perfil.PratoPerfilPublicoAdapter;
+import com.tcc.maispratos.prato.Classificacao;
 import com.tcc.maispratos.prato.Prato;
 import com.tcc.maispratos.prato.PratoAdapter;
 import com.tcc.maispratos.util.BaseMenuActivity;
@@ -96,8 +97,9 @@ public class PerfilPublicoActivity extends BaseMenuActivity {
         String json = null;
         try {
             json = (String) connection.get();
-            Type type = new TypeToken<String>(){}.getType();
-            return new Gson().fromJson(json, type);
+            Type type = new TypeToken<Classificacao>(){}.getType();
+            Classificacao c = new Gson().fromJson(json, type);
+            return c.getDescricao();
         } catch (Exception e) {
             e.printStackTrace();
             exibirErro("Ocorreu um problema ao tentar buscar os dados. Tente novamente mais tarde.");

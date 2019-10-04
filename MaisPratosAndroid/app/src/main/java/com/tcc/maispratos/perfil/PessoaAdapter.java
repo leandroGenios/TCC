@@ -20,6 +20,7 @@ import com.tcc.maispratos.activity.prato.PratosActivity;
 import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.ingrediente.Ingrediente;
 import com.tcc.maispratos.ingrediente.LineIngredienteHolder;
+import com.tcc.maispratos.prato.Classificacao;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
 
@@ -169,8 +170,9 @@ public class PessoaAdapter extends RecyclerView.Adapter<LinePessoaHolder> {
         String json = null;
         try {
             json = (String) connection.get();
-            Type type = new TypeToken<String>(){}.getType();
-            return new Gson().fromJson(json, type);
+            Type type = new TypeToken<Classificacao>(){}.getType();
+            Classificacao c = new Gson().fromJson(json, type);
+            return c.getDescricao();
         } catch (Exception e) {
             e.printStackTrace();
             exibirErro("Ocorreu um problema ao tentar buscar os dados. Tente novamente mais tarde.");

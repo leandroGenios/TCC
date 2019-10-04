@@ -41,39 +41,48 @@ public class ComentarioActivity extends BaseMenuActivity {
         mltComentario = findViewById(R.id.mltComentario);
         btnSalvar = findViewById(R.id.btnSalvar);
 
-        btnSalvar.setOnClickListener(salvar());
+        btnSalvar.setOnClickListener(verificaPreechimento());
     }
 
-    private View.OnClickListener salvar(){
+    private View.OnClickListener verificaPreechimento(){
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TaskConnection connection = new TaskConnection();
-                Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
-                params[Constants.TIPO_DE_REQUISICAO] = Constants.POST;
-                params[Constants.NOME_DO_RESOURCE] = "prato/comentario";
-
-                prato.setComentario(mltComentario.getText().toString());
-                getUsuario().setPrato(prato);
-                String gson = new Gson().toJson(getUsuario());
-                try {
-                    params[Constants.OBJETO] = new JSONObject(gson);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    connection.execute(params);
-
-                    getIntent().putExtra("comentario", mltComentario.getText().toString());
-                    setResult(RESULT_FIRST_USER, getIntent());
-                    finish();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    exibirErro("Ocorreu um problema ao salvar o comentário. Tente novamente mais tarde.");
-                }
+            if(mltComentario.getText() != null && !mltComentario.getText().toString().equals("")){
+                salvar();
+            }else{
+                exibirMensagem("O campo deve ser preenchido");
+            }
             }
         };
         return onClickListener;
+    }
+
+    private void salvar(){
+        TaskConnection connection = new TaskConnection();
+        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.POST;
+        params[Constants.NOME_DO_RESOURCE] = "prato/comentario";
+
+        prato.setComentario(mltComentario.getText().toString());
+        getUsuario().setPrato(prato);
+        String gson = new Gson().toJson(getUsuario());
+        try {
+            params[Constants.OBJETO] = new JSONObject(gson);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            connection.execute(params);
+
+            getIntent().putExtra("comentario", mltComentario.getText().toString());
+            setResult(RESULT_FIRST_USER, getIntent());
+            finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+            exibirErro("Ocorreu um problema ao salvar o comentário. Tente novamente mais tarde.");
+        }
+
     }
 }

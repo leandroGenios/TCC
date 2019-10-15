@@ -58,12 +58,14 @@ public class PerfilActivity extends BaseMenuActivity {
         btnMeusPratos = findViewById(R.id.btnMeusPratos);
 
         txtNivelCozinheiro.setText(getClassificacao().getDescricao());
-        int progresso = classificacao.getMaiorValor() + 1;
         int boaAvaliacao = getCountPratosBoaAvaliacao();
-        int pratosClassificacaoAtual = boaAvaliacao - classificacao.getMenorValor();
-        int divisaoProgresso = (classificacao.getMaiorValor() + 1) - pratosClassificacaoAtual;
-        progressBar.setProgress((100 / divisaoProgresso) * ( - progresso));
-        txtProximoNivel.setText("Faltam " + progresso + " pratos para o próximo nível");
+        int qtdeClassificacaoAtual = (classificacao.getMaiorValor() - classificacao.getMenorValor()) + 1;
+        int qtdePratosUteis = boaAvaliacao - (classificacao.getMenorValor() - 1);
+        int progresso = qtdePratosUteis * 100 / qtdeClassificacaoAtual;
+
+
+        progressBar.setProgress(progresso);
+        txtProximoNivel.setText("Faltam " + ((qtdeClassificacaoAtual + 1) - qtdePratosUteis) + " pratos para o próximo nível");
         txtQtdePratosCadastrados.setText(getCountMeusPratos() + " pratos cadastrados");
         txtQtdePratosAvaliados.setText(getCountPratosAvaliados() + " pratos avaliados");
         txtNomeUsuario.setText(getUsuario().getNome());

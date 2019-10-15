@@ -12,6 +12,7 @@ import android.widget.EditText;
 import com.google.gson.Gson;
 import com.tcc.maispratos.R;
 import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
+import com.tcc.maispratos.activity.perfil.PerfilActivity;
 import com.tcc.maispratos.util.BaseMenuActivity;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
@@ -186,7 +187,7 @@ public class UpdatePerfilActivity extends BaseMenuActivity {
             getUsuario().setSenha(usuario.getSenha());
             getUsuario().setEmail(usuario.getEmail());
             getUsuario().setNome(usuario.getNome());
-            exibeMensagemSucesso();
+            exibirMensagem("Perfil Atualizado com sucesso", PerfilActivity.class);
         } catch (Exception e) {
             e.printStackTrace();
             exibirErro("Ocorreu um problema ao cadastrar. Tente novamente mais tarde.");
@@ -195,18 +196,6 @@ public class UpdatePerfilActivity extends BaseMenuActivity {
 
     private Usuario getUsuario(String json){
         return new Gson().fromJson(json, Usuario.class);
-    }
-
-    private void exibeMensagemSucesso(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Sucesso");
-        builder.setMessage("Perfil atualizado");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface arg0, int arg1) {
-            }
-        });
-        AlertDialog alerta = builder.create();
-        alerta.show();
     }
 
 }

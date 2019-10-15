@@ -1,16 +1,21 @@
 package com.tcc.maispratos.activity.perfil;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.tcc.maispratos.R;
+import com.tcc.maispratos.activity.ingrediente.IngredientesActivity;
 import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.perfil.PratoPerfilPublicoAdapter;
 import com.tcc.maispratos.prato.Classificacao;
@@ -19,6 +24,9 @@ import com.tcc.maispratos.prato.PratoAdapter;
 import com.tcc.maispratos.util.BaseMenuActivity;
 import com.tcc.maispratos.util.Constants;
 import com.tcc.maispratos.util.TaskConnection;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -60,6 +68,8 @@ public class PerfilPublicoActivity extends BaseMenuActivity {
         adapter = new PratoPerfilPublicoAdapter(new ArrayList<Prato>(0), this);
         rcvPratos.setAdapter(adapter);
         rcvPratos.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+
+        btnAddAmigo.setOnClickListener(addAmigo(amigo));
     }
 
     private void listPratos(){
@@ -106,5 +116,57 @@ public class PerfilPublicoActivity extends BaseMenuActivity {
         }
 
         return "";
+    }
+
+    private View.OnClickListener addAmigo(final Usuario pessoa){
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                exibeDialogo(pessoa);
+            }
+        };
+        return onClickListener;
+    }
+
+    private void exibeDialogo(final Usuario pessoa) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Atenção");
+        builder.setMessage("Deseja adicionar " + pessoa.getNome() + " em sua lista de amigos?");
+        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                adicionar(pessoa);
+            }
+        });
+
+        builder.setNeutralButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        AlertDialog alerta = builder.create();
+        alerta.show();
+    }
+
+    private void adicionar(Usuario pessoa){
+        TaskConnection connection = new TaskConnection();
+        Object[] params = new Object[Constants.QUERY_COM_ENVIO_DE_OBJETO];
+        params[Constants.TIPO_DE_REQUISICAO] = Constants.POST;
+        params[Constants.NOME_DO_RESOURCE] = "usuario/amigo/" + getUsuario().getId();
+        String gson = new Gson().toJson(pessoa);
+        try {
+            params[Constants.OBJETO] = new JSONObject(gson);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        connection.execute(params);
+
+        try {
+            if(((String) connection.get()).equals("true")){
+                exibirMensagem("Amigo adicionado!", AmigosActivity.class);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            exibirErro("Ocorreu um problema ao Adicionar. Tente novamente mais tarde.");
+        }
     }
 }

@@ -129,6 +129,7 @@ public class PessoaAdapter extends RecyclerView.Adapter<LinePessoaHolder> {
         try {
             if(((String) connection.get()).equals("true")){
                 exibeMensagem("Amigo adicionado!");
+                this.activity.carregarLista();
             }
         } catch (Exception e) {
             e.printStackTrace();

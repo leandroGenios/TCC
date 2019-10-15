@@ -94,10 +94,11 @@ public class AmigosActivity extends BaseMenuActivity {
         return null;
     }
 
-    private void carregarLista(){
+    public void carregarLista(){
         amigos = getAmigos();
         amigos.addAll(getUsuarios());
 
+        adapter.clear();
         for (Usuario usuario: amigos) {
             adapter.updateList(usuario);
         }

@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.tcc.maispratos.R;
+import com.tcc.maispratos.activity.perfil.AmigosActivity;
 import com.tcc.maispratos.activity.usuario.Usuario;
 
 public class BaseMenuActivity extends AppCompatActivity {
@@ -55,6 +56,22 @@ public class BaseMenuActivity extends AppCompatActivity {
         builder.setMessage(mensagem);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
+            }
+        });
+        AlertDialog alerta = builder.create();
+        alerta.show();
+    }
+
+    public void exibirMensagem(String mensagem, final Class activicy){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Atenção");
+        builder.setMessage(mensagem);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                Intent intent = new Intent(getApplicationContext(), activicy);
+                intent.putExtra("usuario", getUsuario());
+                startActivity(intent);
+                finish();
             }
         });
         AlertDialog alerta = builder.create();

@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.tcc.maispratos.R;
+import com.tcc.maispratos.activity.perfil.PerfilPublicoActivity;
 import com.tcc.maispratos.activity.usuario.Usuario;
 import com.tcc.maispratos.comentario.Comentario;
 import com.tcc.maispratos.comentario.ComentarioAdapter;
@@ -148,6 +149,7 @@ public class PratoActivity extends BaseMenuActivity {
         fabEditar.setOnClickListener(editarPrato());
 
         btnDeixarComentario.setOnClickListener(addComentario());
+        txtNomeCriador.setOnClickListener(exibirAmigo());
 
         meusIngredientes = listMeusIngredientes();
         ingredientesFaltantes = new ArrayList<>();
@@ -678,4 +680,18 @@ public class PratoActivity extends BaseMenuActivity {
             imagem.setImageBitmap(bitmap);
         }
     }
+
+    private View.OnClickListener exibirAmigo(){
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), PerfilPublicoActivity.class);
+                intent.putExtra("usuario", getUsuario());
+                intent.putExtra("amigo", prato.getCriador());
+                startActivity(intent);
+            }
+        };
+        return onClickListener;
+    }
+
 }
